@@ -20,6 +20,11 @@ public abstract class EntityBase : MonoBehaviour
     protected CharacterController _controller;
     protected Animator _animator;
 
+    protected virtual void Awake() {
+        _controller = GetComponent<CharacterController>();
+        _animator = GetComponent<Animator>();
+    }
+
     protected virtual IEnumerator Knockback(float force, Vector3 direction)
     {
         //apply knockback here
