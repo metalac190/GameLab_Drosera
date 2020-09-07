@@ -14,7 +14,7 @@ public abstract class EntityBase : MonoBehaviour
     protected bool _canAct;
     protected bool _canStun;
     protected float _knockbackResistance;
-    protected float _coolDown;
+    protected float _cooldown;
     protected float _moveSpeed;
 
     protected CharacterController _controller;
@@ -23,6 +23,10 @@ public abstract class EntityBase : MonoBehaviour
     protected virtual void Awake() {
         _controller = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
+    }
+
+    protected virtual void Start() {
+
     }
 
     protected virtual IEnumerator Knockback(float force, Vector3 direction)
