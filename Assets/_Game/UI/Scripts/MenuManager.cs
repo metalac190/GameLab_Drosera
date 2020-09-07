@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// 9/3 - worked on by Vinson Kok
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] GameObject mainMenuPanel;
