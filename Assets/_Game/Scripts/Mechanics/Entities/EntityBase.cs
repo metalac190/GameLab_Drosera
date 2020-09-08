@@ -9,16 +9,16 @@ public abstract class EntityBase : MonoBehaviour
     public UnityEvent OnDeath;
     public UnityEvent OnHeal;
 
-    protected float _maxHealth;
+    [SerializeField] protected float _maxHealth;
     protected float _health;
-    protected bool _canAct;
-    protected bool _canStun;
-    protected float _knockbackResistance;
-    protected float _coolDown;
-    protected float _moveSpeed;
+    [SerializeField] protected bool _canAct;
+    [SerializeField] protected bool _canStun;
+    [SerializeField] protected float _knockbackResistance;
+    [SerializeField] protected float _coolDown;
+    [SerializeField] protected float _moveSpeed;
 
-    protected CharacterController _controller;
-    protected Animator _animator;
+    [SerializeField] protected CharacterController _controller;
+    [SerializeField] protected Animator _animator;
 
     protected virtual IEnumerator Knockback(float force, Vector3 direction)
     {
