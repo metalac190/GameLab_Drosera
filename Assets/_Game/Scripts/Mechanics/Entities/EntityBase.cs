@@ -20,20 +20,20 @@ public abstract class EntityBase : MonoBehaviour
     [SerializeField] protected CharacterController _controller;
     [SerializeField] protected Animator _animator;
 
-    protected virtual IEnumerator Knockback(float force, Vector3 direction)
+    public virtual IEnumerator Knockback(float force, Vector3 direction)
     {
         //apply knockback here
         yield return null;
     }
 
-    protected virtual IEnumerator TakeDamage(float value, float knockbackForce, Vector3 knockbackDir)
+    public virtual IEnumerator TakeDamage(float value, float knockbackForce, Vector3 knockbackDir)
     {
         StartCoroutine(Knockback(knockbackForce, knockbackDir));
         TakeDamage(value);
         yield return null;
     }
 
-    protected virtual void TakeDamage(float value)
+    public virtual void TakeDamage(float value)
     {
         OnTakeDamage?.Invoke();
         _health -= value;
@@ -43,7 +43,7 @@ public abstract class EntityBase : MonoBehaviour
         }
     }
 
-    protected virtual float TakeHealing(float value)
+    public virtual float TakeHealing(float value)
     {
         OnHeal?.Invoke();
         _health += value;
