@@ -9,31 +9,40 @@ public abstract class EntityBase : MonoBehaviour
     public UnityEvent OnDeath;
     public UnityEvent OnHeal;
 
-    protected float _maxHealth;
+    [SerializeField] protected float _maxHealth;
     protected float _health;
-    protected bool _canAct;
-    protected bool _canStun;
-    protected float _knockbackResistance;
-    protected float _coolDown;
-    protected float _moveSpeed;
+    [SerializeField] protected bool _canAct;
+    [SerializeField] protected bool _canStun;
+    [SerializeField] protected float _knockbackResistance;
+    [SerializeField] protected float _cooldown;
+    [SerializeField] protected float _moveSpeed;
 
-    protected CharacterController _controller;
-    protected Animator _animator;
+    [SerializeField] protected CharacterController _controller;
+    [SerializeField] protected Animator _animator;
 
-    protected virtual IEnumerator Knockback(float force, Vector3 direction)
+    protected virtual void Awake() {
+        _controller = GetComponent<CharacterController>();
+        _animator = GetComponent<Animator>();
+    }
+
+    protected virtual void Start() {
+
+    }
+
+    public virtual IEnumerator Knockback(float force, Vector3 direction)
     {
         //apply knockback here
         yield return null;
     }
 
-    protected virtual IEnumerator TakeDamage(float value, float knockbackForce, Vector3 knockbackDir)
+    public virtual IEnumerator TakeDamage(float value, float knockbackForce, Vector3 knockbackDir)
     {
         StartCoroutine(Knockback(knockbackForce, knockbackDir));
         TakeDamage(value);
         yield return null;
     }
 
-    protected virtual void TakeDamage(float value)
+    public virtual void TakeDamage(float value)
     {
         OnTakeDamage?.Invoke();
         _health -= value;
@@ -43,7 +52,7 @@ public abstract class EntityBase : MonoBehaviour
         }
     }
 
-    protected virtual float TakeHealing(float value)
+    public virtual float TakeHealing(float value)
     {
         OnHeal?.Invoke();
         _health += value;
