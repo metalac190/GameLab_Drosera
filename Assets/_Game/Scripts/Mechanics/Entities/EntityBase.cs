@@ -14,11 +14,20 @@ public abstract class EntityBase : MonoBehaviour
     [SerializeField] protected bool _canAct;
     [SerializeField] protected bool _canStun;
     [SerializeField] protected float _knockbackResistance;
-    [SerializeField] protected float _coolDown;
+    [SerializeField] protected float _cooldown;
     [SerializeField] protected float _moveSpeed;
 
     [SerializeField] protected CharacterController _controller;
     [SerializeField] protected Animator _animator;
+
+    protected virtual void Awake() {
+        _controller = GetComponent<CharacterController>();
+        _animator = GetComponent<Animator>();
+    }
+
+    protected virtual void Start() {
+
+    }
 
     public virtual IEnumerator Knockback(float force, Vector3 direction)
     {
