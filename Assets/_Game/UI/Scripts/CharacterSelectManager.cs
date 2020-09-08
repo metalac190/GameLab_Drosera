@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 
-// 9/6 - worked on by Vinson Kok
+// 9/8 - worked on by Vinson Kok
 public class CharacterSelectManager : MonoBehaviour
 {
     [SerializeField] CharacterSelectInfo[] characterList;
@@ -76,5 +76,11 @@ public class CharacterSelectManager : MonoBehaviour
         {
             weaponImages[i].sprite = characterList[index].WeaponSprites[i];
         }
+    }
+
+    // TODO- display weapon info when player clicks on weapon button
+    public void DisplaySelectedWeaponInfo(int index)
+    {
+
     }
 }
