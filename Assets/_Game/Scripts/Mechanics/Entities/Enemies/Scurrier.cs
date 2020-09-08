@@ -19,11 +19,12 @@ public class Scurrier : EnemyBase {
 
     protected override IEnumerator Idle(bool regen) {
         _agent.stoppingDistance = 0f;
+        _agent.SetDestination(transform.position);
         if(regen) {
             isHealing = true;
             StartCoroutine(Regenerate());
         }
-        _agent.SetDestination(transform.position);
+        currentState = EnemyState.Passive;
         yield return new WaitForSeconds(1f);
 
         Vector3 forward;
@@ -49,11 +50,12 @@ public class Scurrier : EnemyBase {
 
     protected override IEnumerator AggressiveMove() {
         _agent.stoppingDistance = stoppingDistance;
+        currentState = EnemyState.Aggressive;
 
-        // No target player - exit
+        // No target player available - idle instead
         FindTarget();
         if(targetPlayer == null) {
-            ResetEnemy();
+            ForceIdle();
             yield break;
         }
 

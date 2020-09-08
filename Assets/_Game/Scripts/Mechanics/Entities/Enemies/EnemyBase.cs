@@ -64,7 +64,6 @@ public abstract class EnemyBase : EntityBase {
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     protected virtual IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
         aggressive = true;
-        currentState = EnemyState.Aggressive;
         isHealing = false;
 
         // Stop in place
@@ -93,7 +92,7 @@ public abstract class EnemyBase : EntityBase {
     }
 
     // -------------------------------------------------------------------------------------------
-    // Behavior Coroutines
+    // Behavior Coroutines - Main
 
     /// <summary>
     /// Idle function of the enemy (either non-aggressive or no available targets)
@@ -132,10 +131,15 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     protected abstract IEnumerator Die();
 
+    // -------------------------------------------------------------------------------------------
+    // Behavior Coroutines - Control
+
     /// <summary>
-    /// Returns the enemy to its proper state (such as after being stunned)
+    /// Returns the enemy to its proper state (such as after being stunned or after a player re-enters a room)
     /// </summary>
     public virtual void ResetEnemy() {
+        if(currentState == EnemyState.Passive && !aggressive) // Don't re-start idle behavior if not aggressive
+            return;
         StopCoroutine(currentBehavior);
 
         if(aggressive)

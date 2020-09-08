@@ -10,7 +10,7 @@ public class EnemyBaseEditor : Editor {
         base.OnInspectorGUI();
         EnemyBase enemy = target as EnemyBase;
 
-        if(GUILayout.Button("Idle")) {
+        if(GUILayout.Button("Force Idle")) {
             enemy.ForceIdle();
         }
         if(GUILayout.Button("Turn Aggressive")) {
