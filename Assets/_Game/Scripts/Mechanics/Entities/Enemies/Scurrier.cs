@@ -23,6 +23,7 @@ public class Scurrier : EnemyBase {
             isHealing = true;
             StartCoroutine(Regenerate());
         }
+        _agent.SetDestination(transform.position);
         yield return new WaitForSeconds(1f);
 
         Vector3 forward;
@@ -65,8 +66,7 @@ public class Scurrier : EnemyBase {
             // Swat (Melee) Attack
             if(cooldownTimer == 0) { // check cooldown
                 if(Vector3.Distance(transform.position, targetPlayer.transform.position) <= swatRange) { // check melee range
-                    currentBehavior = AttackSwat();
-                    StartCoroutine(currentBehavior);
+                    currentBehavior = StartCoroutine(AttackSwat());
                     yield break;
                 }
             } else { // On cooldown
@@ -78,8 +78,7 @@ public class Scurrier : EnemyBase {
             // Gore (Charge) Attack
             if(cooldownTimerGore == 0) { // check cooldown
                 if(true /* TODO - raycast to player */) { // raycast
-                    currentBehavior = AttackGore();
-                    StartCoroutine(currentBehavior);
+                    currentBehavior = StartCoroutine(AttackGore());
                     yield break;
                 }
             } else { // On cooldown
@@ -116,8 +115,7 @@ public class Scurrier : EnemyBase {
     private IEnumerator GoreSkid() {
         yield return null;
 
-        currentBehavior = AggressiveMove();
-        StartCoroutine(currentBehavior);
+        currentBehavior = StartCoroutine(AggressiveMove());
     }
 
     /// <summary>
@@ -126,8 +124,7 @@ public class Scurrier : EnemyBase {
     private IEnumerator GoreCrash() {
         yield return null;
 
-        currentBehavior = AggressiveMove();
-        StartCoroutine(currentBehavior);
+        currentBehavior = StartCoroutine(AggressiveMove());
     }
 
     /// <summary>
@@ -136,8 +133,7 @@ public class Scurrier : EnemyBase {
     private IEnumerator AttackSwat() {
         yield return null;
 
-        currentBehavior = AggressiveMove();
-        StartCoroutine(currentBehavior);
+        currentBehavior = StartCoroutine(AggressiveMove());
     }
 
 }

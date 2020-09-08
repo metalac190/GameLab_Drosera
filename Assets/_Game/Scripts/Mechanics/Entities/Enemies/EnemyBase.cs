@@ -14,7 +14,7 @@ public abstract class EnemyBase : EntityBase {
     [SerializeField] protected bool hyperseed;
     [SerializeField] protected EnemyState currentState;
     public UnityEvent TurnAggressive, TurnAggressiveHyperseed;
-    protected IEnumerator currentBehavior;
+    protected Coroutine currentBehavior;
 
     [Header("Behavior Variables")]
     [SerializeField] protected float idleWanderRange;
@@ -45,8 +45,7 @@ public abstract class EnemyBase : EntityBase {
     protected override void Start() {
         base.Start();
 
-        currentBehavior = Idle();
-        StartCoroutine(currentBehavior);
+        currentBehavior = StartCoroutine(Idle());
     }
 
     // -------------------------------------------------------------------------------------------
@@ -82,8 +81,7 @@ public abstract class EnemyBase : EntityBase {
 
         // Change behavior
         StopCoroutine(currentBehavior);
-        currentBehavior = AggressiveMove();
-        StartCoroutine(currentBehavior);
+        currentBehavior = StartCoroutine(AggressiveMove());
         yield return null;
     }
 
@@ -141,10 +139,17 @@ public abstract class EnemyBase : EntityBase {
         StopCoroutine(currentBehavior);
 
         if(aggressive)
-            currentBehavior = AggressiveMove();
+            currentBehavior = StartCoroutine(AggressiveMove());
         else
-            currentBehavior = Idle(true);
-        StartCoroutine(currentBehavior);
+            currentBehavior = StartCoroutine(Idle(true));
+    }
+
+    /// <summary>
+    /// Forces the enemy into its idle state (but stays aggressive if already so)
+    /// </summary>
+    public virtual void ForceIdle() {
+        StopCoroutine(currentBehavior);
+        currentBehavior = StartCoroutine(Idle(true));
     }
 
 }
