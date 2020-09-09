@@ -25,6 +25,19 @@ public class PlayerBase : EntityBase
 
     protected Vector3 move;
 
+    protected InteractableBase interactTarget;
+    public InteractableBase InteractTarget { get => interactTarget; set => interactTarget = value; }
+    [SerializeField]
+    protected float interactCooldown = 0.2f;
+    protected float lastInteract = 0;
+
+    [SerializeField]
+    protected int ammo = 0;
+    public int Ammo { get => ammo; set => ammo = value; }
+    [SerializeField]
+    protected int ammoPerOre = 1;
+    public int AmmoPerOre { get => ammoPerOre; }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,9 +57,9 @@ public class PlayerBase : EntityBase
             abilityButton = Input.GetKey(KeyCode.JoystickButton4);
             interactButton = Input.GetKey(KeyCode.JoystickButton1);
             pauseButton = Input.GetKey(KeyCode.JoystickButton7);
-            dodgeButtonGamepad = Input.GetAxisRaw("9");
-            shootButtonGamepad = Input.GetAxisRaw("10");
-            adjustCameraGamepad = Input.GetAxisRaw("6");
+            //dodgeButtonGamepad = Input.GetAxisRaw("9");
+            //shootButtonGamepad = Input.GetAxisRaw("10");
+            //adjustCameraGamepad = Input.GetAxisRaw("6");
             altFireButton = Input.GetKey(KeyCode.JoystickButton3);
             swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5);
         }
@@ -66,6 +79,12 @@ public class PlayerBase : EntityBase
         }
 
         move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        if (interactButton && Time.fixedTime > lastInteract + interactCooldown)
+        {
+            interactTarget?.Interact(this);
+            lastInteract = Time.fixedTime;
+        }
+        interactTarget = null;
 
     }
 }
