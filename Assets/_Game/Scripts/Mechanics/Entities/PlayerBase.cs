@@ -38,12 +38,6 @@ public class PlayerBase : EntityBase
     protected int ammoPerOre = 1;
     public int AmmoPerOre { get => ammoPerOre; }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
     // Update is called once per frame
     void FixedUpdate()
     {
