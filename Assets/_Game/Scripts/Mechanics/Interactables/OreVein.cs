@@ -19,7 +19,7 @@ public class OreVein : InteractableBase
         {
             obj.SetActive(false);
         }
-        _orePrefabSizes[_uses].SetActive(true);
+        _orePrefabSizes[Mathf.Clamp(_uses, 0, _orePrefabSizes.Length - 1)].SetActive(true);
     }
 
     public override bool Interact(PlayerBase player)
@@ -43,6 +43,6 @@ public class OreVein : InteractableBase
         {
             obj.SetActive(false);
         }
-        _orePrefabSizes[_uses].SetActive(true);
+        _orePrefabSizes[Mathf.Clamp(_uses, 0, _orePrefabSizes.Length-1)].SetActive(true);
     }
 }
