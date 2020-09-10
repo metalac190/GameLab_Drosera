@@ -17,10 +17,6 @@ public class BreakableWall : EntityBase
     [SerializeField]
     private float _fallDist = 3;
 
-    private void Start()
-    {
-        _health = _maxHealth;
-    }
 
     public override void TakeDamage(float value)
     {

@@ -26,7 +26,7 @@ public abstract class EntityBase : MonoBehaviour
     }
 
     protected virtual void Start() {
-
+        _health = _maxHealth;
     }
 
     public virtual IEnumerator Knockback(float force, Vector3 direction)
