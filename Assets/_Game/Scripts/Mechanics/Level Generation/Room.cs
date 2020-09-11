@@ -44,6 +44,7 @@ public class Room : MonoBehaviour
     {
         foreach(Layout layout in layouts)
         {
+            layout.objects.RemoveAll(obj => obj == null);
             foreach(Transform obj in layout.objects)
             {
                 obj.gameObject.SetActive(false);
