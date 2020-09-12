@@ -14,7 +14,7 @@ public class RoomWindow : EditorWindow
     Color sectionColor = new Color(.7f, .7f, .7f);
     Color subsectionColor = new Color(.8f, .8f, .8f);
 
-    [MenuItem("Tools/Layout Editor")]
+    [MenuItem("Tools/Room Editor")]
     public static void DrawWindow()
     {
         GetWindow<RoomWindow>("Room Editor");
