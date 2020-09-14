@@ -11,6 +11,8 @@ public class PlayerBase : EntityBase
 
     //button variable names
     protected bool aimToggle;
+    protected bool cycleTargetRight;
+    protected bool cycleTargetLeft;
     protected bool reloadButton;
     protected bool abilityButton;
     protected bool interactButton;
@@ -26,6 +28,10 @@ public class PlayerBase : EntityBase
     //gunner specific
     protected bool altFireButton;
     protected bool swapAbilityButton;
+
+    public bool AimToggle { get { return aimToggle; } }
+    public bool CycleTargetRight { get { return cycleTargetRight; } }
+    public bool CycleTargetLeft { get { return cycleTargetLeft; } }
 
     protected Vector3 move;
     private CharacterController controller;
@@ -55,7 +61,7 @@ public class PlayerBase : EntityBase
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
 
         //assign buttons
@@ -75,16 +81,18 @@ public class PlayerBase : EntityBase
         }
         else //keyboard
         {
-            aimToggle = Input.GetMouseButton(3);
+            aimToggle = Input.GetMouseButtonDown(2);
+            cycleTargetRight = Input.mouseScrollDelta.y > 0;
+            cycleTargetLeft = Input.mouseScrollDelta.y < 0;
             reloadButton = Input.GetKey(KeyCode.R);
             abilityButton = Input.GetKey(KeyCode.LeftShift);
             interactButton = Input.GetKey(KeyCode.E);
             pauseButton = Input.GetKey(KeyCode.Escape);
             dodgeButtonKey = Input.GetKey(KeyCode.Space);
-            shootButtonKey = Input.GetMouseButton(1);
+            shootButtonKey = Input.GetMouseButton(0);
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
             adjustCameraRightKey = Input.GetKey(KeyCode.X);
-            altFireButton = Input.GetMouseButton(2);
+            altFireButton = Input.GetMouseButton(1);
             swapAbilityButton = Input.GetKey(KeyCode.Q);
         }
 
