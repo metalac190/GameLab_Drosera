@@ -89,10 +89,10 @@ public class PlayerBase : EntityBase
             interactButton = Input.GetKey(KeyCode.E);
             pauseButton = Input.GetKey(KeyCode.Escape);
             dodgeButtonKey = Input.GetKey(KeyCode.Space);
-            shootButtonKey = Input.GetMouseButton(1);
+            shootButtonKey = Input.GetMouseButton(0);
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
             adjustCameraRightKey = Input.GetKey(KeyCode.X);
-            altFireButton = Input.GetMouseButton(2);
+            altFireButton = Input.GetMouseButton(1);
             swapAbilityButton = Input.GetKey(KeyCode.Q);
         }
 
