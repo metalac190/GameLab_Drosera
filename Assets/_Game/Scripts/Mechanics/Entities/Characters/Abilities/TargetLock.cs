@@ -8,8 +8,8 @@ public class TargetLock : MonoBehaviour
 
     [SerializeField] float _maxRange = 20f;
 
-    GameObject _currentTarget;
-    float inputCooldown;
+    [HideInInspector] public GameObject _currentTarget;
+    float _inputCooldown;
     List<Collider> _visibleEnemies = new List<Collider>();
     LayerMask _mask;
 
@@ -36,16 +36,16 @@ public class TargetLock : MonoBehaviour
 
         if (_currentTarget != null)
         {
-            if (_player.CycleTargetRight && Time.fixedTime - inputCooldown > 0.05f)
+            if (_player.CycleTargetRight && Time.fixedTime - _inputCooldown > 0.05f)
             {
                 GetNextEnemy(1);
-                inputCooldown = Time.fixedTime;
+                _inputCooldown = Time.fixedTime;
                 Debug.Log(_currentTarget.name);
             }
-            else if (_player.CycleTargetLeft && Time.fixedTime - inputCooldown > 0.05f)
+            else if (_player.CycleTargetLeft && Time.fixedTime - _inputCooldown > 0.05f)
             {
                 GetNextEnemy(-1);
-                inputCooldown = Time.fixedTime;
+                _inputCooldown = Time.fixedTime;
                 Debug.Log(_currentTarget.name);
             }
         }
