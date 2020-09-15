@@ -9,6 +9,8 @@ public class Scurrier : EnemyBase {
     [SerializeField] private float aggressiveRange; // Range at which Scurrier turns aggressive
     [SerializeField] private float swatRange; // Range at which Scurrier will swat instead of gore (charge)
     [SerializeField] private float cooldownGore; // Cooldown timer for attempting another gore (charge) attack
+    [SerializeField] private float goreSpeedMultiplier; // Speed multiplier for gore
+    [SerializeField] private float goreDistance; // Distance scurrier will travel during gore
     private float cooldownTimerGore; // Timer for gore (charge) attack cooldowns
 
     // -------------------------------------------------------------------------------------------
@@ -33,34 +35,53 @@ public class Scurrier : EnemyBase {
             targetPosition = spawnPosition + (new Vector3(Random.Range(-idleWanderRange, idleWanderRange), 0, Random.Range(-idleWanderRange, idleWanderRange)));
             forward = targetPosition - transform.position;
 
-            // Turn to look towards position over 1 sec, then wait 0.5 sec
+            // Turn to look towards position over 1 sec
             for(float i = 0; i < 1; i += Time.deltaTime) {
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 180f);
                 yield return null;
+
+                if(CheckAggression())
+                    TurnAggressiveWrapper();
             }
-            yield return new WaitForSeconds(0.5f);
+
+            // Wait 0.5 sec
+            for(float i = 0; i < 0.5; i += Time.deltaTime) {
+                yield return null;
+                if(CheckAggression())
+                    TurnAggressiveWrapper();
+            }
 
             // Move towards position
             _agent.SetDestination(targetPosition);
 
-            // Wait at position
-            yield return new WaitForSeconds(3f);
+            // Wait at position for 3 sec
+            for(float i = 0; i < 3; i += Time.deltaTime) {
+                yield return null;
+                if(CheckAggression())
+                    TurnAggressiveWrapper();
+            }
         }
     }
+
+    protected override bool CheckAggression() {
+        return false;
+    }
+
+    // ------
 
     protected override IEnumerator AggressiveMove() {
         _agent.stoppingDistance = stoppingDistance;
         currentState = EnemyState.Aggressive;
 
-        // No target player available - idle instead
-        FindTarget();
-        if(targetPlayer == null) {
-            ForceIdle();
-            yield break;
-        }
-
         while(true) {
             yield return null;
+            FindTarget();
+
+            // No target player available - idle instead
+            if(targetPlayer == null) {
+                ForceIdle();
+                yield break;
+            }
 
             // Move towards player
             _agent.SetDestination(targetPlayer.transform.position);
@@ -72,20 +93,20 @@ public class Scurrier : EnemyBase {
                     yield break;
                 }
             } else { // On cooldown
-                cooldownTimer += Time.deltaTime;
-                if(cooldownTimer >= _cooldown)
+                cooldownTimer -= Time.deltaTime;
+                if(cooldownTimer <= 0)
                     cooldownTimer = 0;
             }
 
             // Gore (Charge) Attack
             if(cooldownTimerGore == 0) { // check cooldown
-                if(true /* TODO - raycast to player */) { // raycast
+                if(true /* TODO - raycast to player */ && Vector3.Distance(transform.position, _agent.destination) > swatRange * 1.5) { // raycast & check distance
                     currentBehavior = StartCoroutine(AttackGore());
                     yield break;
                 }
             } else { // On cooldown
-                cooldownTimerGore += Time.deltaTime;
-                if(cooldownTimerGore >= cooldownGore)
+                cooldownTimerGore -= Time.deltaTime;
+                if(cooldownTimerGore <= 0)
                     cooldownTimerGore = 0;
             }
         }
@@ -108,7 +129,38 @@ public class Scurrier : EnemyBase {
     /// Gore (charge) attack
     /// </summary>
     private IEnumerator AttackGore() {
-        yield return null;
+        _agent.SetDestination(transform.position);
+        Debug.Log("Gore Attack");
+
+        // TODO - windup animation
+        // Turn to look towards position over 1 sec
+        Vector3 forward = targetPlayer.transform.position - transform.position;
+        for(float i = 0; i < 0.5; i += Time.deltaTime) {
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 360f);
+            yield return null;
+        }
+
+        // Charge
+        yield return new WaitForSeconds(1f);
+        _agent.speed *= goreSpeedMultiplier;
+        _agent.destination = targetPlayer.transform.position;
+
+        float timeout = 0; // Gore will timout if stuck on edge of NavMesh with no wall
+        while(_agent.remainingDistance > 0.2) { // Last 20% of distance is skidding
+            // TODO - check wall collision
+
+            yield return null;
+
+            // Check timeout
+            timeout += Time.deltaTime;
+            if(timeout > 5f) {
+                Debug.LogError(gameObject.name + "'s gore attack timed out - likely stuck at edge of a NavMesh with no wall.");
+                break;
+            }
+        }
+
+        // Did not crash - begin skidding
+        currentBehavior = StartCoroutine(GoreSkid());
     }
 
     /// <summary>
@@ -117,6 +169,7 @@ public class Scurrier : EnemyBase {
     private IEnumerator GoreSkid() {
         yield return null;
 
+        cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
     }
 
@@ -126,6 +179,7 @@ public class Scurrier : EnemyBase {
     private IEnumerator GoreCrash() {
         yield return null;
 
+        cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
     }
 
@@ -133,8 +187,10 @@ public class Scurrier : EnemyBase {
     /// Swat attack
     /// </summary>
     private IEnumerator AttackSwat() {
-        yield return null;
+        Debug.Log("Swat Attack");
+        yield return new WaitForSeconds(1f);
 
+        cooldownTimer = _cooldown;
         currentBehavior = StartCoroutine(AggressiveMove());
     }
 

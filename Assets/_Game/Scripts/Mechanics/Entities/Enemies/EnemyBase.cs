@@ -55,7 +55,8 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     public void TurnAggressiveWrapper(bool hyperseed = false) {
-        StartCoroutine(TurnAggressiveFunction(hyperseed));
+        StopCoroutine(currentBehavior);
+        currentBehavior = StartCoroutine(TurnAggressiveFunction(hyperseed));
     }
 
     /// <summary>
@@ -63,6 +64,8 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     protected virtual IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
+        // TODO - Turn whole group of enemies aggressive
+
         aggressive = true;
         isHealing = false;
 
@@ -99,6 +102,11 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="regen">Whether the enemy should be regenerating health.</param>
     protected abstract IEnumerator Idle(bool regen = false);
+
+    /// <summary>
+    /// Checks whether the aggressive condition for the enemy is true
+    /// </summary>
+    protected abstract bool CheckAggression();
 
     /// <summary>
     /// Heals the enemy over time, at a total rate of healRate / 1 sec, healing once every 0.1 seconds

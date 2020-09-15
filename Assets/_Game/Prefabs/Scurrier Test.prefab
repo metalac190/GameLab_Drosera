@@ -112,9 +112,9 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 10
-  m_Acceleration: 20
+  m_Acceleration: 100
   avoidancePriority: 50
-  m_AngularSpeed: 720
+  m_AngularSpeed: 480
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -148,7 +148,7 @@ MonoBehaviour:
   _canAct: 0
   _canStun: 0
   _knockbackResistance: 0
-  _cooldown: 0
+  _cooldown: 0.5
   _moveSpeed: 0
   _controller: {fileID: 0}
   _animator: {fileID: 0}
@@ -186,11 +186,11 @@ MonoBehaviour:
   idleWanderRange: 5
   spawnRoom: 0
   targetPlayer: {fileID: 0}
-  stoppingDistance: 5
-  healRate: 0
+  stoppingDistance: 2.5
+  healRate: 1
   aggressiveRange: 0
-  swatRange: 5.5
-  cooldownGore: 0
+  swatRange: 2.75
+  cooldownGore: 5
 --- !u!1 &2876863882267249476
 GameObject:
   m_ObjectHideFlags: 0
