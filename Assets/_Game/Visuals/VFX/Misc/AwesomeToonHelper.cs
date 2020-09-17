@@ -28,6 +28,7 @@ namespace AwesomeToon {
         // Params
         [SerializeField] Material material = null;
         [SerializeField] bool instanceMaterial = true;
+        [SerializeField] bool showRaycasts = true;
         [SerializeField] Vector3 meshCenter = Vector3.zero;
         [SerializeField] int maxLights = 6;
 
@@ -142,7 +143,7 @@ namespace AwesomeToon {
             }
 
             // Turn off the remaining light slots
-            while (i <= maxLights) {
+            while (i <= 6) {
                 materialInstance.SetVector($"_L{i}_dir", Vector3.up);
                 materialInstance.SetColor($"_L{i}_color", Color.black);
                 i++;
@@ -152,6 +153,8 @@ namespace AwesomeToon {
             foreach (LightSet lightSet in sortedLights) {
                 lightSets[lightSet.id] = lightSet;
             }
+
+            
         }
 
         LightSet CalcLight(LightSet lightSet) {
@@ -211,10 +214,16 @@ namespace AwesomeToon {
             if (!raycast) return 1.1f;
             RaycastHit hit;
             if (Physics.Raycast(posAbs, dir, out hit, dist, raycastMask)) {
-                Debug.DrawRay(posAbs, dir.normalized * hit.distance, Color.red);
+                if(showRaycasts)
+                {
+                    Debug.DrawRay(posAbs, dir.normalized * hit.distance, Color.red);
+                }
                 return -0.1f;
             } else {
-                Debug.DrawRay(posAbs, dir.normalized * dist, Color.green);
+                if(showRaycasts)
+                {
+                    Debug.DrawRay(posAbs, dir.normalized * dist, Color.green);
+                }
                 return 1.1f;
             }
         }
