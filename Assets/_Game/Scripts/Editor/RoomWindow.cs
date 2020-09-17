@@ -11,6 +11,8 @@ public class RoomWindow : EditorWindow
     int settingsHeight = 60;
     int widthBuffer = 5;
     int heightBuffer = 5;
+    
+    string[] biomes = { "Jungle" , "Desert"};
     Color sectionColor = new Color(.7f, .7f, .7f);
     Color subsectionColor = new Color(.8f, .8f, .8f);
 
@@ -80,14 +82,24 @@ public class RoomWindow : EditorWindow
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Entrance: " + (currentRoom.Entrance == null ? "Not Set" : currentRoom.Entrance.name)))
         {
-            if (selected == 1)
+            if (selected == 1 && Selection.transforms[0].GetComponent<Door>())
+            {
                 currentRoom.Entrance = Selection.transforms[0];
+                currentRoom.Entrance.GetComponent<Door>().room = currentRoom;
+            }
+                
         }
         if (GUILayout.Button("Exit: " + (currentRoom.Exit == null ? "Not Set" : currentRoom.Exit.name)))
         {
-            if (selected == 1)
+            if (selected == 1 && Selection.transforms[0].GetComponent<Door>())
+            {
                 currentRoom.Exit = Selection.transforms[0];
+                currentRoom.Exit.GetComponent<Door>().room = currentRoom;
+            }
+                
         }
+        GUILayout.Label("Biome:");
+        currentRoom.Biome = (DroseraGlobalEnums.Biome)EditorGUILayout.EnumFlagsField(currentRoom.Biome);
         EditorGUILayout.EndHorizontal();
         GUILayout.EndArea();
     }
