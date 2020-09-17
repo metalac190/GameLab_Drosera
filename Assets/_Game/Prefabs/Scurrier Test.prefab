@@ -144,12 +144,12 @@ MonoBehaviour:
   OnHeal:
     m_PersistentCalls:
       m_Calls: []
-  _maxHealth: 10
+  _maxHealth: 90
   _canAct: 0
   _canStun: 0
   _knockbackResistance: 0
-  _cooldown: 0.5
-  _moveSpeed: 0
+  _cooldown: 1
+  _moveSpeed: 5
   _controller: {fileID: 0}
   _animator: {fileID: 0}
   aggressive: 0
@@ -190,7 +190,9 @@ MonoBehaviour:
   healRate: 1
   aggressiveRange: 0
   swatRange: 2.75
-  cooldownGore: 5
+  cooldownGore: 7
+  goreSpeedMultiplier: 3
+  goreSkidDistance: 1
 --- !u!1 &2876863882267249476
 GameObject:
   m_ObjectHideFlags: 0

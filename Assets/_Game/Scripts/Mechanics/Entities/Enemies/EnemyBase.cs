@@ -38,14 +38,18 @@ public abstract class EnemyBase : EntityBase {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
         spawnPosition = transform.position;
-
-        currentState = EnemyState.Passive;
     }
 
     protected override void Start() {
         base.Start();
 
-        currentBehavior = StartCoroutine(Idle());
+        if(currentState == EnemyState.Aggressive) {
+            currentBehavior = StartCoroutine(Idle());
+            currentBehavior = StartCoroutine(TurnAggressiveFunction());
+        } else {
+            currentState = EnemyState.Passive;
+            currentBehavior = StartCoroutine(Idle());
+        }
     }
 
     // -------------------------------------------------------------------------------------------
@@ -68,6 +72,7 @@ public abstract class EnemyBase : EntityBase {
 
         aggressive = true;
         isHealing = false;
+        currentState = EnemyState.Aggressive;
 
         // Stop in place
         _agent.SetDestination(transform.position);
@@ -146,6 +151,9 @@ public abstract class EnemyBase : EntityBase {
     /// Returns the enemy to its proper state (such as after being stunned or after a player re-enters a room)
     /// </summary>
     public virtual void ResetEnemy() {
+        _agent.autoBraking = true;
+        _agent.speed = _moveSpeed;
+
         if(currentState == EnemyState.Passive && !aggressive) // Don't re-start idle behavior if not aggressive
             return;
         StopCoroutine(currentBehavior);
@@ -160,6 +168,9 @@ public abstract class EnemyBase : EntityBase {
     /// Forces the enemy into its idle state (but stays aggressive if already so)
     /// </summary>
     public virtual void ForceIdle() {
+        _agent.autoBraking = true;
+        _agent.speed = _moveSpeed;
+
         StopCoroutine(currentBehavior);
         currentBehavior = StartCoroutine(Idle(true));
     }
