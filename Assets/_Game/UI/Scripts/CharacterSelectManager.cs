@@ -6,80 +6,100 @@ using TMPro;
 using DG.Tweening;
 
 // 9/8 - worked on by Vinson Kok
+// 9/13 - worked on by Vinson Kok
 public class CharacterSelectManager : MonoBehaviour
 {
+    int currentlySelectedCharacter = 0;
+    int previouslySelectedCharacter = 0;
+
     [SerializeField] CharacterSelectInfo[] characterList;
 
     [Header("Text Stuff")]
     [SerializeField] TextMeshProUGUI nameText;
     [SerializeField] TextMeshProUGUI titleText;
-    [SerializeField] TextMeshProUGUI subtitleText;
-    [SerializeField] TextMeshProUGUI descriptionText;
+    [SerializeField] TextMeshProUGUI weaponHeaderText;
+    [SerializeField] TextMeshProUGUI weaponDescriptionText;
+    [SerializeField] TextMeshProUGUI statHeaderText;
+    [SerializeField] TextMeshProUGUI statDescriptionText;
 
     [Header("Visual Stuff")]
     [SerializeField] Color[] characterColors;
 
-    int previouslySelectedCharacter = 1;
-    [SerializeField] Image[] characterBorderImages;
+    [SerializeField] CharacterButtonAnim[] characterButtons;    // for animating character buttons on hover
     [SerializeField] Image characterImage;
     [SerializeField] Image characterBackgroundImage;
     [SerializeField] Image[] weaponImages;
 
+    [SerializeField] Image[] scrollBarElements;
+
     private void Awake()
     {
         SetCharacterBorderColors();
-        DisplaySelectedCharacter(0);
+        DisplaySelectedCharacter();
     }
 
     void SetCharacterBorderColors()
     {
         for (int i = 0; i < characterColors.Length; i++)
         {
-            characterBorderImages[i].color = characterColors[i];
+            characterButtons[i].GetComponent<Image>().color = characterColors[i];
         }
     }
 
-    void AnimateCharacterBorder(int animateIn, int animateOut)
+    public void OnHoverCharacterButtonAnimation(int index)
     {
-        if (animateIn != animateOut)
+        if (index != currentlySelectedCharacter)
         {
-            characterBorderImages[animateOut].gameObject.transform.DOMoveX(150, 1);
-            characterBorderImages[animateIn].gameObject.transform.DOMoveX(0, 1);
+            currentlySelectedCharacter = index;
+
+            characterButtons[previouslySelectedCharacter].AnimateCharacterBorderIn();
+            characterButtons[currentlySelectedCharacter].AnimateCharacterBorderOut();
+
+            previouslySelectedCharacter = currentlySelectedCharacter;
         }
     }
 
-    // setup selected character info visually when player presses that character's button
-    public void DisplaySelectedCharacter(int index)
+    public void DisplaySelectedCharacter()
     {
-        AnimateCharacterBorder(previouslySelectedCharacter, index);
-        previouslySelectedCharacter = index;
-
         // text stuff
-        nameText.text = characterList[index].Name;
-        nameText.color = characterColors[index];
+        nameText.text = characterList[currentlySelectedCharacter].Name;
+        nameText.color = characterColors[currentlySelectedCharacter];
 
-        titleText.text = characterList[index].CharacterTitle;
-        titleText.color = characterColors[index];
+        titleText.text = characterList[currentlySelectedCharacter].CharacterTitle;
+        titleText.color = characterColors[currentlySelectedCharacter];
 
-        subtitleText.text = characterList[index].CharacterSubtitle;
-        subtitleText.color = characterColors[index]; 
+        DisplaySelectedWeaponInfo(0);
 
-        descriptionText.text = characterList[index].CharacterDescription;
-        descriptionText.color = characterColors[index];
+        statHeaderText.text = characterList[currentlySelectedCharacter].StatHeader;
+        statHeaderText.color = characterColors[currentlySelectedCharacter];
+        statDescriptionText.text = characterList[currentlySelectedCharacter].StatDescription;
+        statDescriptionText.color = characterColors[currentlySelectedCharacter];
 
         // visual stuff
-        characterImage.sprite = characterList[index].CharacterSprite;
+        characterImage.sprite = characterList[currentlySelectedCharacter].CharacterSprite;
 
-        characterBackgroundImage.color = characterColors[index];
+        characterBackgroundImage.color = characterColors[currentlySelectedCharacter];
 
         for (int i = 0; i < weaponImages.Length; i++)
         {
-            weaponImages[i].sprite = characterList[index].WeaponSprites[i];
+            weaponImages[i].sprite = characterList[currentlySelectedCharacter].WeaponSprites[i];
         }
+
+        // 0- scroll bar, 1- scroll bar handle
+        scrollBarElements[0].color = characterColors[currentlySelectedCharacter];
+        scrollBarElements[1].color = characterColors[currentlySelectedCharacter];
     }
 
-    // TODO- display weapon info when player clicks on weapon button
-    public void DisplaySelectedWeaponInfo(int index)
+    public void DisplaySelectedWeaponInfo(int weaponIndex)
+    {
+        weaponHeaderText.text = characterList[currentlySelectedCharacter].WeaponHeader[weaponIndex];
+        weaponHeaderText.color = characterColors[currentlySelectedCharacter];
+
+        weaponDescriptionText.text = characterList[currentlySelectedCharacter].WeaponDescription[weaponIndex];
+        weaponDescriptionText.color = characterColors[currentlySelectedCharacter];
+    }
+
+    public void ConfirmCharacter()
     {
 
     }

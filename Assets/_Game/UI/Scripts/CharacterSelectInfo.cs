@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // 9/6 - worked on by Vinson Kok
+// 9/13 - worked on by Vinson Kok
 public class CharacterSelectInfo : MonoBehaviour
 {
     [SerializeField] Sprite characterSprite;
@@ -34,18 +35,33 @@ public class CharacterSelectInfo : MonoBehaviour
         set => weaponSprites = value;
     }
 
-    [SerializeField] string characterSubtitle;
-    public string CharacterSubtitle
+    [SerializeField] string[] weaponHeader;
+    public string[] WeaponHeader
     {
-        get => characterSubtitle;
-        set => characterSubtitle = value;
+        get => weaponHeader;
+        set => weaponHeader = value;
     }
 
     [TextArea(1, 100)]
-    [SerializeField] string characterDescription;
-    public string CharacterDescription
+    [SerializeField] string[] weaponDescription;
+    public string[] WeaponDescription
     {
-        get => characterDescription;
-        set => characterDescription = value;
+        get => weaponDescription;
+        set => weaponDescription = value;
+    }
+
+    [SerializeField] string statHeader;
+    public string StatHeader
+    {
+        get => statHeader;
+        set => statHeader = value;
+    }
+
+    [TextArea(1, 100)]
+    [SerializeField] string statDescription;
+    public string StatDescription
+    {
+        get => statDescription;
+        set => statDescription = value;
     }
 }
