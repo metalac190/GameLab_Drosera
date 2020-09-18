@@ -37,6 +37,8 @@ public abstract class EnemyBase : EntityBase {
     protected override void Awake() {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
+        _agent.speed = _moveSpeed;
+
         spawnPosition = transform.position;
     }
 
@@ -45,7 +47,7 @@ public abstract class EnemyBase : EntityBase {
 
         if(currentState == EnemyState.Aggressive) {
             currentBehavior = StartCoroutine(Idle());
-            currentBehavior = StartCoroutine(TurnAggressiveFunction());
+            TurnAggressive.Invoke();
         } else {
             currentState = EnemyState.Passive;
             currentBehavior = StartCoroutine(Idle());
@@ -111,7 +113,7 @@ public abstract class EnemyBase : EntityBase {
     /// <summary>
     /// Checks whether the aggressive condition for the enemy is true
     /// </summary>
-    protected abstract bool CheckAggression();
+    protected abstract void CheckAggression();
 
     /// <summary>
     /// Heals the enemy over time, at a total rate of healRate / 1 sec, healing once every 0.1 seconds

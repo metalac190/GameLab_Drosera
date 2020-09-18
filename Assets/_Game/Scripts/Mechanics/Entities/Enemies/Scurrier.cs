@@ -15,10 +15,7 @@ public class Scurrier : EnemyBase {
 
     // -------------------------------------------------------------------------------------------
 
-    protected override void Start() {
-        base.Start();
-        _moveSpeed = _agent.speed;
-    }
+
 
     // -------------------------------------------------------------------------------------------
 
@@ -32,11 +29,7 @@ public class Scurrier : EnemyBase {
         }
         currentState = EnemyState.Passive;
 
-        // Fix variables from gore (if interrupted)
-        _agent.autoBraking = true;
-        _agent.speed = _moveSpeed;
-        _agent.updatePosition = true;
-
+        GoreReset();
 
         Vector3 forward;
         while(true) {
@@ -48,16 +41,13 @@ public class Scurrier : EnemyBase {
             for(float i = 0; i < 1; i += Time.deltaTime) {
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 180f);
                 yield return null;
-
-                if(CheckAggression())
-                    TurnAggressiveWrapper();
+                CheckAggression();
             }
 
             // Wait 0.5 sec
             for(float i = 0; i < 0.5; i += Time.deltaTime) {
                 yield return null;
-                if(CheckAggression())
-                    TurnAggressiveWrapper();
+                CheckAggression();
             }
 
             // Move towards position
@@ -66,14 +56,16 @@ public class Scurrier : EnemyBase {
             // Wait at position for 3 sec
             for(float i = 0; i < 3; i += Time.deltaTime) {
                 yield return null;
-                if(CheckAggression())
-                    TurnAggressiveWrapper();
+                CheckAggression();
             }
         }
     }
 
-    protected override bool CheckAggression() {
-        return false;
+    protected override void CheckAggression() {
+        bool turnAggressive = false;
+
+        if(turnAggressive)
+            TurnAggressive.Invoke();
     }
 
     // ------
@@ -82,10 +74,7 @@ public class Scurrier : EnemyBase {
         _agent.stoppingDistance = stoppingDistance;
         currentState = EnemyState.Aggressive;
 
-        // Fix variables from gore (if interrupted)
-        _agent.autoBraking = true;
-        _agent.speed = _moveSpeed;
-        _agent.updatePosition = true;
+        GoreReset();
 
         while(true) {
             yield return null;
@@ -128,7 +117,7 @@ public class Scurrier : EnemyBase {
     protected override IEnumerator Die() {
         yield return null;
     }
-
+    
     // -------------------------------------------------------------------------------------------
     // Attacks
 
@@ -146,13 +135,20 @@ public class Scurrier : EnemyBase {
         currentState = EnemyState.Attacking;
         _agent.stoppingDistance = 0;
         _agent.autoBraking = false;
-        _agent.SetDestination(transform.position);
-        Debug.Log("Gore Attack - Prep");
+        _agent.isStopped = true;
+        Debug.Log("Gore Attack");
 
         // TODO - windup animation
+
         // Turn to look towards position over 1 sec
-        Vector3 forward = targetPlayer.transform.position - transform.position;
+        Vector3 forward = Vector3.zero;
+        Vector3 initialTargetPos = targetPlayer.transform.position;
+        forward.y = 0;
         for(float i = 0; i < 0.5; i += Time.deltaTime) {
+            // TODO - raycast to check if player has left line of sight, and if so exit and start charge at last seen position
+            initialTargetPos = targetPlayer.transform.position;
+
+            forward = (initialTargetPos - transform.position).normalized;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 360f);
             yield return null;
         }
@@ -160,12 +156,16 @@ public class Scurrier : EnemyBase {
 
         // Set vars
         _agent.speed *= goreSpeedMultiplier;
-        _agent.SetDestination(targetPlayer.transform.position);
+        _agent.SetDestination(initialTargetPos);
         while(_agent.pathPending)
             yield return null;
+        //Debug.DrawRay(transform.position, _agent.destination + (forward * goreSkidDistance) - transform.position, Color.red, 2);
+        //Debug.DrawRay(transform.position, _agent.destination - transform.position, Color.green, 2);
+
+        // TODO - begin charge animation
 
         // Charge
-        Debug.Log("Gore Attack - Charge");
+        _agent.isStopped = false;
         float timeout = 0; // Failsafe to prevent infinite gore
         while(_agent.remainingDistance > 1) {
             // TODO - check wall collision
@@ -181,39 +181,35 @@ public class Scurrier : EnemyBase {
         }
 
         // Did not crash - begin skidding
-        _agent.speed = _moveSpeed;
         currentBehavior = StartCoroutine(GoreSkid());
-        //currentBehavior = StartCoroutine(AggressiveMove());
     }
 
     /// <summary>
     /// Function for if gore finishes successfully, and Scurrier starts skidding
     /// </summary>
     private IEnumerator GoreSkid() {
-        Debug.Log("start skid");
         yield return null;
+
+        // TODO - start skid animation
 
         // Δx = (v + v_o)t/2 => t = 2(Δx)/(v + v_o) => v = 0, so t = 2(Δx)/v_0
         Vector3 baseVelocity = _agent.velocity;
-        float skidTime = 2 * goreSkidDistance / _agent.velocity.magnitude;
+        float skidTime = 2 * goreSkidDistance / baseVelocity.magnitude;
 
-        // Set new destination
-        _agent.SetDestination(transform.position + (transform.forward * goreSkidDistance));
         _agent.updatePosition = false;
-        while(_agent.pathPending)
-            yield return null;
+        _agent.ResetPath();
 
         // Skid
         for(float i = 0; i < skidTime; i += Time.deltaTime) {
-            _agent.velocity = Vector3.Lerp(baseVelocity, Vector3.zero, 1 - (i / skidTime));
+            _agent.velocity = Vector3.Lerp(baseVelocity, Vector3.zero, i / skidTime);
+            transform.position = _agent.nextPosition;
 
             yield return null;
         }
         _agent.velocity = Vector3.zero;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(1f);
 
         // Set cooldown & return to movement
-        Debug.Log("end skid");
         cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
     }
@@ -231,6 +227,19 @@ public class Scurrier : EnemyBase {
     }
 
     /// <summary>
+    /// Reset scurrier stats after gore in case of interruption
+    /// </summary>
+    private void GoreReset() {
+        _agent.isStopped = false;
+        _agent.autoBraking = true;
+        _agent.speed = _moveSpeed;
+
+        _agent.updatePosition = true;
+    }
+
+    // -----
+
+    /// <summary>
     /// Swat attack
     /// </summary>
     private IEnumerator AttackSwat() {
@@ -240,6 +249,13 @@ public class Scurrier : EnemyBase {
 
         cooldownTimer = _cooldown;
         currentBehavior = StartCoroutine(AggressiveMove());
+    }
+
+    // -----
+
+    public override void ResetEnemy() {
+        GoreReset();
+        base.ResetEnemy();
     }
 
 }
