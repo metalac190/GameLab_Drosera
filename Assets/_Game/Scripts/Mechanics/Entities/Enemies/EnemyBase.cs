@@ -37,15 +37,21 @@ public abstract class EnemyBase : EntityBase {
     protected override void Awake() {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
-        spawnPosition = transform.position;
+        _agent.speed = _moveSpeed;
 
-        currentState = EnemyState.Passive;
+        spawnPosition = transform.position;
     }
 
     protected override void Start() {
         base.Start();
 
-        currentBehavior = StartCoroutine(Idle());
+        if(currentState == EnemyState.Aggressive) {
+            currentBehavior = StartCoroutine(Idle());
+            TurnAggressive.Invoke();
+        } else {
+            currentState = EnemyState.Passive;
+            currentBehavior = StartCoroutine(Idle());
+        }
     }
 
     // -------------------------------------------------------------------------------------------
@@ -55,7 +61,8 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     public void TurnAggressiveWrapper(bool hyperseed = false) {
-        StartCoroutine(TurnAggressiveFunction(hyperseed));
+        StopCoroutine(currentBehavior);
+        currentBehavior = StartCoroutine(TurnAggressiveFunction(hyperseed));
     }
 
     /// <summary>
@@ -63,8 +70,11 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     protected virtual IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
+        // TODO - Turn whole group of enemies aggressive
+
         aggressive = true;
         isHealing = false;
+        currentState = EnemyState.Aggressive;
 
         // Stop in place
         _agent.SetDestination(transform.position);
@@ -99,6 +109,11 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="regen">Whether the enemy should be regenerating health.</param>
     protected abstract IEnumerator Idle(bool regen = false);
+
+    /// <summary>
+    /// Checks whether the aggressive condition for the enemy is true
+    /// </summary>
+    protected abstract void CheckAggression();
 
     /// <summary>
     /// Heals the enemy over time, at a total rate of healRate / 1 sec, healing once every 0.1 seconds
@@ -138,6 +153,9 @@ public abstract class EnemyBase : EntityBase {
     /// Returns the enemy to its proper state (such as after being stunned or after a player re-enters a room)
     /// </summary>
     public virtual void ResetEnemy() {
+        _agent.autoBraking = true;
+        _agent.speed = _moveSpeed;
+
         if(currentState == EnemyState.Passive && !aggressive) // Don't re-start idle behavior if not aggressive
             return;
         StopCoroutine(currentBehavior);
@@ -152,6 +170,9 @@ public abstract class EnemyBase : EntityBase {
     /// Forces the enemy into its idle state (but stays aggressive if already so)
     /// </summary>
     public virtual void ForceIdle() {
+        _agent.autoBraking = true;
+        _agent.speed = _moveSpeed;
+
         StopCoroutine(currentBehavior);
         currentBehavior = StartCoroutine(Idle(true));
     }
