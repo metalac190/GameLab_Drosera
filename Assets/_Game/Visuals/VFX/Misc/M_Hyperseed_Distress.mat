@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-528786741854584982
+--- !u!114 &-1912604556449336780
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Toon_Emissive
-  m_Shader: {fileID: -6465566751694194690, guid: 705c779ffdae93644b735923096a8d4a,
+  m_Name: M_Hyperseed_Distress
+  m_Shader: {fileID: -6465566751694194690, guid: 762033bd0e8bf3a41b3b7d16e53b7094,
     type: 3}
   m_ShaderKeywords: _NORMALMAP_TANGENT_SPACE
   m_LightmapFlags: 4
@@ -32,10 +32,10 @@ Material:
     MotionVector: User
   disabledShaderPasses:
   - DistortionVectors
-  - TransparentBackface
+  - MOTIONVECTORS
   - TransparentDepthPrepass
   - TransparentDepthPostpass
-  - MOTIONVECTORS
+  - TransparentBackface
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -128,17 +128,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Boolean_4598239B: 1
-    - Boolean_53FA7B3C: 1
-    - Boolean_70DC8568: 1
-    - Boolean_7B3DC251: 1
-    - Boolean_8E6793B3: 0
-    - Boolean_A5C18104: 0
-    - Vector1_2FACF48F: 0.592
-    - Vector1_4B4B1643: 10
-    - Vector1_65A1CCBA: 0
-    - Vector1_C29C4E3D: 28
-    - Vector1_CEC9BF59: 0.684
+    - Boolean_702A7F2A: 0
+    - Boolean_70D0E87F: 1
+    - Boolean_D9797BFE: 0
+    - Vector1_1C306F8E: 10
+    - Vector1_43039C9: 5
+    - Vector1_4B4B1643: 2
+    - Vector1_6D886319: 3.18
+    - Vector1_6E7BCB65: 0.1
+    - Vector1_6F87D215: 1
+    - Vector1_7BCA1449: 0.3
+    - Vector1_AF6F86BC: 0.1
+    - Vector1_C4A667E0: 0.93
+    - Vector1_CDCB10F8: 67.2
     - _AORemapMax: 1
     - _AORemapMin: 0
     - _ATDistance: 1
@@ -259,10 +261,11 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
-    - Color_25431453: {r: 0.5058824, g: 0.8862745, b: 0.6392992, a: 1}
-    - Color_5BBB7D65: {r: 9.938316, g: 37.26869, b: 67.79352, a: 1}
-    - Color_84686C61: {r: 0, g: 0.57883954, b: 1, a: 1}
-    - Color_F6E6BB0E: {r: 1, g: 1, b: 1, a: 1}
+    - Color_7F9E5A93: {r: 16, g: 0, b: 1.1, a: 0}
+    - Color_84686C61: {r: 12, g: 10, b: 1.1, a: 1}
+    - Color_8F68520D: {r: 18.942997, g: 1.4089879, b: 0, a: 0}
+    - Color_C5B5B67D: {r: 16, g: 0, b: 1.1, a: 0}
+    - Vector2_517433C1: {r: 1, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
