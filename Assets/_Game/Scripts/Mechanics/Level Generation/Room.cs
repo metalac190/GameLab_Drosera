@@ -11,6 +11,9 @@ public class Room : MonoBehaviour
     [SerializeField]
     private Transform exit;
     public Transform Exit { get => exit; set => exit = value; }
+    [SerializeField]
+    private DroseraGlobalEnums.Biome biome;
+    public DroseraGlobalEnums.Biome Biome { get => biome; set => biome = value; }
 
     [Header("Room Layouts")]
     [SerializeField]
