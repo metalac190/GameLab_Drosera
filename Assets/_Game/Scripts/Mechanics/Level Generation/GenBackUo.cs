@@ -1,13 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class LevelGenTest : MonoBehaviour
+public class GenBackUo : MonoBehaviour
 {
-    /// <summary>
-    /// DEAD SCRIPT DO NOT USE
-    /// </summary>
     [SerializeField]
     private int levelNumber = 1;
     public int LevelNumber { get => levelNumber; }
@@ -36,17 +32,17 @@ public class LevelGenTest : MonoBehaviour
     [SerializeField]
     private DroseraGlobalEnums.Biome level6Biome;
     public DroseraGlobalEnums.Biome Level6Biome { get => level6Biome; set => level6Biome = value; }
-    [SerializeField]
+
     private List<DroseraGlobalEnums.Biome> levelBiomesList = new List<DroseraGlobalEnums.Biome>();
-    public List<DroseraGlobalEnums.Biome> LevelBiomesList { get => levelBiomesList; }
+
 
     [Header("Level Information")]
     [SerializeField]
-    private float desiredLevelDifficulty; 
+    private float desiredLevelDifficulty;
     public float DesiredLevelDifficulty { get => desiredLevelDifficulty; set => desiredLevelDifficulty = value; }
     [SerializeField]
     [Tooltip("The difficulty at end of level. DO NOT EDIT")]
-    private float currentLevelDifficulty = 0; 
+    private float currentLevelDifficulty = 0;
     public float CurrentLevelDifficulty { get => currentLevelDifficulty; set => currentLevelDifficulty = value; }
     [SerializeField]
     private GameObject dropShipRoom;
@@ -54,9 +50,6 @@ public class LevelGenTest : MonoBehaviour
     [SerializeField]
     private GameObject endRoom;
     public GameObject EndRoom { get => endRoom; set => endRoom = value; }
-
-    [Header("Debugging")]
-    public List<GameObject> showList = new List<GameObject>();
 
     //Variables to detect Entrance/Exit Rotations
     private Vector3 currentExitLocation;
@@ -68,41 +61,36 @@ public class LevelGenTest : MonoBehaviour
     void Start() //on scene start, generate level
     {
         putBiomesInList();
-        for (int i = 0; i < roomMasterPrefab.GetComponent<StoreRooms>().AllRooms.Count; i++)    //puts Prefab list into editable copy
+        List<GameObject> roomPrefabs = new List<GameObject>();
+        for (int i = 0; i < roomMasterPrefab.GetComponent<StoreRooms>().AllRooms.Count; i++)
         {
-            roomMasterList.Add(roomMasterPrefab.GetComponent<StoreRooms>().AllRooms[i]);
+            roomPrefabs.Add(roomMasterPrefab.GetComponent<StoreRooms>().AllRooms[i]);
         }
-        List<GameObject> roomPrefabs = new List<GameObject>();      //list for first room
-        for (int i = 0; i< roomMasterList.Count; i++)
-        {
-            roomPrefabs.Add(roomMasterList[i]);
-        }
+
         ShuffleRoomList(roomPrefabs);       //randomizes room array
-        currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);    //sets starting point and dropship exit
-        priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;    //get rotation of dropship exit
+        currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
+        priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
 
-        Debug.Log("Generate Level: " + levelNumber);
-        while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true && roomPrefabs.Count>0)       //instatiate rooms till desiredDiff reached
+        roomPrefabs = getBiomeSpecificList(roomPrefabs, levelNumber);   //makes list biome specific
+        while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)       //instatiate rooms till desiredDiff reached
         {
-            InstantiateValidRoom(roomPrefabs, 1);   //first level generation
+            InstantiateValidRoom(roomPrefabs);
         }
-        //end room
         InstantiateEndRoom(endRoom);
-        Debug.Log("Finish Level: " + levelNumber);
     }
-
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown("space"))
         {
-            /*
-            Debug.Log("Generate Level: " + (levelNumber+1));
-            levelNumber += 1;
-            NextLevel(roomMasterList, levelNumber);
-            Debug.Log("Finish Level: " + levelNumber);
-            */
-            NextLevel(roomMasterList, 1);
-            Debug.Log("Finish Level: " + levelNumber);
+            if (levelNumber < 6)
+            {
+                NextLevel(roomMasterPrefab.GetComponent<StoreRooms>().AllRooms);
+            }
+            else
+            {
+                Debug.Log("At Last Level.");
+            }
+            
         }
     }
 
@@ -121,43 +109,34 @@ public class LevelGenTest : MonoBehaviour
     /// <summary>
     /// This fucntion will take in the the randomized roomList and instantiate the first room if it passes check.
     /// Room is removed from list when instantiated.
-    /// Checks needed: biome, rotation
     /// </summary>
-    private void InstantiateValidRoom(List<GameObject> roomList, int currentLevel)
+    private void InstantiateValidRoom(List<GameObject> roomList)
     {
         GameObject toRemove = null;
+        float blank = 0;
         for (int i = 0; i < roomList.Count; i++) //goes through list until a break (will break on chosen room/continues on failed room check)
-        {           //check for room biome
-            if (roomList[i].GetComponent<Room>().Biome == levelBiomesList[currentLevel - 1] || roomList[i].GetComponent<Room>().Biome == DroseraGlobalEnums.Biome.None)
+        {
+            if (blank == 0)
             {        //will be room rotation check
-                
                 toRemove = roomList[i];
                 GameObject plz = Instantiate(roomList[i], currentExitLocation + FixTransformDeficit(roomList[i]), priorRoomRotation);
-                    plz.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, roomList[i]));
+                plz.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, roomList[i]));
                 //priorRoomRotation = plz.transform.rotation;
                 priorRoomRotation = plz.GetComponent<Room>().Exit.transform.rotation;
                 plz.GetComponent<Room>().Entrance.transform.SetParent(null);
-                plz.transform.SetParent(plz.GetComponent<Room>().Entrance,true);
+                plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
                 plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
                 currentExitLocation = plz.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
 
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
                 int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
                 plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-                        //Debug.Log("Layout Activated: " + plz.GetComponent<Room>().Layouts[randomLayout].name + " Diff: " + plz.GetComponent<Room>().Layouts[randomLayout].difficulty);
+                //Debug.Log("Layout Activated: " + plz.GetComponent<Room>().Layouts[randomLayout].name + " Diff: " + plz.GetComponent<Room>().Layouts[randomLayout].difficulty);
                 currentLevelDifficulty += plz.GetComponent<Room>().Layouts[randomLayout].difficulty;
                 break;
             }
-            else if (i == (roomList.Count - 1))
-            {
-                break;  //breaks loop if last room is incompatible
-            }
         }
-        if (toRemove)
-        {
         roomList.Remove(toRemove);
-
-        }
 
         if (roomList.Count == 0)
         {
@@ -167,12 +146,14 @@ public class LevelGenTest : MonoBehaviour
 
     private void InstantiateEndRoom(GameObject lastRoom)
     {
-                GameObject plz = Instantiate(lastRoom, currentExitLocation + FixTransformDeficit(lastRoom), priorRoomRotation);
-                plz.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, lastRoom));
-                priorRoomRotation = plz.GetComponent<Room>().Exit.transform.rotation;
-                plz.GetComponent<Room>().Entrance.transform.SetParent(null);
-                plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
-                plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
+        GameObject plz = Instantiate(lastRoom, currentExitLocation + FixTransformDeficit(lastRoom), priorRoomRotation);
+        plz.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, lastRoom));
+        priorRoomRotation = plz.GetComponent<Room>().Exit.transform.rotation;
+        plz.GetComponent<Room>().Entrance.transform.SetParent(null);
+        plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
+        plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
+        //currentExitLocation = plz.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
+
     }
 
     private Vector3 FixTransformDeficit(GameObject genericRoom)
@@ -180,9 +161,9 @@ public class LevelGenTest : MonoBehaviour
         return (genericRoom.transform.position - genericRoom.GetComponent<Room>().Entrance.transform.position);
     }
 
-    private float RotateRoom(Quaternion previousRoom,GameObject genericRoom)
+    private float RotateRoom(Quaternion previousRoom, GameObject genericRoom)
     {
-        Quaternion adjustmentRotation = new Quaternion(0,0,0,0);
+        Quaternion adjustmentRotation = new Quaternion(0, 0, 0, 0);
         float neededRotate = 0; //the y rotation needed to match
 
         if (genericRoom.GetComponent<Room>().Entrance.transform.rotation.eulerAngles.y > 180)
@@ -196,9 +177,9 @@ public class LevelGenTest : MonoBehaviour
         return neededRotate;
     }
 
-    void NextLevel(List<GameObject> masterList, int currentLevel) //on new level; similar to start function but additional stuff to erase.
+    void NextLevel(List<GameObject> masterList) //on new level; similar to start function but additional stuff to erase.
     {
-        Debug.Log("Next level function call: " + currentLevel);
+        levelNumber += 1;
         DestroyInstantiatedRooms();
         whileCheck = true;
         List<GameObject> currentListOptions = new List<GameObject>();
@@ -207,28 +188,27 @@ public class LevelGenTest : MonoBehaviour
             currentListOptions.Add(masterList[i]);
         }
         currentLevelDifficulty = 0;
-        showList = masterList;
+
         ShuffleRoomList(currentListOptions);
         currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
-                //add so can chose random layout for drop ship room.
+        //add so can chose random layout for drop ship room.
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
-
-        while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true && currentListOptions.Count > 0)
+        currentListOptions = getBiomeSpecificList(currentListOptions, levelNumber);   //makes list biome specific
+        while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)
         {
-            InstantiateValidRoom(currentListOptions,currentLevel);
+            InstantiateValidRoom(currentListOptions);
         }
         InstantiateEndRoom(endRoom);
     }
 
     private void DestroyInstantiatedRooms()
     {
-        GameObject[] iEntrances = GameObject.FindGameObjectsWithTag("RoomEntrance"); //destroys entrances since they're new parents
+        GameObject[] iEntrances = GameObject.FindGameObjectsWithTag("RoomEntrance");
         for (int i = 0; i < iEntrances.Length; i++)
         {
             Destroy(iEntrances[i]);
         }
     }
-
     private void putBiomesInList()
     {
         levelBiomesList.Add(level1Biome);
@@ -239,4 +219,15 @@ public class LevelGenTest : MonoBehaviour
         levelBiomesList.Add(level6Biome);
     }
 
+    private List<GameObject> getBiomeSpecificList(List<GameObject> overallList, int currentLevel)
+    {
+        List<GameObject> biomeSpecificList = new List<GameObject>();
+        for (int i = 0; i < overallList.Count; i++)
+        {
+            if(overallList[i].GetComponent<Room>().Biome == levelBiomesList[currentLevel - 1] ||
+                overallList[i].GetComponent<Room>().Biome == DroseraGlobalEnums.Biome.None)
+            biomeSpecificList.Add(overallList[i]);
+        }
+        return biomeSpecificList;
+    }
 }
