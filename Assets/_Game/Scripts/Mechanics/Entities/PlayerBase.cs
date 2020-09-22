@@ -37,7 +37,10 @@ public class PlayerBase : EntityBase
     private CharacterController controller;
 
     [SerializeField]
-    protected float abilityCooldownTime = 60.0f;
+    protected float gravityAmt = 9.8f;
+
+    [SerializeField]
+    protected float abilityCooldownTime = 6.0f;
     protected float abilityCooldown = 0.0f;
 
 
@@ -48,7 +51,11 @@ public class PlayerBase : EntityBase
     protected float lastInteract = 0;
 
     [SerializeField]
-    protected int ammo = 0;
+    protected int ammo = 5;
+    [SerializeField]
+    protected int maxAmmo = 20;
+    [SerializeField]
+    protected int heldAmmo = 20;
     public int Ammo { get { return ammo; } set { ammo = value; } }
     [SerializeField]
     protected int ammoPerOre = 1;
@@ -56,6 +63,7 @@ public class PlayerBase : EntityBase
 
     new void Start()
     {
+        base.Start();
         controller = gameObject.AddComponent<CharacterController>();
         currentState = PlayerState.Neutral;
     }
@@ -65,49 +73,60 @@ public class PlayerBase : EntityBase
     {
 
         //assign buttons
-        if (Input.GetJoystickNames().Length != 0) //controller
+        //controller
+        //note: for dodge and shoot on controller need to use != 0
+
+        if (currentState != PlayerState.Dead)
         {
-            //note: for dodge and shoot on controller need to use != 0
-            aimToggle = Input.GetKey(KeyCode.JoystickButton9);
-            reloadButton = Input.GetKey(KeyCode.JoystickButton2);
-            abilityButton = Input.GetKey(KeyCode.JoystickButton4);
-            interactButton = Input.GetKey(KeyCode.JoystickButton1);
-            pauseButton = Input.GetKey(KeyCode.JoystickButton7);
-            dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
-            shootButtonGamepad = Input.GetAxisRaw("Shoot");
-            adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
-            altFireButton = Input.GetKey(KeyCode.JoystickButton3);
-            swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5);
-        }
-        else //keyboard
-        {
-            aimToggle = Input.GetMouseButtonDown(2);
-            cycleTargetRight = Input.mouseScrollDelta.y > 0;
-            cycleTargetLeft = Input.mouseScrollDelta.y < 0;
-            reloadButton = Input.GetKey(KeyCode.R);
-            abilityButton = Input.GetKey(KeyCode.LeftShift);
-            interactButton = Input.GetKey(KeyCode.E);
-            pauseButton = Input.GetKey(KeyCode.Escape);
+            if (Input.GetJoystickNames().Length != 0)
+            {
+                //note: for dodge and shoot on controller need to use != 0
+                aimToggle = Input.GetKeyDown(KeyCode.JoystickButton9) || Input.GetMouseButtonDown(2);
+                cycleTargetRight = Input.GetAxis("Controller Right Stick X") > 0 || Input.mouseScrollDelta.y > 0;
+                cycleTargetLeft = Input.GetAxis("Controller Right Stick X") < 0 || Input.mouseScrollDelta.y < 0;
+                reloadButton = Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.R);
+                abilityButton = Input.GetKey(KeyCode.JoystickButton4) || Input.GetKey(KeyCode.LeftShift);
+                interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
+                pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
+                dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
+                shootButtonGamepad = Input.GetAxisRaw("Shoot");
+                adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
+                altFireButton = Input.GetKey(KeyCode.JoystickButton3) || Input.GetMouseButton(1);
+                swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5) || Input.GetKey(KeyCode.Q);
+            }
+            else
+            {
+                aimToggle = Input.GetMouseButtonDown(2);
+                cycleTargetRight = Input.mouseScrollDelta.y > 0;
+                cycleTargetLeft = Input.mouseScrollDelta.y < 0;
+                reloadButton = Input.GetKey(KeyCode.R);
+                abilityButton = Input.GetKey(KeyCode.LeftShift);
+                interactButton = Input.GetKey(KeyCode.E);
+                pauseButton = Input.GetKey(KeyCode.Escape);
+                altFireButton = Input.GetMouseButton(1);
+                swapAbilityButton = Input.GetKey(KeyCode.Q);
+            }
+
             dodgeButtonKey = Input.GetKey(KeyCode.Space);
             shootButtonKey = Input.GetMouseButton(0);
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
             adjustCameraRightKey = Input.GetKey(KeyCode.X);
-            altFireButton = Input.GetMouseButton(1);
-            swapAbilityButton = Input.GetKey(KeyCode.Q);
         }
+               
 
         //movement
         move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         controller.Move(move * Time.deltaTime * _moveSpeed);
-
         if (move != Vector3.zero) //moving
         {
 
         }
-        else //not moving
+        else if (currentState == PlayerState.Neutral) //idle
         {
 
         }
+
+        abilityCooldown -= Time.deltaTime;
 
         //states
         switch (currentState)
@@ -160,6 +179,7 @@ public class PlayerBase : EntityBase
         if (ammo > 0) //have ammo
         {
             //attack stuff here
+            ammo--;
             currentState = PlayerState.Neutral;
         }
         else //no ammo
@@ -170,10 +190,24 @@ public class PlayerBase : EntityBase
 
     protected void Reloading()
     {
+        if (ammo != maxAmmo) //full
+        {
+            int tempAmmo = heldAmmo + ammo;
+            if(tempAmmo > maxAmmo) //can't hold all the ammo
+            {
+                ammo = maxAmmo;
+                heldAmmo = tempAmmo - maxAmmo;
+            }
+            else
+            {
+                ammo = tempAmmo;
+                heldAmmo = 0;
+            }
+        }
         currentState = PlayerState.Neutral;
     }
 
-    protected void Ability()
+    protected virtual void Ability()
     {
         //ability stuff
 
@@ -195,6 +229,6 @@ public class PlayerBase : EntityBase
 
     protected void Dead()
     {
-
+        
     }
 }
