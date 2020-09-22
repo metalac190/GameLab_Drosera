@@ -18,6 +18,8 @@ public class TargetLock : MonoBehaviour
     LayerMask _mask;
     bool _stickRelease = false;
     bool _mouseAiming = true;
+    bool _offsetSet = false;
+    Vector3 _offset = Vector3.zero;
     Vector3 _lastMousePosition = Vector3.zero;
 
     private void Awake()
@@ -240,12 +242,22 @@ public class TargetLock : MonoBehaviour
         Vector2 input = new Vector2(xInput, yInput);
         if (input.magnitude > .25)
         {
+            _offsetSet = false;
             Vector3 direction = (transform.position - Camera.main.transform.position).normalized;
             _aimingReticle.transform.position = transform.position + direction;
 
             float angle = Mathf.Atan2(xInput, yInput) * Mathf.Rad2Deg;
 
             _aimingReticle.transform.RotateAround(transform.position, Vector3.up, angle);
+        }
+        else
+        {
+            if (!_offsetSet)
+            {
+                _offset = (transform.position - _aimingReticle.transform.position);
+                _offsetSet = true;
+            }
+            _aimingReticle.transform.position = transform.position - _offset;
         }
     }
 
