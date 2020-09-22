@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-// 9/6 - worked on by Vinson Kok
 public class CharacterButtonAnim : MonoBehaviour
 {
     public void AnimateCharacterBorderOut()
