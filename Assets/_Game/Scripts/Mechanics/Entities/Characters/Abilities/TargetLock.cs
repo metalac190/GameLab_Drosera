@@ -1,67 +1,98 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TargetLock : MonoBehaviour
 {
     PlayerBase _player;
 
     [SerializeField] float _maxRange = 20f;
+    [SerializeField] float _turnSpeed = 5;
+    [SerializeField] GameObject _aimingReticle;
+    [SerializeField] RectTransform _targetingReticle;
 
     [HideInInspector] public GameObject _currentTarget;
     float _inputCooldown;
     List<Collider> _visibleEnemies = new List<Collider>();
     LayerMask _mask;
+    bool _stickRelease = false;
+    bool _mouseAiming = true;
+    bool _offsetSet = false;
+    Vector3 _offset = Vector3.zero;
+    Vector3 _lastMousePosition = Vector3.zero;
 
     private void Awake()
     {
         //get reference to player and set layer mask for enemies
         _player = GetComponent<PlayerBase>();
         _mask = LayerMask.GetMask("Enemy");
+        _currentTarget = _aimingReticle;
+        _targetingReticle.gameObject.SetActive(false);
     }
 
     private void Update()
     {
         //if player changes target and no target is selected, target nearest enemy
-        if (_player.AimToggle && _currentTarget == null)
+        if (_player.AimToggle && _currentTarget == _aimingReticle)
         {
             GetNearestEnemy();
- 
-            Debug.Log(_currentTarget.name);
         }
-        else if (_player.AimToggle && _currentTarget != null)
+        else if (_player.AimToggle && _currentTarget != _aimingReticle)
         {
-            _currentTarget = null;
+            _currentTarget = _aimingReticle;
         }
 
-        if (_currentTarget != null)
+        if (_currentTarget != _aimingReticle && _stickRelease)
         {
-            if (_player.CycleTargetRight && Time.fixedTime - _inputCooldown > 0.05f)
+            if (_player.CycleTargetRight && Time.fixedTime - _inputCooldown > 0.1f)
             {
                 GetNextEnemy(1);
                 _inputCooldown = Time.fixedTime;
-                Debug.Log(_currentTarget.name);
+                _stickRelease = false;
             }
-            else if (_player.CycleTargetLeft && Time.fixedTime - _inputCooldown > 0.05f)
+            else if (_player.CycleTargetLeft && Time.fixedTime - _inputCooldown > 0.1f)
             {
                 GetNextEnemy(-1);
                 _inputCooldown = Time.fixedTime;
-                Debug.Log(_currentTarget.name);
+                _stickRelease = false;
             }
         }
 
+        if (!(_player.CycleTargetLeft || _player.CycleTargetRight))
+        {
+            _stickRelease = true;
+        }
+
+        if (_currentTarget != _aimingReticle)
+        {
+            _targetingReticle.gameObject.SetActive(true);
+            _targetingReticle.position = Camera.main.WorldToScreenPoint(_currentTarget.transform.position);
+        }
+        else
+        {
+            _targetingReticle.gameObject.SetActive(false);
+        }
+
         //if currently targeted enemy moves outside of range, target nearest enemy
-        if (_currentTarget != null && Vector3.Distance(_currentTarget.transform.position, transform.position) > _maxRange)
+        if (_currentTarget != _aimingReticle && Vector3.Distance(_currentTarget.transform.position, transform.position) > _maxRange)
         {
             GetNearestEnemy();
-            Debug.Log(_currentTarget.name);
+        }
+
+        //if no enemy is locked, aim with controller or mouse
+        if (_currentTarget == _aimingReticle)
+        {
+            ManageAiming();
         }
 
         //Orient player towards current target
-        if (_currentTarget != null)
-        {
-            LookAtTarget();
-        }
+        LookAtTarget();
+    }
+
+    private void LateUpdate()
+    {
+        _lastMousePosition = Input.mousePosition;
     }
 
     //sets target to nearest enemy
@@ -158,7 +189,7 @@ public class TargetLock : MonoBehaviour
             RaycastHit hit;
             Vector3 rayDirection = enemy.transform.position - transform.position;
             Physics.Raycast(transform.position, rayDirection, out hit);
-            if (hit.collider == enemy)
+            if (hit.collider == enemy && enemy.gameObject != _currentTarget)
             {
                 _visibleEnemies.Add(enemy);
             }
@@ -177,6 +208,74 @@ public class TargetLock : MonoBehaviour
     void LookAtTarget()
     {
         float angle = GetAngleToEnemy(_currentTarget.transform);
-        transform.RotateAround(transform.position, Vector3.up, angle);
+        float angleToTurn = Mathf.Lerp(0, angle, _turnSpeed * Time.deltaTime);
+        transform.RotateAround(transform.position, Vector3.up, angleToTurn);
+    }
+
+    void ManageAiming()
+    {
+        Vector3 mousePosition = Input.mousePosition;
+        float xInput = Input.GetAxis("Controller Right Stick X");
+        float yInput = Input.GetAxis("Controller Right Stick Y");
+
+        if (!(xInput == 0 && yInput == 0))
+        {
+            _mouseAiming = false;
+        }
+        else if (mousePosition != _lastMousePosition)
+        {
+            _mouseAiming = true;
+        }
+
+        if (_mouseAiming)
+        {
+            MouseAim(mousePosition);
+        }
+        else
+        {
+            ControllerAim(xInput, yInput);
+        }
+    }
+
+    void ControllerAim(float xInput, float yInput)
+    {
+        Vector2 input = new Vector2(xInput, yInput);
+        if (input.magnitude > .25)
+        {
+            _offsetSet = false;
+            Vector3 direction = (transform.position - Camera.main.transform.position).normalized;
+            _aimingReticle.transform.position = transform.position + direction;
+
+            float angle = Mathf.Atan2(xInput, yInput) * Mathf.Rad2Deg;
+
+            _aimingReticle.transform.RotateAround(transform.position, Vector3.up, angle);
+        }
+        else
+        {
+            if (!_offsetSet)
+            {
+                _offset = (transform.position - _aimingReticle.transform.position);
+                _offsetSet = true;
+            }
+            _aimingReticle.transform.position = transform.position - _offset;
+        }
+    }
+
+    void MouseAim(Vector3 mousePosition)
+    {
+        mousePosition.z = Mathf.Abs(Camera.main.transform.position.y - transform.position.y);
+        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+
+        Vector3 direction = mousePosition - Camera.main.transform.position;
+        Plane xzPlane = new Plane(Vector3.up, new Vector3(0, 1, 0));
+        Ray ray = new Ray(Camera.main.transform.position, direction);
+        float distance;
+
+        xzPlane.Raycast(ray, out distance);
+        Debug.DrawRay(Camera.main.transform.position, direction * 20);
+
+        Vector3 hitPoint = ray.GetPoint(distance);
+
+        _aimingReticle.transform.position = hitPoint;
     }
 }
