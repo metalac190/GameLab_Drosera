@@ -5,26 +5,27 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-    public float currentHealth;
-    public float maxHealth;
+    [SerializeField] float currentHealth;
+    [SerializeField] float maxHealth;
 
-    public float currentHealthBarAmt;
-    public float maxHealthBarAmt;
+    [SerializeField] float currentHealthBarAmt;
+    float maxHealthBarAmt;
     [Range(1, 5)]
-    public int numberOfHealthBars;
+    [SerializeField] int numberOfHealthBars;
 
-    public Image healthBar;
-    public Image healthBarBackground;
-    public Color[] healthBarColors;
-    public Color[] healthBarBackgroundColors;
+    [SerializeField] Image healthBar;
+    [SerializeField] Image healthBarBackground;
+    [SerializeField] Color[] healthBarColors;
+    [SerializeField] Color[] healthBarBackgroundColors;
 
     // Start is called before the first frame update
     void Start()
     {
         currentHealth = maxHealth;
 
-        maxHealthBarAmt = maxHealth / numberOfHealthBars;
-        currentHealthBarAmt = maxHealthBarAmt;
+        // 100 / 5 = 20
+        currentHealthBarAmt = maxHealth / numberOfHealthBars;
+        maxHealthBarAmt = currentHealthBarAmt;
 
         healthBar.color = healthBarColors[numberOfHealthBars - 1];
         healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars - 1];
@@ -45,15 +46,13 @@ public class HealthBar : MonoBehaviour
         if (currentHealth > 0)
         {
             currentHealth -= damage;
-
             currentHealthBarAmt -= damage;
-            healthBar.fillAmount = currentHealthBarAmt / maxHealthBarAmt;
 
-            if (currentHealthBarAmt < 0)
+            healthBar.fillAmount = currentHealth / maxHealth;
+
+            if (currentHealthBarAmt <= 0)
             {
-                float remainder = maxHealthBarAmt + currentHealthBarAmt;
-                currentHealthBarAmt = remainder;
-                healthBar.fillAmount = currentHealthBarAmt / maxHealthBarAmt;
+                currentHealthBarAmt = maxHealthBarAmt;
 
                 numberOfHealthBars -= 1;
 
