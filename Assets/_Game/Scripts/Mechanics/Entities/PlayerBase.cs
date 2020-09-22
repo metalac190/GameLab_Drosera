@@ -61,7 +61,7 @@ public class PlayerBase : EntityBase
     protected int ammoPerOre = 1;
     public int AmmoPerOre { get { return ammoPerOre; } }
 
-     new void Start()
+    new void Start()
     {
         base.Start();
         controller = gameObject.AddComponent<CharacterController>();
@@ -75,77 +75,58 @@ public class PlayerBase : EntityBase
         //assign buttons
         //controller
         //note: for dodge and shoot on controller need to use != 0
-        aimToggle = Input.GetKey(KeyCode.JoystickButton9);
-        reloadButton = Input.GetKey(KeyCode.JoystickButton2);
-        abilityButton = Input.GetKey(KeyCode.JoystickButton4);
-        interactButton = Input.GetKey(KeyCode.JoystickButton1);
-        pauseButton = Input.GetKey(KeyCode.JoystickButton7);
-        dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
-        shootButtonGamepad = Input.GetAxisRaw("Shoot");
-        adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
-        altFireButton = Input.GetKey(KeyCode.JoystickButton3);
-        swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5);
-        //keyboard
-        aimToggle = Input.GetMouseButton(3);
-        reloadButton = Input.GetKey(KeyCode.R);
-        abilityButton = Input.GetKey(KeyCode.LeftShift);
-        interactButton = Input.GetKey(KeyCode.E);
-        pauseButton = Input.GetKey(KeyCode.Escape);
-        dodgeButtonKey = Input.GetKey(KeyCode.Space);
-        shootButtonKey = Input.GetMouseButton(1);
-        adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
-        adjustCameraRightKey = Input.GetKey(KeyCode.X);
-        altFireButton = Input.GetMouseButton(2);
-        swapAbilityButton = Input.GetKey(KeyCode.Q);
 
         if (currentState != PlayerState.Dead)
         {
-            //note: for dodge and shoot on controller need to use != 0
-            aimToggle = Input.GetKeyDown(KeyCode.JoystickButton9) || Input.GetMouseButtonDown(2);
-            cycleTargetRight = Input.GetAxis("Controller Right Stick X") > 0 || Input.mouseScrollDelta.y > 0;
-            cycleTargetLeft = Input.GetAxis("Controller Right Stick X") < 0 || Input.mouseScrollDelta.y < 0;
-            reloadButton = Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.R);
-            abilityButton = Input.GetKey(KeyCode.JoystickButton4) || Input.GetKey(KeyCode.LeftShift);
-            interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
-            pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
-            dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
-            shootButtonGamepad = Input.GetAxisRaw("Shoot");
-            adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
-            altFireButton = Input.GetKey(KeyCode.JoystickButton3) || Input.GetMouseButton(1);
-            swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5) || Input.GetKey(KeyCode.Q);
-        }
-        else
-        {
-            aimToggle = Input.GetMouseButtonDown(2);
-            cycleTargetRight = Input.mouseScrollDelta.y > 0;
-            cycleTargetLeft = Input.mouseScrollDelta.y < 0;
-            reloadButton = Input.GetKey(KeyCode.R);
-            abilityButton = Input.GetKey(KeyCode.LeftShift);
-            interactButton = Input.GetKey(KeyCode.E);
-            pauseButton = Input.GetKey(KeyCode.Escape);
-            altFireButton = Input.GetMouseButton(1);
-            swapAbilityButton = Input.GetKey(KeyCode.Q);
-        }
+            if (Input.GetJoystickNames().Length != 0)
+            {
+                //note: for dodge and shoot on controller need to use != 0
+                aimToggle = Input.GetKeyDown(KeyCode.JoystickButton9) || Input.GetMouseButtonDown(2);
+                cycleTargetRight = Input.GetAxis("Controller Right Stick X") > 0 || Input.mouseScrollDelta.y > 0;
+                cycleTargetLeft = Input.GetAxis("Controller Right Stick X") < 0 || Input.mouseScrollDelta.y < 0;
+                reloadButton = Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.R);
+                abilityButton = Input.GetKey(KeyCode.JoystickButton4) || Input.GetKey(KeyCode.LeftShift);
+                interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
+                pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
+                dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
+                shootButtonGamepad = Input.GetAxisRaw("Shoot");
+                adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
+                altFireButton = Input.GetKey(KeyCode.JoystickButton3) || Input.GetMouseButton(1);
+                swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5) || Input.GetKey(KeyCode.Q);
+            }
+            else
+            {
+                aimToggle = Input.GetMouseButtonDown(2);
+                cycleTargetRight = Input.mouseScrollDelta.y > 0;
+                cycleTargetLeft = Input.mouseScrollDelta.y < 0;
+                reloadButton = Input.GetKey(KeyCode.R);
+                abilityButton = Input.GetKey(KeyCode.LeftShift);
+                interactButton = Input.GetKey(KeyCode.E);
+                pauseButton = Input.GetKey(KeyCode.Escape);
+                altFireButton = Input.GetMouseButton(1);
+                swapAbilityButton = Input.GetKey(KeyCode.Q);
+            }
 
-        dodgeButtonKey = Input.GetKey(KeyCode.Space);
-        shootButtonKey = Input.GetMouseButton(0);
-        adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
-        adjustCameraRightKey = Input.GetKey(KeyCode.X);
+            dodgeButtonKey = Input.GetKey(KeyCode.Space);
+            shootButtonKey = Input.GetMouseButton(0);
+            adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
+            adjustCameraRightKey = Input.GetKey(KeyCode.X);
+        }
+               
 
         //movement
         move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         controller.Move(move * Time.deltaTime * _moveSpeed);
-            if (move != Vector3.zero) //moving
-            {
+        if (move != Vector3.zero) //moving
+        {
 
-            }
-            else if (currentState == PlayerState.Neutral) //idle
-            {
-
-            }
-
-            abilityCooldown -= Time.deltaTime;
         }
+        else if (currentState == PlayerState.Neutral) //idle
+        {
+
+        }
+
+        abilityCooldown -= Time.deltaTime;
 
         //states
         switch (currentState)
