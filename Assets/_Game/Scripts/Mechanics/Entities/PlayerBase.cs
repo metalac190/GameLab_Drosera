@@ -68,18 +68,20 @@ public class PlayerBase : EntityBase
         if (Input.GetJoystickNames().Length != 0) //controller
         {
             //note: for dodge and shoot on controller need to use != 0
-            aimToggle = Input.GetKey(KeyCode.JoystickButton9);
-            reloadButton = Input.GetKey(KeyCode.JoystickButton2);
-            abilityButton = Input.GetKey(KeyCode.JoystickButton4);
-            interactButton = Input.GetKey(KeyCode.JoystickButton1);
-            pauseButton = Input.GetKey(KeyCode.JoystickButton7);
+            aimToggle = Input.GetKeyDown(KeyCode.JoystickButton9) || Input.GetMouseButtonDown(2);
+            cycleTargetRight = Input.GetAxis("Controller Right Stick X") > 0 || Input.mouseScrollDelta.y > 0;
+            cycleTargetLeft = Input.GetAxis("Controller Right Stick X") < 0 || Input.mouseScrollDelta.y < 0;
+            reloadButton = Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.R);
+            abilityButton = Input.GetKey(KeyCode.JoystickButton4) || Input.GetKey(KeyCode.LeftShift);
+            interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
+            pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
             dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
             shootButtonGamepad = Input.GetAxisRaw("Shoot");
             adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
-            altFireButton = Input.GetKey(KeyCode.JoystickButton3);
-            swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5);
+            altFireButton = Input.GetKey(KeyCode.JoystickButton3) || Input.GetMouseButton(1);
+            swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5) || Input.GetKey(KeyCode.Q);
         }
-        else //keyboard
+        else
         {
             aimToggle = Input.GetMouseButtonDown(2);
             cycleTargetRight = Input.mouseScrollDelta.y > 0;
@@ -88,13 +90,14 @@ public class PlayerBase : EntityBase
             abilityButton = Input.GetKey(KeyCode.LeftShift);
             interactButton = Input.GetKey(KeyCode.E);
             pauseButton = Input.GetKey(KeyCode.Escape);
-            dodgeButtonKey = Input.GetKey(KeyCode.Space);
-            shootButtonKey = Input.GetMouseButton(0);
-            adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
-            adjustCameraRightKey = Input.GetKey(KeyCode.X);
             altFireButton = Input.GetMouseButton(1);
             swapAbilityButton = Input.GetKey(KeyCode.Q);
         }
+
+        dodgeButtonKey = Input.GetKey(KeyCode.Space);
+        shootButtonKey = Input.GetMouseButton(0);
+        adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
+        adjustCameraRightKey = Input.GetKey(KeyCode.X);
 
         //movement
         move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
