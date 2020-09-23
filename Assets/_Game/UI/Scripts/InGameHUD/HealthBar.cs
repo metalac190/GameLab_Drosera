@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 9/13 - worked on by Vinson Kok
 public class HealthBar : MonoBehaviour
 {
     public float currentHealth;

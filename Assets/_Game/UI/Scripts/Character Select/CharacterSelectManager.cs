@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 
-// 9/8 - worked on by Vinson Kok
-// 9/13 - worked on by Vinson Kok
 public class CharacterSelectManager : MonoBehaviour
 {
     int currentlySelectedCharacter = 0;
@@ -26,7 +24,7 @@ public class CharacterSelectManager : MonoBehaviour
     [SerializeField] Color[] characterColors;
 
     [SerializeField] CharacterButtonAnim[] characterButtons;    // for animating character buttons on hover
-    [SerializeField] Image characterImage;
+    [SerializeField] GameObject[] characterImage;
     [SerializeField] Image characterBackgroundImage;
     [SerializeField] Image[] weaponImages;
 
@@ -35,6 +33,7 @@ public class CharacterSelectManager : MonoBehaviour
     private void Awake()
     {
         SetCharacterBorderColors();
+
         DisplaySelectedCharacter();
     }
 
@@ -50,13 +49,19 @@ public class CharacterSelectManager : MonoBehaviour
     {
         if (index != currentlySelectedCharacter)
         {
+            previouslySelectedCharacter = currentlySelectedCharacter;
             currentlySelectedCharacter = index;
 
+            // animate character border in/out
             characterButtons[previouslySelectedCharacter].AnimateCharacterBorderIn();
             characterButtons[currentlySelectedCharacter].AnimateCharacterBorderOut();
-
-            previouslySelectedCharacter = currentlySelectedCharacter;
         }
+    }
+
+    void UpdateCharacterImage()
+    {
+        characterImage[previouslySelectedCharacter].SetActive(false);
+        characterImage[currentlySelectedCharacter].SetActive(true);
     }
 
     public void DisplaySelectedCharacter()
@@ -76,7 +81,8 @@ public class CharacterSelectManager : MonoBehaviour
         statDescriptionText.color = characterColors[currentlySelectedCharacter];
 
         // visual stuff
-        characterImage.sprite = characterList[currentlySelectedCharacter].CharacterSprite;
+        // characterImage.sprite = characterList[currentlySelectedCharacter].CharacterSprite;
+        UpdateCharacterImage();
 
         characterBackgroundImage.color = characterColors[currentlySelectedCharacter];
 
