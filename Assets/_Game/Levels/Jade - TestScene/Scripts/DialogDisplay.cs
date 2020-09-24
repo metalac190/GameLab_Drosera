@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DialogDisplay : MonoBehaviour
 {
+    [SerializeField] public GameObject nextSceneButton;
+    [SerializeField] public GameObject continueButton;
+
     [SerializeField] public Conversation conversation;
     [SerializeField] public GameObject speakerLeft;
     [SerializeField] public GameObject speakerRight;
@@ -20,22 +24,17 @@ public class DialogDisplay : MonoBehaviour
 
         speakerUILeft.Speaker = conversation.speakerLeft;
         speakerUIRight.Speaker = conversation.speakerRight;
-    }
-    
-    void Update()
-    {
-        if(Input.GetKeyDown("space"))
-        {
-            AdvanceConversation();
-        } 
-        else if(Input.GetKeyDown("x"))
-        {
-            EndConversation();
-        }
-            
+
+        AdvanceConversation();
+        continueButton.SetActive(true);
     }
 
-    void AdvanceConversation()
+    public void NextSentences()
+    {
+        AdvanceConversation();
+    }
+
+    public void AdvanceConversation()
     {
         if(activateLineIndex < conversation.lines.Length)
         {
@@ -47,18 +46,16 @@ public class DialogDisplay : MonoBehaviour
             speakerUILeft.Hide();
             speakerUIRight.Hide();
             activateLineIndex = 0;
+            // set scene change 
+            nextSceneButton.SetActive(true);
+            continueButton.SetActive(false);
         }
     }
 
-    void EndConversation()
-    {
-        speakerUILeft.Hide();
-        speakerUIRight.Hide();
-    }
-
-    void DisplayLine()
+    public void DisplayLine()
     {
         Line line = conversation.lines[activateLineIndex];
+
         Character character = line.character;
 
         if(speakerUILeft.SpeakerIs(character))
@@ -71,23 +68,22 @@ public class DialogDisplay : MonoBehaviour
         }
     }
 
-    void SetDialog(SpeakerUI activeSpeakerUI, SpeakerUI inactiveSpeakerUI, string text)
+    public void SetDialog(SpeakerUI activeSpeakerUI, SpeakerUI inactiveSpeakerUI, string text)
     {
-        //activeSpeakerUI.Dialog = text;
         activeSpeakerUI.Show();
         inactiveSpeakerUI.Hide();
 
-        activeSpeakerUI.Dialog = "";
+        StopAllCoroutines();
         StartCoroutine(EffectTypewriter(text, activeSpeakerUI));
     }
 
-    private IEnumerator EffectTypewriter(string text, SpeakerUI uI)
+    IEnumerator EffectTypewriter(string text, SpeakerUI activeSpeakerUI)
     {
-        foreach(char character in text.ToCharArray())
+        activeSpeakerUI.Dialog = "";
+        foreach (char character in text.ToCharArray())
         {
-            uI.Dialog += character;
-            yield return new WaitForSeconds(0.02f);
-            // yield reutrn null;
+            activeSpeakerUI.Dialog += character;
+            yield return null;
         }
     }
 }

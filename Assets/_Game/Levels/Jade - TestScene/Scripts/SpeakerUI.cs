@@ -7,6 +7,7 @@ public class SpeakerUI : MonoBehaviour
 {
     [SerializeField] public Text fullName;
     [SerializeField] public Text dialog;
+    [SerializeField] public Image portrait;
 
     private Character speaker;
     public Character Speaker
@@ -15,6 +16,7 @@ public class SpeakerUI : MonoBehaviour
         set
         {
             speaker = value;
+            portrait.sprite = speaker.portrait;
             fullName.text = speaker.fullName;
         }
     }
