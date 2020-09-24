@@ -14,6 +14,8 @@ public class MenuManager : MonoBehaviour
 
     [Header("Buttons")]
     [SerializeField] Image[] buttons;
+    [SerializeField] Sprite[] whiteText;
+    [SerializeField] Sprite[] coloredText;
     int currentlySelectedButton = -1;
     int previouslySelectedButton = -1;
 
@@ -36,9 +38,16 @@ public class MenuManager : MonoBehaviour
         {
             currentlySelectedButton = index;
 
+            buttons[currentlySelectedButton].sprite = coloredText[currentlySelectedButton];
+            buttons[currentlySelectedButton].SetNativeSize();
             buttons[currentlySelectedButton].enabled = true;
+
             if (previouslySelectedButton >= 0)
+            {
+                buttons[previouslySelectedButton].sprite = whiteText[previouslySelectedButton];
+                buttons[previouslySelectedButton].SetNativeSize();
                 buttons[previouslySelectedButton].enabled = false;
+            }
 
             previouslySelectedButton = currentlySelectedButton;
         }

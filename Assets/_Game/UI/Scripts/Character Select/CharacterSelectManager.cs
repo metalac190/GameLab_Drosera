@@ -32,7 +32,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     private void Awake()
     {
-        SetCharacterBorderColors();
+        //SetCharacterBorderColors();
 
         DisplaySelectedCharacter();
     }
