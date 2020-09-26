@@ -126,6 +126,8 @@ public class CommandConsole : MonoBehaviour
         consoleWindow.SetActive(toState);
         if (!enableHotkeysWhileClosed)
             ToggleHotkeys.Invoke(toState);
+        if(!toState)
+            RevertConsole();
     }
     public void OpenCommandConsole()
     {
@@ -135,7 +137,6 @@ public class CommandConsole : MonoBehaviour
     public void CloseCommandConsole()
     {
         SetConsole(false);
-        RevertConsole();
     }
 
 
