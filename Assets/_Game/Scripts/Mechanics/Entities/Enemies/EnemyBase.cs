@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 public abstract class EnemyBase : EntityBase {
 
-    public enum EnemyState { Dead, Passive, Aggressive, Attacking };
+    public enum EnemyState { Dead, Passive, Stunned, Aggressive, Attacking };
 
     [Header("Enemy State")]
     [SerializeField] protected bool aggressive;
@@ -37,25 +37,31 @@ public abstract class EnemyBase : EntityBase {
     protected override void Awake() {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
-        spawnPosition = transform.position;
+        _agent.speed = _moveSpeed;
 
-        currentState = EnemyState.Passive;
+        spawnPosition = transform.position;
     }
 
     protected override void Start() {
         base.Start();
 
-        currentBehavior = StartCoroutine(Idle());
+        if(currentState == EnemyState.Aggressive) {
+            currentBehavior = StartCoroutine(Idle());
+            TurnAggressive.Invoke();
+        } else
+            currentBehavior = StartCoroutine(Idle());
     }
 
     // -------------------------------------------------------------------------------------------
+    // Aggressive
 
     /// <summary>
     /// Non-IEnumerator wrapper function of TurnAggressive
     /// </summary>
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     public void TurnAggressiveWrapper(bool hyperseed = false) {
-        StartCoroutine(TurnAggressiveFunction(hyperseed));
+        StopCoroutine(currentBehavior);
+        currentBehavior = StartCoroutine(TurnAggressiveFunction(hyperseed));
     }
 
     /// <summary>
@@ -63,20 +69,28 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     protected virtual IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
-        aggressive = true;
-        isHealing = false;
+        // First time aggressive
+        if(!aggressive) {
+            // TODO - Turn whole group of enemies aggressive
 
-        // Stop in place
-        _agent.SetDestination(transform.position);
+            // Stop in place
+            _agent.SetDestination(transform.position);
 
-        // Hyperseed
-        if(hyperseed) {
+            // TODO - Turn aggressive animation
+        }
+
+        // First time Hyperseed
+        if(hyperseed && !this.hyperseed) {
             this.hyperseed = true;
             _health *= hyperseedHealthMultiplier;
             _maxHealth *= hyperseedHealthMultiplier;
+            // TODO - damage multiplier
         }
 
-        // TODO - Turn aggressive animation
+        // Set stats
+        aggressive = true;
+        isHealing = false;
+        currentState = EnemyState.Aggressive;
 
         // Change behavior
         StopCoroutine(currentBehavior);
@@ -84,11 +98,24 @@ public abstract class EnemyBase : EntityBase {
         yield return null;
     }
 
+    // -------------------------------------------------------------------------------------------
+    // Targetting
+
     /// <summary>
     /// Determines which player the enemy should target
     /// </summary>
     protected virtual void FindTarget() {
 
+    }
+
+    /// <summary>
+    /// Returns the vector towards the to targetted player. Returns Vector3.zero if no player is targetted
+    /// </summary>
+    protected Vector3 VectorToPlayer() {
+        if(targetPlayer == null)
+            return Vector3.zero;
+
+        return targetPlayer.transform.position - transform.position;
     }
 
     // -------------------------------------------------------------------------------------------
@@ -99,21 +126,6 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="regen">Whether the enemy should be regenerating health.</param>
     protected abstract IEnumerator Idle(bool regen = false);
-
-    /// <summary>
-    /// Heals the enemy over time, at a total rate of healRate / 1 sec, healing once every 0.1 seconds
-    /// </summary>
-    protected IEnumerator Regenerate() {
-        while(isHealing) {
-            _health += healRate * 0.1f;
-
-            if(_health >= _maxHealth) { // Reached max health
-                _health = _maxHealth;
-                isHealing = false;
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
 
     /// <summary>
     /// Move function while the enemy is aggressive and has a target player
@@ -132,12 +144,38 @@ public abstract class EnemyBase : EntityBase {
     protected abstract IEnumerator Die();
 
     // -------------------------------------------------------------------------------------------
+    // Behavior Coroutines - Other
+
+    /// <summary>
+    /// Checks whether the aggressive condition for the enemy is true
+    /// </summary>
+    protected abstract void CheckAggression();
+
+    /// <summary>
+    /// Heals the enemy over time, at a total rate of healRate / 1 sec, healing once every 0.1 seconds
+    /// </summary>
+    protected IEnumerator Regenerate() {
+        while(isHealing) {
+            _health += healRate * 0.1f;
+
+            if(_health >= _maxHealth) { // Reached max health
+                _health = _maxHealth;
+                isHealing = false;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Control
 
     /// <summary>
     /// Returns the enemy to its proper state (such as after being stunned or after a player re-enters a room)
     /// </summary>
     public virtual void ResetEnemy() {
+        _agent.autoBraking = true;
+        _agent.speed = _moveSpeed;
+
         if(currentState == EnemyState.Passive && !aggressive) // Don't re-start idle behavior if not aggressive
             return;
         StopCoroutine(currentBehavior);
