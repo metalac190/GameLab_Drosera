@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-754623451394320453
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 2
 --- !u!21 &2100000
 Material:
   serializedVersion: 6
@@ -20,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DesertRock
+  m_Name: M_PuddleInner
   m_Shader: {fileID: -6465566751694194690, guid: 0ebabf87fd5c438469e549be88415be7,
     type: 3}
   m_ShaderKeywords: _NORMALMAP_TANGENT_SPACE
@@ -128,16 +115,17 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Boolean_4598239B: 0
+    - Boolean_4598239B: 1
     - Boolean_53FA7B3C: 1
-    - Boolean_70DC8568: 0
+    - Boolean_70DC8568: 1
+    - Boolean_7B3DC251: 1
     - Boolean_92686935: 1
     - Boolean_E5EF1A2F: 0
     - Boolean_F4268FBD: 0
-    - Vector1_2FACF48F: 0.716
-    - Vector1_4B4B1643: 64.3
-    - Vector1_65A1CCBA: 0.1
-    - Vector1_CEC9BF59: 0.7
+    - Vector1_2FACF48F: 0.643
+    - Vector1_4B4B1643: 9.1
+    - Vector1_65A1CCBA: 0.313
+    - Vector1_CEC9BF59: 0.938
     - _AORemapMax: 1
     - _AORemapMin: 0
     - _ATDistance: 1
@@ -258,12 +246,12 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
-    - Color_25431453: {r: 1, g: 1, b: 1, a: 1}
+    - Color_25431453: {r: 0.44705883, g: 0.36078432, b: 0.19607843, a: 1}
     - Color_5BBB7D65: {r: 1, g: 1, b: 1, a: 1}
-    - Color_84686C61: {r: 0.7735849, g: 0.60695815, b: 0.25178, a: 1}
-    - _BaseColor: {r: 0.6509434, g: 0.46110022, b: 0.21800464, a: 1}
+    - Color_84686C61: {r: 0.54901963, g: 0.54901963, b: 0.54901963, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.6509434, g: 0.46110016, b: 0.21800461, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
@@ -271,21 +259,34 @@ Material:
     - _EmissiveColorLDR: {r: 0, g: 0, b: 0, a: 1}
     - _InvPrimScale: {r: 1, g: 1, b: 0, a: 0}
     - _IridescenceThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
-    - _L1_color: {r: 0.00070688373, g: 0.1052283, b: 0.18025537, a: 0.037752595}
-    - _L1_dir: {r: 0.18820633, g: 0, b: -0.9821295, a: 0}
-    - _L2_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L2_dir: {r: 0, g: 1, b: 0, a: 0}
+    - _L1_color: {r: 1.3648003, g: 0, b: 1.5951118, a: 0.33407947}
+    - _L1_dir: {r: 0.8712019, g: 0.3541471, b: -0.33998105, a: 0}
+    - _L2_color: {r: 0, g: 0, b: 1.015942, a: 0.2127784}
+    - _L2_dir: {r: -0.88901967, g: 0.25994727, b: 0.37692362, a: 0}
     - _L3_color: {r: 0, g: 0, b: 0, a: 1}
     - _L3_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L4_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L4_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L5_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L5_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L6_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L6_dir: {r: 0, g: 1, b: 0, a: 0}
+    - _L4_color: {r: 0.36130318, g: 0, b: 0.36130318, a: 0.07567116}
+    - _L4_dir: {r: -0.0014306123, g: 0.0014306109, b: -0.999998, a: 0}
+    - _L5_color: {r: 0.31723866, g: 0, b: 0, a: 0.0664423}
+    - _L5_dir: {r: 0.77365935, g: 0.0013338942, b: -0.63360035, a: 0}
+    - _L6_color: {r: 0, g: 0, b: 0.32007784, a: 0.06703694}
+    - _L6_dir: {r: -0.78942364, g: 0.0013402767, b: -0.61384726, a: 0}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
+--- !u!114 &7616446654206892600
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 2
