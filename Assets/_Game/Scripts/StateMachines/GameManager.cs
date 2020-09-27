@@ -4,7 +4,17 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public delegate void OnGameStateChangeHandler();
+    public event OnGameStateChangeHandler OnStateChange;
     private static GameManager _instance = null;
+
+    private DroseraGlobalEnums.GameState gameState;
+    public DroseraGlobalEnums.GameState GameState { get => gameState; set {
+            gameState = value;
+            OnStateChange?.Invoke();
+        } }
+    private DroseraGlobalEnums.Biome currentBiome;
+    public DroseraGlobalEnums.Biome CurrentBiome { get => currentBiome; set => currentBiome = value; }
 
     public static GameManager Instance
     {
@@ -23,11 +33,9 @@ public class GameManager : MonoBehaviour
         else
         {
             _instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
     }
 
-    private DroseraGlobalEnums.GameState gameState;
-    public DroseraGlobalEnums.GameState GameState { get => gameState; set => gameState = value; }
-    private DroseraGlobalEnums.Biome currentBiome;
-    public DroseraGlobalEnums.Biome CurrentBiome { get => currentBiome; set => currentBiome = value; }
+
 }
