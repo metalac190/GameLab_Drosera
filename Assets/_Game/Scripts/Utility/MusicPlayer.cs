@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class MusicPlayer : MonoBehaviour
 {
-    [SerializeField] AudioClip menuMusic;
-    [SerializeField] AudioClip cutSceneMusic;
-    [SerializeField] AudioClip jungleOne;
-    [SerializeField] AudioClip jungleTwo;
-    [SerializeField] AudioClip desertOne;
-    [SerializeField] AudioClip desertTwo;
+    [SerializeField] AudioClip menuMusic, cutSceneMusic, jungleOne, jungleTwo, desertOne, desertTwo;
 
     private static MusicPlayer _instance = null;
-    private AudioClip currentClip;
     private AudioSource audioSource;
     private GameManager gm;
 
