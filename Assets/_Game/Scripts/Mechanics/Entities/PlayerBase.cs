@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.Events;
 
 public class PlayerBase : EntityBase
@@ -109,12 +110,12 @@ public class PlayerBase : EntityBase
                 abilityButton = Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.Escape);
-                altFireButton = Input.GetMouseButton(1);
+                altFireButton = Input.GetMouseButtonDown(1);
                 swapAbilityButton = Input.GetKey(KeyCode.Q);
             }
 
             dodgeButtonKey = Input.GetKey(KeyCode.Space);
-            shootButtonKey = Input.GetMouseButton(0);
+            shootButtonKey = Input.GetMouseButtonDown(0);
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
             adjustCameraRightKey = Input.GetKey(KeyCode.X);
         }
@@ -191,6 +192,7 @@ public class PlayerBase : EntityBase
         if (ammo > 0) //have ammo
         {
             //attack stuff here
+            Instantiate(AssetDatabase.LoadAssetAtPath("Assets/_Game/Prefabs/Bullet.prefab", typeof(GameObject)), transform.position, transform.rotation);
             ammo--;
             currentState = PlayerState.Neutral;
         }
