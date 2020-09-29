@@ -11,6 +11,8 @@ public class GunnerAltFire : Ability
     Transform _gunEnd;
     Gunner _gunner;
 
+    [SerializeField] GameObject _projectile;
+
     bool _startCharging = false;
     float _charge = 0f;
     [SerializeField] float _chargeRate;
@@ -31,10 +33,9 @@ public class GunnerAltFire : Ability
 
     IEnumerator ChargeShot()
     {
-        Instantiate(AssetDatabase.LoadAssetAtPath("Assets/_Game/Prefabs/ChargeShot.prefab", typeof(GameObject)), _gunEnd.position, _gunEnd.rotation);
+        Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
         while (_gunner.AltFireButton && _charge < _maxCharge)
         {
-            Debug.Log("nuts");
             _charge += _chargeRate * Time.deltaTime;
             yield return null;
         }
