@@ -66,7 +66,7 @@ NavMeshAgent:
   m_Speed: 10
   m_Acceleration: 100
   avoidancePriority: 50
-  m_AngularSpeed: 480
+  m_AngularSpeed: 360
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -109,37 +109,16 @@ MonoBehaviour:
   currentState: 1
   TurnAggressive:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6388667625416121741}
-        m_MethodName: TurnAggressiveWrapper
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   TurnAggressiveHyperseed:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6388667625416121741}
-        m_MethodName: TurnAggressiveWrapper
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
   idleWanderRange: 0
   spawnRoom: 0
   targetPlayer: {fileID: 0}
   stoppingDistance: 3
   healRate: 1
+  attackRange: 4
   waypoints: []
 --- !u!1 &7895856336225956394
 GameObject:

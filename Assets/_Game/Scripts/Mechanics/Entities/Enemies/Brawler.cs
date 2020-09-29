@@ -7,11 +7,12 @@ public class Brawler : EnemyBase {
 #pragma warning disable 0649 // Disable "Field is never assigned" warning for SerializeField
 
     [Header("Brawler Specific")]
+    [SerializeField] private float attackRange;
     [SerializeField] private List<GameObject> waypoints;
     private List<Vector3> waypointPositions = new List<Vector3>();
     private int currentWaypoint;
 
-#pragma warning disable 0649
+#pragma warning restore 0649
 
     // -------------------------------------------------------------------------------------------
 
@@ -89,8 +90,41 @@ public class Brawler : EnemyBase {
     // ------
 
     protected override IEnumerator AggressiveMove() {
-        yield return null;
+        _agent.stoppingDistance = stoppingDistance;
+        currentState = EnemyState.Aggressive;
+
+        while(true) {
+            yield return null;
+            FindTarget();
+
+            // No target player available - idle instead
+            if(targetPlayer == null) {
+                ForceIdle();
+                yield break;
+            }
+
+            // Move towards player
+            _agent.SetDestination(targetPlayer.transform.position);
+
+            // Turn if standing still
+            if(_agent.velocity.magnitude < 0.5f)
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(VectorToPlayer(), Vector3.up), Time.deltaTime * _agent.angularSpeed);
+
+            // Check attack
+            if(cooldownTimer == 0) {
+                if(Vector3.Distance(transform.position, targetPlayer.transform.position) <= attackRange && // Check melee range
+                    Vector3.Angle(transform.forward, VectorToPlayer()) < 20f) { // Check player in front of brawler (total 40° cone)
+                    currentBehavior = StartCoroutine(Attack());
+                    yield break;
+                }
+            } else { // On cooldown
+                cooldownTimer -= Time.deltaTime;
+                if(cooldownTimer <= 0)
+                    cooldownTimer = 0;
+            }
+        }
     }
+
     protected override IEnumerator Die() {
         yield return null;
     }
@@ -99,11 +133,17 @@ public class Brawler : EnemyBase {
     // Attacks
 
     protected override IEnumerator Attack() {
-        yield return null;
+        currentState = EnemyState.Attacking;
+        Debug.Log("Brawler Attack");
+        yield return new WaitForSeconds(1f);
+
+        cooldownTimer = _cooldown;
+        currentBehavior = StartCoroutine(AggressiveMove());
     }
 
     // -------------------------------------------------------------------------------------------
-    
+    // Waypoint Management
+
     /// <summary>
     /// Gets all waypoints in the container object, and adds them to the list
     /// </summary>
