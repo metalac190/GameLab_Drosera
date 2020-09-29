@@ -105,8 +105,10 @@ public class CharacterSelectManager : MonoBehaviour
         weaponDescriptionText.color = characterColors[currentlySelectedCharacter];
     }
 
-    public void ConfirmCharacter()
+    public void ConfirmCharacter(string sceneName)
     {
-
+        //For now just start the game. Later will actually change character.
+        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+        GameManager.Instance.GameState = DroseraGlobalEnums.GameState.MainOne; //Will probably be changed to cutscene
     }
 }

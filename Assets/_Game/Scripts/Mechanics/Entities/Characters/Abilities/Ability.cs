@@ -7,7 +7,7 @@ public abstract class Ability : MonoBehaviour
 {
     [SerializeField] protected float _cooldown;
     [SerializeField] public int _ammoCost;
-    protected bool _onCooldown;
+    protected bool _onCooldown = false;
 
     //call this when using ability
     public void Fire()
@@ -16,7 +16,6 @@ public abstract class Ability : MonoBehaviour
         {
             ActivateAbility();
             _onCooldown = true;
-            StartCoroutine(CooldownTimer());
         }
     }
 
