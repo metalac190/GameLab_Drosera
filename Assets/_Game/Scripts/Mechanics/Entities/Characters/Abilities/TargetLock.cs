@@ -7,9 +7,14 @@ public class TargetLock : MonoBehaviour
 {
     PlayerBase _player;
 
+    [Header("Targeting properties")]
     [SerializeField] float _maxRange = 20f;
     [SerializeField] float _turnSpeed = 5;
+
+    [Header("Set this to an empty GameObject")]
     [SerializeField] GameObject _aimingReticle;
+
+    [Header("Set this to the UI element for the lock-on")]
     [SerializeField] RectTransform _targetingReticle;
 
     [HideInInspector] public GameObject _currentTarget;
@@ -41,6 +46,14 @@ public class TargetLock : MonoBehaviour
         else if (_player.AimToggle && _currentTarget != _aimingReticle)
         {
             _currentTarget = _aimingReticle;
+        }
+
+        if (_currentTarget == null)
+        {
+            if (!GetNearestEnemy())
+            {
+                _currentTarget = _aimingReticle;
+            }
         }
 
         if (_currentTarget != _aimingReticle && _stickRelease)
@@ -96,7 +109,7 @@ public class TargetLock : MonoBehaviour
     }
 
     //sets target to nearest enemy
-    void GetNearestEnemy()
+    bool GetNearestEnemy()
     {
         float minDistance = 9999f;
 
@@ -111,6 +124,12 @@ public class TargetLock : MonoBehaviour
                 minDistance = distance;
             }
         }
+
+        if (!(_currentTarget == _aimingReticle || _currentTarget == null))
+        {
+            return true;
+        }
+        return false;
     }
 
     void GetNextEnemy(float input)

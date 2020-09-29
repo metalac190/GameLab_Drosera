@@ -49,6 +49,7 @@ public abstract class EntityBase : MonoBehaviour
         if (_health <= 0)
         {
             OnDeath?.Invoke();
+            Destroy(gameObject);
         }
     }
 

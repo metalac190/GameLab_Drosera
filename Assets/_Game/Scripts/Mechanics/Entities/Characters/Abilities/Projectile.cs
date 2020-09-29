@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Projectile : MonoBehaviour
 {
+    public UnityEvent OnHit;
+
     [SerializeField]
     protected float moveSpeed = 15f;
-    [SerializeField]
-    protected float damage = 1f;
     [SerializeField]
     protected float lifespan = 5f;
 
@@ -15,22 +16,26 @@ public class Projectile : MonoBehaviour
 
     void Awake()
     {
-        rb = gameObject.AddComponent<Rigidbody>();
+        rb = gameObject.GetComponent<Rigidbody>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        rb.AddForce(rb.transform.forward * moveSpeed);
         Destroy(gameObject, lifespan);
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void FixedUpdate()
     {
-        if(collision.gameObject.GetComponent("PlayerBase") == null) //hit anything but player
+        rb.MovePosition(transform.position + transform.forward * moveSpeed * Time.deltaTime);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(!(other.gameObject.layer == 11 || other.gameObject.layer == 13)) //hit anything but player and other hitboxes
         {
+            OnHit?.Invoke();
             Destroy(gameObject);
         }
-        
     }
 }
