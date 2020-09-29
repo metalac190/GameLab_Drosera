@@ -84,7 +84,7 @@ public class GenBackUo : MonoBehaviour
         {
             if (levelNumber < 6)
             {
-                NextLevel(roomMasterPrefab.GetComponent<StoreRooms>().AllRooms);
+                //NextLevel(roomMasterPrefab.GetComponent<StoreRooms>().AllRooms);
             }
             else
             {

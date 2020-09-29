@@ -55,4 +55,13 @@ public class EnemyGroup : MonoBehaviour {
         });
     }
 
+    public void hyperseedAgro()
+    {
+        EnemyBase[] enemies = GetComponentsInChildren<EnemyBase>();
+        foreach (EnemyBase enemy in enemies)
+        {
+            enemy.TurnAggressiveHyperseed.Invoke();
+        }
+    }
+
 }
