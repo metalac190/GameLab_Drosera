@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 public class Scurrier : EnemyBase {
 
-    #pragma warning disable 0649 // Disable "Field is never assigned" warning for SerializeField
+#pragma warning disable 0649 // Disable "Field is never assigned" warning for SerializeField
 
     [Header("Scurrier Specific")]
     [SerializeField] private float aggressiveRange; // Range at which Scurrier turns aggressive
@@ -17,7 +17,7 @@ public class Scurrier : EnemyBase {
     [SerializeField] private float goreSkidDistance; // Distance scurrier will travel during gore skid
     private float cooldownTimerGore; // Timer for gore (charge) attack cooldowns
 
-    #pragma warning disable 0649
+#pragma warning disable 0649
 
     // -------------------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ public class Scurrier : EnemyBase {
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Main
 
-    protected override IEnumerator Idle(bool regen) {
+    protected override IEnumerator Idle(bool regen = false) {
         _agent.stoppingDistance = 0f;
         _agent.SetDestination(transform.position);
 
@@ -43,6 +43,7 @@ public class Scurrier : EnemyBase {
             // Get target position
             targetPosition = spawnPosition + (new Vector3(Random.Range(-idleWanderRange, idleWanderRange), 0, Random.Range(-idleWanderRange, idleWanderRange)));
             forward = targetPosition - transform.position;
+            forward.y = 0;
 
             // Turn to look towards position over 1 sec
             for(float i = 0; i < 1; i += Time.deltaTime) {
@@ -59,9 +60,11 @@ public class Scurrier : EnemyBase {
 
             // Move towards position
             _agent.SetDestination(targetPosition);
+            while(_agent.remainingDistance > 1f)
+                yield return null;
 
-            // Wait at position for 3 sec
-            for(float i = 0; i < 3; i += Time.deltaTime) {
+            // Wait at position for 2 sec
+            for(float i = 0; i < 2; i += Time.deltaTime) {
                 yield return null;
                 CheckAggression();
             }
@@ -163,6 +166,7 @@ public class Scurrier : EnemyBase {
             // Check if player left line of sight or left max range - exit
             if(Physics.Raycast(transform.position, VectorToPlayer(), goreRange.y, LayerMask.GetMask("Terrain")) || // Raycast
                 Vector3.Distance(transform.position, initialTargetPos) >= goreRange.y) { // Check distance
+
                 currentBehavior = StartCoroutine(AggressiveMove());
                 yield break;
             }

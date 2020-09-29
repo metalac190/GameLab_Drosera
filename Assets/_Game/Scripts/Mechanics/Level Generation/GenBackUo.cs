@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI; // for nav meshs
 
 public class GenBackUo : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class GenBackUo : MonoBehaviour
     private GameObject roomMasterPrefab;
     public GameObject RoomMasterPrefab { get => roomMasterPrefab; }
     private List<GameObject> roomMasterList = new List<GameObject>();
+    [Header("Difficulty Scale Ratio")]
+    [SerializeField]
+    private float levelScaleRatio;
+    public float LevelScaleRatio { get => levelScaleRatio; }
     [Header("Level Biomes")]
     [SerializeField]
     private DroseraGlobalEnums.Biome level1Biome;
@@ -34,12 +39,13 @@ public class GenBackUo : MonoBehaviour
     public DroseraGlobalEnums.Biome Level6Biome { get => level6Biome; set => level6Biome = value; }
 
     private List<DroseraGlobalEnums.Biome> levelBiomesList = new List<DroseraGlobalEnums.Biome>();
-
+    //possible list of instantiated room coliiders
 
     [Header("Level Information")]
     [SerializeField]
-    private float desiredLevelDifficulty;
-    public float DesiredLevelDifficulty { get => desiredLevelDifficulty; set => desiredLevelDifficulty = value; }
+    private float baseDifficulty;
+    public float BaseDifficulty { get => baseDifficulty; set => baseDifficulty = value; }
+
     [SerializeField]
     [Tooltip("The difficulty at end of level. DO NOT EDIT")]
     private float currentLevelDifficulty = 0;
@@ -51,6 +57,11 @@ public class GenBackUo : MonoBehaviour
     private GameObject endRoom;
     public GameObject EndRoom { get => endRoom; set => endRoom = value; }
 
+    [Header("Next Level")]
+    [SerializeField]
+    private float desiredLevelDifficulty;
+    public float DesiredLevelDifficulty { get => desiredLevelDifficulty; set => desiredLevelDifficulty = value; }
+
     //Variables to detect Entrance/Exit Rotations
     private Vector3 currentExitLocation;
     private float priorRoomExitRotation = 0;    //default should = dropship room exit rotation
@@ -60,6 +71,7 @@ public class GenBackUo : MonoBehaviour
 
     void Start() //on scene start, generate level
     {
+        desiredLevelDifficulty = baseDifficulty;
         putBiomesInList();
         List<GameObject> roomPrefabs = new List<GameObject>();
         for (int i = 0; i < roomMasterPrefab.GetComponent<StoreRooms>().AllRooms.Count; i++)
@@ -89,8 +101,7 @@ public class GenBackUo : MonoBehaviour
             else
             {
                 Debug.Log("At Last Level.");
-            }
-            
+            }           
         }
     }
 
@@ -127,6 +138,21 @@ public class GenBackUo : MonoBehaviour
                 plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
                 plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
                 currentExitLocation = plz.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
+                //check if room intersect, if so delete and continue(if not last room in list)
+                // ? maybe check if any or children colliders in room intersect
+                //if plz.collider.bounds intersect with any room then delete
+                /*
+                for(int i = 0; i< list of  previous room colliders; i++)
+                {
+                    if(plz.collider intersects with colliderList[i])
+                    {
+                        delete plz
+                        if plz is last (i != roomlist.count - 1) -->
+                        if plz(i != roomlist.count - 1) is not last in list  --> continue
+                    }
+                }
+
+                */
 
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
                 int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
@@ -136,6 +162,7 @@ public class GenBackUo : MonoBehaviour
                 break;
             }
         }
+        //if to Remove != null *************
         roomList.Remove(toRemove);
 
         if (roomList.Count == 0)
@@ -152,8 +179,20 @@ public class GenBackUo : MonoBehaviour
         plz.GetComponent<Room>().Entrance.transform.SetParent(null);
         plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
         plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
-        //currentExitLocation = plz.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
 
+        //scale level difficulty
+        desiredLevelDifficulty = ScaleDifficulty();
+
+    }
+
+    public float ScaleDifficulty()
+    {
+        float returnVal = 0;
+        returnVal = BaseDifficulty * Mathf.Pow(LevelScaleRatio, levelNumber);
+        //its non updated level diff since formula would be actual level - 1 anyway.
+
+
+        return returnVal;
     }
 
     private Vector3 FixTransformDeficit(GameObject genericRoom)
@@ -207,6 +246,11 @@ public class GenBackUo : MonoBehaviour
         for (int i = 0; i < iEntrances.Length; i++)
         {
             Destroy(iEntrances[i]);
+        }
+        GameObject[] iRooms = GameObject.FindGameObjectsWithTag("InstantiatedRoom");
+        for (int i = 0; i < iRooms.Length; i++)
+        {
+            Destroy(iRooms[i]);
         }
     }
     private void putBiomesInList()
