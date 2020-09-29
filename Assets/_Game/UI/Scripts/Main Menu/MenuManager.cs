@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// 9/3 - worked on by Vinson Kok
 public class MenuManager : MonoBehaviour
 {
     [Header("Panels")]

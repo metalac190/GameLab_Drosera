@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 9/6 - worked on by Vinson Kok
-// 9/13 - worked on by Vinson Kok
 public class CharacterSelectInfo : MonoBehaviour
 {
+    /*
     [SerializeField] Sprite characterSprite;
     public Sprite CharacterSprite
     {
         get => characterSprite;
         set => characterSprite = value;
     }
+    */
 
     [SerializeField] string characterName;
     public string Name
