@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.Events;
 
 public class PlayerBase : EntityBase
@@ -32,6 +33,7 @@ public class PlayerBase : EntityBase
     public bool AimToggle { get { return aimToggle; } }
     public bool CycleTargetRight { get { return cycleTargetRight; } }
     public bool CycleTargetLeft { get { return cycleTargetLeft; } }
+    public bool AltFireButton { get { return altFireButton; } }
 
     protected Vector3 move;
     private CharacterController controller;
@@ -78,7 +80,7 @@ public class PlayerBase : EntityBase
     }
 
     // Update is called once per frame
-    void Update()
+    protected void Update()
     {
         //note: for dodge and shoot on controller need to use != 0
 
@@ -158,7 +160,7 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
-        if (shootButtonGamepad == 1 || shootButtonKey)
+        if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
         }
@@ -186,12 +188,11 @@ public class PlayerBase : EntityBase
 
     }
 
-    protected void Attacking()
+    protected virtual void Attacking()
     {
         if (ammo > 0) //have ammo
         {
             //attack stuff here
-            ammo--;
             currentState = PlayerState.Neutral;
         }
         else //no ammo
