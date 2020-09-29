@@ -7,6 +7,7 @@ using UnityEditor;
 public class GunnerAltFire : Ability
 {
     public UnityEvent OnFire;
+    public GameObject chargeShot;
 
     Transform _gunEnd;
     Gunner _gunner;
@@ -31,7 +32,7 @@ public class GunnerAltFire : Ability
 
     IEnumerator ChargeShot()
     {
-        Instantiate(AssetDatabase.LoadAssetAtPath("Assets/_Game/Prefabs/ChargeShot.prefab", typeof(GameObject)), _gunEnd.position, _gunEnd.rotation);
+        Instantiate(chargeShot, _gunEnd.position, _gunEnd.rotation);
         while (_gunner.AltFireButton && _charge < _maxCharge)
         {
             Debug.Log("nuts");

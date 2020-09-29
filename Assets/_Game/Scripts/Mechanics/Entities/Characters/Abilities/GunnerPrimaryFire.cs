@@ -7,6 +7,7 @@ using UnityEngine.Events;
 public class GunnerPrimaryFire : Ability
 {
     public UnityEvent OnFire;
+    public GameObject bullet;
 
     Transform _gunEnd;
     Gunner _gunner;
@@ -21,7 +22,7 @@ public class GunnerPrimaryFire : Ability
     {
         StartCoroutine(CooldownTimer());
         OnFire?.Invoke();
-        Instantiate(AssetDatabase.LoadAssetAtPath("Assets/_Game/Prefabs/Bullet.prefab", typeof(GameObject)), _gunEnd.position, _gunEnd.rotation);
+        Instantiate(bullet, _gunEnd.position, _gunEnd.rotation);
         _gunner.Ammo -= _ammoCost;
     }
 }
