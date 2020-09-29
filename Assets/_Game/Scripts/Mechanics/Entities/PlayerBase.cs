@@ -33,6 +33,7 @@ public class PlayerBase : EntityBase
     public bool AimToggle { get { return aimToggle; } }
     public bool CycleTargetRight { get { return cycleTargetRight; } }
     public bool CycleTargetLeft { get { return cycleTargetLeft; } }
+    public bool AltFireButton { get { return altFireButton; } }
 
     protected Vector3 move;
     private CharacterController controller;
@@ -79,7 +80,7 @@ public class PlayerBase : EntityBase
     }
 
     // Update is called once per frame
-    void Update()
+    protected void Update()
     {
         //note: for dodge and shoot on controller need to use != 0
 
@@ -110,12 +111,12 @@ public class PlayerBase : EntityBase
                 abilityButton = Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.Escape);
-                altFireButton = Input.GetMouseButtonDown(1);
+                altFireButton = Input.GetMouseButton(1);
                 swapAbilityButton = Input.GetKey(KeyCode.Q);
             }
 
             dodgeButtonKey = Input.GetKey(KeyCode.Space);
-            shootButtonKey = Input.GetMouseButtonDown(0);
+            shootButtonKey = Input.GetMouseButton(0);
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
             adjustCameraRightKey = Input.GetKey(KeyCode.X);
         }
@@ -159,7 +160,7 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
-        if (shootButtonGamepad == 1 || shootButtonKey)
+        if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
         }
@@ -187,13 +188,11 @@ public class PlayerBase : EntityBase
 
     }
 
-    protected void Attacking()
+    protected virtual void Attacking()
     {
         if (ammo > 0) //have ammo
         {
             //attack stuff here
-            Instantiate(AssetDatabase.LoadAssetAtPath("Assets/_Game/Prefabs/Bullet.prefab", typeof(GameObject)), transform.position, transform.rotation);
-            ammo--;
             currentState = PlayerState.Neutral;
         }
         else //no ammo
