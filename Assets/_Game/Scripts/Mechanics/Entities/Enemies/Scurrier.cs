@@ -1,25 +1,32 @@
-﻿using System.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Scurrier : EnemyBase {
+
+#pragma warning disable 0649 // Disable "Field is never assigned" warning for SerializeField
 
     [Header("Scurrier Specific")]
     [SerializeField] private float aggressiveRange; // Range at which Scurrier turns aggressive
     [SerializeField] private float swatRange; // Range at which Scurrier will swat instead of gore (charge)
+    [SerializeField] private Vector2 goreRange; // Min-max range for gore attack
     [SerializeField] private float cooldownGore; // Cooldown timer for attempting another gore (charge) attack
     [SerializeField] private float goreSpeedMultiplier; // Speed multiplier for gore
     [SerializeField] private float goreSkidDistance; // Distance scurrier will travel during gore skid
     private float cooldownTimerGore; // Timer for gore (charge) attack cooldowns
 
-    // -------------------------------------------------------------------------------------------
-
-
+#pragma warning disable 0649
 
     // -------------------------------------------------------------------------------------------
 
-    protected override IEnumerator Idle(bool regen) {
+
+
+    // -------------------------------------------------------------------------------------------
+    // Behavior Coroutines - Main
+
+    protected override IEnumerator Idle(bool regen = false) {
         _agent.stoppingDistance = 0f;
         _agent.SetDestination(transform.position);
 
@@ -36,6 +43,7 @@ public class Scurrier : EnemyBase {
             // Get target position
             targetPosition = spawnPosition + (new Vector3(Random.Range(-idleWanderRange, idleWanderRange), 0, Random.Range(-idleWanderRange, idleWanderRange)));
             forward = targetPosition - transform.position;
+            forward.y = 0;
 
             // Turn to look towards position over 1 sec
             for(float i = 0; i < 1; i += Time.deltaTime) {
@@ -52,9 +60,11 @@ public class Scurrier : EnemyBase {
 
             // Move towards position
             _agent.SetDestination(targetPosition);
+            while(_agent.remainingDistance > 1f)
+                yield return null;
 
-            // Wait at position for 3 sec
-            for(float i = 0; i < 3; i += Time.deltaTime) {
+            // Wait at position for 2 sec
+            for(float i = 0; i < 2; i += Time.deltaTime) {
                 yield return null;
                 CheckAggression();
             }
@@ -72,7 +82,6 @@ public class Scurrier : EnemyBase {
 
     protected override IEnumerator AggressiveMove() {
         _agent.stoppingDistance = stoppingDistance;
-        currentState = EnemyState.Aggressive;
 
         GoreReset();
 
@@ -89,9 +98,14 @@ public class Scurrier : EnemyBase {
             // Move towards player
             _agent.SetDestination(targetPlayer.transform.position);
 
+            // Turn if standing still
+            if(_agent.velocity.magnitude < 0.5f)
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(VectorToPlayer(), Vector3.up), Time.deltaTime * _agent.angularSpeed);
+
             // Swat (Melee) Attack
-            if(cooldownTimer == 0) { // check cooldown
-                if(Vector3.Distance(transform.position, targetPlayer.transform.position) <= swatRange) { // check melee range
+            if(cooldownTimer == 0) { // Check cooldown
+                if(Vector3.Distance(transform.position, targetPlayer.transform.position) <= swatRange && // Check melee range
+                    Vector3.Angle(transform.forward, VectorToPlayer()) < 15f) { // Check player in front of scurrier (total 30° cone)
                     currentBehavior = StartCoroutine(AttackSwat());
                     yield break;
                 }
@@ -103,7 +117,10 @@ public class Scurrier : EnemyBase {
 
             // Gore (Charge) Attack
             if(cooldownTimerGore == 0) { // check cooldown
-                if(true /* TODO - raycast to player */ && Vector3.Distance(transform.position, _agent.destination) > swatRange * 1.5) { // raycast & check distance
+                if(!Physics.Raycast(transform.position, VectorToPlayer(), // Raycast (contains max distance)
+                    Mathf.Clamp(VectorToPlayer().magnitude, 0, goreRange.y), LayerMask.GetMask("Terrain")) &&
+                    Vector3.Distance(transform.position, _agent.destination) > goreRange.x) { // Check min distance
+
                     currentBehavior = StartCoroutine(AttackGore());
                     yield break;
                 }
@@ -114,6 +131,7 @@ public class Scurrier : EnemyBase {
             }
         }
     }
+
     protected override IEnumerator Die() {
         yield return null;
     }
@@ -136,23 +154,30 @@ public class Scurrier : EnemyBase {
         _agent.stoppingDistance = 0;
         _agent.autoBraking = false;
         _agent.isStopped = true;
-        Debug.Log("Gore Attack");
+        Debug.Log("Try Gore Attack");
 
         // TODO - windup animation
 
-        // Turn to look towards position over 1 sec
+        // Turn to look towards position over 0.5 sec
         Vector3 forward = Vector3.zero;
         Vector3 initialTargetPos = targetPlayer.transform.position;
         forward.y = 0;
         for(float i = 0; i < 0.5; i += Time.deltaTime) {
-            // TODO - raycast to check if player has left line of sight, and if so exit and start charge at last seen position
-            initialTargetPos = targetPlayer.transform.position;
+            // Check if player left line of sight or left max range - exit
+            if(Physics.Raycast(transform.position, VectorToPlayer(), goreRange.y, LayerMask.GetMask("Terrain")) || // Raycast
+                Vector3.Distance(transform.position, initialTargetPos) >= goreRange.y) { // Check distance
 
+                currentBehavior = StartCoroutine(AggressiveMove());
+                yield break;
+            }
+
+            initialTargetPos = targetPlayer.transform.position;
             forward = (initialTargetPos - transform.position).normalized;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 360f);
             yield return null;
         }
-        yield return new WaitForSeconds(1f);
+
+        Debug.Log("Start Gore Attack");
 
         // Set vars
         _agent.speed *= goreSpeedMultiplier;
@@ -207,9 +232,10 @@ public class Scurrier : EnemyBase {
             yield return null;
         }
         _agent.velocity = Vector3.zero;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.25f);
 
         // Set cooldown & return to movement
+        cooldownTimer = _cooldown;
         cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
     }
@@ -222,6 +248,8 @@ public class Scurrier : EnemyBase {
 
         yield return null;
 
+        // Set cooldown & return to movement
+        cooldownTimer = _cooldown;
         cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
     }
@@ -251,7 +279,7 @@ public class Scurrier : EnemyBase {
         currentBehavior = StartCoroutine(AggressiveMove());
     }
 
-    // -----
+    // -------------------------------------------------------------------------------------------
 
     public override void ResetEnemy() {
         GoreReset();
