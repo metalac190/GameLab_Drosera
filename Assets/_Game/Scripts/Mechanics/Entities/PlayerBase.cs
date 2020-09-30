@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.Events;
 
 public class PlayerBase : EntityBase
@@ -32,17 +33,17 @@ public class PlayerBase : EntityBase
     public bool AimToggle { get { return aimToggle; } }
     public bool CycleTargetRight { get { return cycleTargetRight; } }
     public bool CycleTargetLeft { get { return cycleTargetLeft; } }
+    public bool AltFireButton { get { return altFireButton; } }
 
     protected Vector3 move;
     private CharacterController controller;
 
     [SerializeField]
-    protected float gravityAmt = 9.8f;
+    protected float playerY = .5f;
 
     [SerializeField]
     protected float abilityCooldownTime = 6.0f;
     protected float abilityCooldown = 0.0f;
-
 
     protected InteractableBase interactTarget;
     public InteractableBase InteractTarget { get { return interactTarget; } set { interactTarget = value; } }
@@ -60,6 +61,9 @@ public class PlayerBase : EntityBase
     [SerializeField]
     protected int ammoPerOre = 1;
     public int AmmoPerOre { get { return ammoPerOre; } }
+    [SerializeField]
+    protected float reloadCoolDownTime = 1.0f;
+    protected float reloadCoolDown = 0f;
 
     new void Start()
     {
@@ -68,17 +72,21 @@ public class PlayerBase : EntityBase
         currentState = PlayerState.Neutral;
     }
 
-    // Update is called once per frame
-    void Update()
+    public static PlayerBase instance;
+    new void Awake()
     {
+        base.Awake();
+        instance = this;
+    }
 
-        //assign buttons
-        //controller
+    // Update is called once per frame
+    protected void Update()
+    {
         //note: for dodge and shoot on controller need to use != 0
 
         if (currentState != PlayerState.Dead)
         {
-            if (Input.GetJoystickNames().Length != 0)
+            if (Input.GetJoystickNames().Length != 0) //controller or keyboard
             {
                 //note: for dodge and shoot on controller need to use != 0
                 aimToggle = Input.GetKeyDown(KeyCode.JoystickButton9) || Input.GetMouseButtonDown(2);
@@ -94,7 +102,7 @@ public class PlayerBase : EntityBase
                 altFireButton = Input.GetKey(KeyCode.JoystickButton3) || Input.GetMouseButton(1);
                 swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5) || Input.GetKey(KeyCode.Q);
             }
-            else
+            else //keyboard only
             {
                 aimToggle = Input.GetMouseButtonDown(2);
                 cycleTargetRight = Input.mouseScrollDelta.y > 0;
@@ -117,6 +125,10 @@ public class PlayerBase : EntityBase
         //movement
         move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         controller.Move(move * Time.deltaTime * _moveSpeed);
+        if(transform.position.y != playerY)
+        {
+            transform.position = new Vector3(transform.position.x, playerY, transform.position.z);
+        }
         if (move != Vector3.zero) //moving
         {
 
@@ -126,7 +138,9 @@ public class PlayerBase : EntityBase
 
         }
 
+        //cooldowns
         abilityCooldown -= Time.deltaTime;
+        reloadCoolDown -= Time.deltaTime;
 
         //states
         switch (currentState)
@@ -146,7 +160,7 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
-        if (shootButtonGamepad == 1 || shootButtonKey)
+        if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
         }
@@ -174,12 +188,11 @@ public class PlayerBase : EntityBase
 
     }
 
-    protected void Attacking()
+    protected virtual void Attacking()
     {
         if (ammo > 0) //have ammo
         {
             //attack stuff here
-            ammo--;
             currentState = PlayerState.Neutral;
         }
         else //no ammo
@@ -190,19 +203,23 @@ public class PlayerBase : EntityBase
 
     protected void Reloading()
     {
-        if (ammo != maxAmmo) //full
+        if (heldAmmo != 0 && reloadCoolDown < 0.01) //have ammo to reload and reload time is up
         {
-            int tempAmmo = heldAmmo + ammo;
-            if(tempAmmo > maxAmmo) //can't hold all the ammo
+            if (ammo != maxAmmo) //full
             {
-                ammo = maxAmmo;
-                heldAmmo = tempAmmo - maxAmmo;
+                int tempAmmo = heldAmmo + ammo;
+                if (tempAmmo > maxAmmo) //can't hold all the ammo
+                {
+                    ammo = maxAmmo;
+                    heldAmmo = tempAmmo - maxAmmo;
+                }
+                else
+                {
+                    ammo = tempAmmo;
+                    heldAmmo = 0;
+                }
             }
-            else
-            {
-                ammo = tempAmmo;
-                heldAmmo = 0;
-            }
+            reloadCoolDown = reloadCoolDownTime;
         }
         currentState = PlayerState.Neutral;
     }

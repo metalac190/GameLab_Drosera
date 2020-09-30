@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2876863880597785585}
   - component: {fileID: 2876863880597785584}
   m_Layer: 12
-  m_Name: Scurrier Test
+  m_Name: Scurrier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -157,32 +157,10 @@ MonoBehaviour:
   currentState: 1
   TurnAggressive:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2876863880597785584}
-        m_MethodName: TurnAggressiveWrapper
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   TurnAggressiveHyperseed:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2876863880597785584}
-        m_MethodName: TurnAggressiveWrapper
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
   idleWanderRange: 5
   spawnRoom: 0
   targetPlayer: {fileID: 0}
@@ -190,9 +168,10 @@ MonoBehaviour:
   healRate: 1
   aggressiveRange: 0
   swatRange: 2.75
+  goreRange: {x: 5, y: 15}
   cooldownGore: 7
-  goreSpeedMultiplier: 2.5
-  goreSkidDistance: 3
+  goreSpeedMultiplier: 3.5
+  goreSkidDistance: 4
 --- !u!1 &2876863882267249476
 GameObject:
   m_ObjectHideFlags: 0
