@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_PalmTree_Foliage
+  m_Name: M_DropShip_Exterior
   m_Shader: {fileID: -6465566751694194690, guid: 0ebabf87fd5c438469e549be88415be7,
     type: 3}
   m_ShaderKeywords: _NORMALMAP_TANGENT_SPACE
@@ -115,17 +115,16 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Boolean_4598239B: 0
+    - Boolean_4598239B: 1
     - Boolean_53FA7B3C: 1
-    - Boolean_70DC8568: 1
-    - Boolean_7B3DC251: 1
+    - Boolean_70DC8568: 0
     - Boolean_92686935: 1
     - Boolean_E5EF1A2F: 0
     - Boolean_F4268FBD: 0
-    - Vector1_2FACF48F: 0.643
-    - Vector1_4B4B1643: 9.1
-    - Vector1_65A1CCBA: 0.313
-    - Vector1_CEC9BF59: 0.938
+    - Vector1_2FACF48F: 0.15
+    - Vector1_4B4B1643: 32
+    - Vector1_65A1CCBA: 0.14
+    - Vector1_CEC9BF59: 0.78
     - _AORemapMax: 1
     - _AORemapMin: 0
     - _ATDistance: 1
@@ -246,9 +245,9 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
-    - Color_25431453: {r: 0, g: 0.40252304, b: 1, a: 1}
-    - Color_5BBB7D65: {r: 1, g: 1, b: 1, a: 1}
-    - Color_84686C61: {r: 0.11213957, g: 0.5283019, b: 0.14222363, a: 1}
+    - Color_25431453: {r: 1, g: 0.5424528, b: 0.5424528, a: 1}
+    - Color_5BBB7D65: {r: 1, g: 0.21226418, b: 0.21226418, a: 1}
+    - Color_84686C61: {r: 0.17661978, g: 0.32125053, b: 0.5943396, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
@@ -259,25 +258,25 @@ Material:
     - _EmissiveColorLDR: {r: 0, g: 0, b: 0, a: 1}
     - _InvPrimScale: {r: 1, g: 1, b: 0, a: 0}
     - _IridescenceThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
-    - _L1_color: {r: 10000, g: 10000, b: 10000, a: 0.99}
-    - _L1_dir: {r: -0.41201943, g: 0.82232565, b: -0.39245456, a: 0}
-    - _L2_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L2_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L3_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L3_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L4_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L4_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L5_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L5_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L6_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L6_dir: {r: 0, g: 1, b: 0, a: 0}
+    - _L1_color: {r: 0, g: 0, b: 0, a: 0}
+    - _L1_dir: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _L2_color: {r: 0, g: 0, b: 0, a: 0}
+    - _L2_dir: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _L3_color: {r: 0, g: 0, b: 0, a: 0}
+    - _L3_dir: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _L4_color: {r: 0, g: 0, b: 0, a: 0}
+    - _L4_dir: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _L5_color: {r: 0, g: 0, b: 0, a: 0}
+    - _L5_dir: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _L6_color: {r: 0, g: 0, b: 0, a: 0}
+    - _L6_dir: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
---- !u!114 &7616446654206892600
+--- !u!114 &165189817771720000
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
