@@ -8,7 +8,7 @@ public struct Line
 {
     [SerializeField] public Character character;
 
-    [TextArea(2, 5)]
+    [TextArea(5, 10)]
     [SerializeField] public string text;
 }
 

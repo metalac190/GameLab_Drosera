@@ -19,6 +19,9 @@ public class EnemyBaseEditor : Editor {
         if(GUILayout.Button("Reset")) {
             enemy.ResetEnemy();
         }
+        if(GUILayout.Button("Kill")) {
+            enemy.OnDeath.Invoke();
+        }
     }
 
 }
