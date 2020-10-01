@@ -80,13 +80,6 @@ public class Brawler : EnemyBase {
         }
     }
 
-    protected override void CheckAggression() {
-        bool turnAggressive = false;
-
-        if(turnAggressive)
-            TurnAggressive.Invoke();
-    }
-
     // ------
 
     protected override IEnumerator AggressiveMove() {
@@ -125,16 +118,11 @@ public class Brawler : EnemyBase {
         }
     }
 
-    protected override IEnumerator Die() {
-        yield return null;
-    }
-
     // -------------------------------------------------------------------------------------------
     // Attacks
 
     protected override IEnumerator Attack() {
         currentState = EnemyState.Attacking;
-        Debug.Log("Brawler Attack");
         yield return new WaitForSeconds(1f);
 
         cooldownTimer = _cooldown;

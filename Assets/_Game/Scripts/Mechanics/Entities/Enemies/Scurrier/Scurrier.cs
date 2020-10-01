@@ -17,11 +17,17 @@ public class Scurrier : EnemyBase {
     [SerializeField] private float goreSkidDistance; // Distance scurrier will travel during gore skid
     private float cooldownTimerGore; // Timer for gore (charge) attack cooldowns
 
+    private ScurrierCrashDetector crashDetector;
+
 #pragma warning disable 0649
 
     // -------------------------------------------------------------------------------------------
 
-
+    protected override void Awake() {
+        base.Awake();
+        crashDetector = GetComponentInChildren<ScurrierCrashDetector>();
+        crashDetector.gameObject.SetActive(false);
+    }
 
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Main
@@ -72,10 +78,14 @@ public class Scurrier : EnemyBase {
     }
 
     protected override void CheckAggression() {
-        bool turnAggressive = false;
-
-        if(turnAggressive)
+        // TODO - if doing multiplayer, get spherecast working for checking players
+        /*if(Physics.SphereCast(transform.position - new Vector3(0, -2, 0), aggressiveRange, Vector3.up, out RaycastHit hit, aggressiveRange, LayerMask.GetMask("Player"))) {
+            targetPlayer = hit.collider.GetComponentInParent<EntityBase>().gameObject;
             TurnAggressive.Invoke();
+        }*/
+        if(Vector3.Distance((PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero), transform.position) < aggressiveRange) {
+            TurnAggressive.Invoke();
+        }
     }
 
     // ------
@@ -131,10 +141,6 @@ public class Scurrier : EnemyBase {
             }
         }
     }
-
-    protected override IEnumerator Die() {
-        yield return null;
-    }
     
     // -------------------------------------------------------------------------------------------
     // Attacks
@@ -143,6 +149,8 @@ public class Scurrier : EnemyBase {
     /// Irrelevant for Scurrier - use AttackGore or AttackSwat instead
     /// </summary>
     protected override IEnumerator Attack() {
+        Debug.LogWarning(gameObject.name + " called irrelevant Coroutine \"Attack\" - use \"AttackGore\" or \"AttackSwat\" instead.");
+        currentBehavior = StartCoroutine(AttackSwat());
         yield return null;
     }
 
@@ -154,7 +162,6 @@ public class Scurrier : EnemyBase {
         _agent.stoppingDistance = 0;
         _agent.autoBraking = false;
         _agent.isStopped = true;
-        Debug.Log("Try Gore Attack");
 
         // TODO - windup animation
 
@@ -177,8 +184,6 @@ public class Scurrier : EnemyBase {
             yield return null;
         }
 
-        Debug.Log("Start Gore Attack");
-
         // Set vars
         _agent.speed *= goreSpeedMultiplier;
         _agent.SetDestination(initialTargetPos);
@@ -190,10 +195,15 @@ public class Scurrier : EnemyBase {
         // TODO - begin charge animation
 
         // Charge
+        crashDetector.gameObject.SetActive(true);
         _agent.isStopped = false;
         float timeout = 0; // Failsafe to prevent infinite gore
         while(_agent.remainingDistance > 1) {
-            // TODO - check wall collision
+            // Check wall collision
+            if(crashDetector.crash) {
+                currentBehavior = StartCoroutine(GoreCrash());
+                yield break;
+            }
 
             yield return null;
 
@@ -226,6 +236,13 @@ public class Scurrier : EnemyBase {
 
         // Skid
         for(float i = 0; i < skidTime; i += Time.deltaTime) {
+            // Check wall collision
+            if(crashDetector.crash) {
+                currentBehavior = StartCoroutine(GoreCrash());
+                yield break;
+            }
+
+            // Slow velocity
             _agent.velocity = Vector3.Lerp(baseVelocity, Vector3.zero, i / skidTime);
             transform.position = _agent.nextPosition;
 
@@ -244,9 +261,9 @@ public class Scurrier : EnemyBase {
     /// Function for if Scurrier crashes into a wall during gore
     /// </summary>
     private IEnumerator GoreCrash() {
-        _agent.speed = _moveSpeed;
-
-        yield return null;
+        Debug.Log("Gore crashed into wall");
+        _agent.isStopped = true;
+        yield return new WaitForSeconds(1f);
 
         // Set cooldown & return to movement
         cooldownTimer = _cooldown;
@@ -272,7 +289,6 @@ public class Scurrier : EnemyBase {
     /// </summary>
     private IEnumerator AttackSwat() {
         currentState = EnemyState.Attacking;
-        Debug.Log("Swat Attack");
         yield return new WaitForSeconds(1f);
 
         cooldownTimer = _cooldown;
