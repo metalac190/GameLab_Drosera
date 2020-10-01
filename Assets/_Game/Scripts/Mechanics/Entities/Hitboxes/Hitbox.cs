@@ -24,7 +24,7 @@ public class Hitbox : MonoBehaviour {
             (other.gameObject.layer == LayerMask.NameToLayer("BreakableWall") && canDamageWalls)) { // Hit wall
 
             // Deal damage
-            other.GetComponent<EntityBase>().TakeDamage(damage);
+            other.GetComponent<EntityBase>()?.TakeDamage(damage);
             hitTargets.Add(other.gameObject);
         }
     }
