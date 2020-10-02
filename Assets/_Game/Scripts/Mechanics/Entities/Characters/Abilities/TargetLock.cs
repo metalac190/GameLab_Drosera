@@ -32,8 +32,11 @@ public class TargetLock : MonoBehaviour
         //get reference to player and set layer mask for enemies
         _player = GetComponent<PlayerBase>();
         _mask = LayerMask.GetMask("Enemy");
-        _currentTarget = _aimingReticle;
+        
+        GameObject canvas = FindObjectOfType<Canvas>().gameObject;
+        _targetingReticle = Instantiate(_targetingReticle, canvas.transform);
         _targetingReticle.gameObject.SetActive(false);
+        _currentTarget = _aimingReticle;
     }
 
     private void Update()
@@ -283,15 +286,16 @@ public class TargetLock : MonoBehaviour
     void MouseAim(Vector3 mousePosition)
     {
         mousePosition.z = Mathf.Abs(Camera.main.transform.position.y - transform.position.y);
-        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+        //mousePosition = Camera.main.ScreenToWorldPoint(mousePosition); //Use this line for perspective camera
 
         Vector3 direction = mousePosition - Camera.main.transform.position;
         Plane xzPlane = new Plane(Vector3.up, new Vector3(0, 1, 0));
-        Ray ray = new Ray(Camera.main.transform.position, direction);
+        //Ray ray = new Ray(Camera.main.transform.position, direction);  //Use this line for perspective camera
+        Ray ray = Camera.main.ScreenPointToRay(mousePosition);           //Use this line for orthographic camera
         float distance;
 
         xzPlane.Raycast(ray, out distance);
-        Debug.DrawRay(Camera.main.transform.position, direction * 20);
+        //Debug.DrawRay(Camera.main.transform.position, direction * 20);
 
         Vector3 hitPoint = ray.GetPoint(distance);
 
