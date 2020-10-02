@@ -33,6 +33,7 @@ public class MenuManager : MonoBehaviour
         DisplayMainMenuPanel();
     }
 
+    // highlight menu button on hover
     public void OnHoverMenuButton(int index)
     {
         if (index != currentlySelectedButton)
