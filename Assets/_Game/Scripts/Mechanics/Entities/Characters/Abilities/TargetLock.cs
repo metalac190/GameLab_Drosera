@@ -34,7 +34,10 @@ public class TargetLock : MonoBehaviour
         _mask = LayerMask.GetMask("Enemy");
         
         GameObject canvas = FindObjectOfType<Canvas>().gameObject;
-        _targetingReticle = Instantiate(_targetingReticle, canvas.transform);
+        if (canvas != null)
+        {
+            _targetingReticle = Instantiate(_targetingReticle, canvas.transform);
+        }
         _targetingReticle.gameObject.SetActive(false);
         _currentTarget = _aimingReticle;
     }
