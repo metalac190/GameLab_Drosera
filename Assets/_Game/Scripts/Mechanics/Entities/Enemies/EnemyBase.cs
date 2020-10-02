@@ -40,6 +40,10 @@ public abstract class EnemyBase : EntityBase {
         _agent.speed = _moveSpeed;
 
         spawnPosition = transform.position;
+    }
+
+    protected override void Start() {
+        base.Start();
 
         // Add turn aggressive listeners
         TurnAggressive.AddListener(() => {
@@ -50,18 +54,13 @@ public abstract class EnemyBase : EntityBase {
         });
         // Aggro scurriers when damage is taken
         OnTakeDamage.AddListener(() => {
-            GetComponentInParent<EnemyGroup>().OnEnemyDamage.Invoke();
+            GetComponentInParent<EnemyGroup>()?.OnEnemyDamage.Invoke();
         });
-
         // Death Event
         OnDeath.AddListener(() => {
             StopCoroutine(currentBehavior);
             currentBehavior = StartCoroutine(Die());
         });
-    }
-
-    protected override void Start() {
-        base.Start();
 
         if(currentState == EnemyState.Aggressive) {
             currentBehavior = StartCoroutine(Idle());
@@ -126,7 +125,8 @@ public abstract class EnemyBase : EntityBase {
     /// Determines which player the enemy should target
     /// </summary>
     protected virtual void FindTarget() {
-
+        // TODO - check player room
+        targetPlayer = PlayerBase.instance?.gameObject;
     }
 
     /// <summary>
@@ -164,7 +164,10 @@ public abstract class EnemyBase : EntityBase {
     /// <summary>
     /// Death function of the enemy
     /// </summary>
-    protected abstract IEnumerator Die();
+    protected virtual IEnumerator Die() {
+        Destroy(gameObject);
+        yield return null;
+    }
 
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Other
@@ -172,7 +175,7 @@ public abstract class EnemyBase : EntityBase {
     /// <summary>
     /// Checks whether the aggressive condition for the enemy is true
     /// </summary>
-    protected abstract void CheckAggression();
+    protected virtual void CheckAggression() { }
 
     /// <summary>
     /// Heals the enemy over time, at a total rate of healRate / 1 sec, healing once every 0.1 seconds
