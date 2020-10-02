@@ -45,6 +45,23 @@ public abstract class EnemyBase : EntityBase {
     protected override void Start() {
         base.Start();
 
+        // Add turn aggressive listeners
+        TurnAggressive.AddListener(() => {
+            TurnAggressiveWrapper(false);
+        });
+        TurnAggressiveHyperseed.AddListener(() => {
+            TurnAggressiveWrapper(true);
+        });
+        // Aggro scurriers when damage is taken
+        OnTakeDamage.AddListener(() => {
+            GetComponentInParent<EnemyGroup>()?.OnEnemyDamage.Invoke();
+        });
+        // Death Event
+        OnDeath.AddListener(() => {
+            StopCoroutine(currentBehavior);
+            currentBehavior = StartCoroutine(Die());
+        });
+
         if(currentState == EnemyState.Aggressive) {
             currentBehavior = StartCoroutine(Idle());
             TurnAggressive.Invoke();
@@ -60,8 +77,12 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     public void TurnAggressiveWrapper(bool hyperseed = false) {
-        StopCoroutine(currentBehavior);
-        currentBehavior = StartCoroutine(TurnAggressiveFunction(hyperseed));
+        // Don't restart aggressive behavior if already aggressive/attacking, UNLESS hyperseed is grabbed
+        if(currentState < EnemyState.Aggressive || (hyperseed && !this.hyperseed)) {
+            currentState = EnemyState.Aggressive;
+            StopCoroutine(currentBehavior);
+            currentBehavior = StartCoroutine(TurnAggressiveFunction(hyperseed));
+        }
     }
 
     /// <summary>
@@ -90,7 +111,6 @@ public abstract class EnemyBase : EntityBase {
         // Set stats
         aggressive = true;
         isHealing = false;
-        currentState = EnemyState.Aggressive;
 
         // Change behavior
         StopCoroutine(currentBehavior);
@@ -105,7 +125,8 @@ public abstract class EnemyBase : EntityBase {
     /// Determines which player the enemy should target
     /// </summary>
     protected virtual void FindTarget() {
-
+        // TODO - check player room
+        targetPlayer = PlayerBase.instance?.gameObject;
     }
 
     /// <summary>
@@ -115,7 +136,9 @@ public abstract class EnemyBase : EntityBase {
         if(targetPlayer == null)
             return Vector3.zero;
 
-        return targetPlayer.transform.position - transform.position;
+        Vector3 vector = targetPlayer.transform.position - transform.position;
+        vector.y = 0;
+        return vector;
     }
 
     // -------------------------------------------------------------------------------------------
@@ -141,7 +164,10 @@ public abstract class EnemyBase : EntityBase {
     /// <summary>
     /// Death function of the enemy
     /// </summary>
-    protected abstract IEnumerator Die();
+    protected virtual IEnumerator Die() {
+        Destroy(gameObject);
+        yield return null;
+    }
 
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Other
@@ -149,7 +175,7 @@ public abstract class EnemyBase : EntityBase {
     /// <summary>
     /// Checks whether the aggressive condition for the enemy is true
     /// </summary>
-    protected abstract void CheckAggression();
+    protected virtual void CheckAggression() { }
 
     /// <summary>
     /// Heals the enemy over time, at a total rate of healRate / 1 sec, healing once every 0.1 seconds
