@@ -6,5 +6,5 @@ using UnityEngine;
 public class Character : ScriptableObject
 {
     [SerializeField] public string fullName;
-    //[SerializeField] public Sprite portrait;
+    [SerializeField] public Sprite portrait;
 }
