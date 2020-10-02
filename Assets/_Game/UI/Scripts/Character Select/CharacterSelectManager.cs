@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 
-// 9/8 - worked on by Vinson Kok
-// 9/13 - worked on by Vinson Kok
 public class CharacterSelectManager : MonoBehaviour
 {
     int currentlySelectedCharacter = 0;
@@ -14,93 +12,107 @@ public class CharacterSelectManager : MonoBehaviour
 
     [SerializeField] CharacterSelectInfo[] characterList;
 
-    [Header("Text Stuff")]
-    [SerializeField] TextMeshProUGUI nameText;
-    [SerializeField] TextMeshProUGUI titleText;
-    [SerializeField] TextMeshProUGUI weaponHeaderText;
-    [SerializeField] TextMeshProUGUI weaponDescriptionText;
-    [SerializeField] TextMeshProUGUI statHeaderText;
-    [SerializeField] TextMeshProUGUI statDescriptionText;
-
-    [Header("Visual Stuff")]
-    [SerializeField] Color[] characterColors;
-
+    [Header("Left-Hand Stuff")]
     [SerializeField] CharacterButtonAnim[] characterButtons;    // for animating character buttons on hover
-    [SerializeField] Image characterImage;
-    [SerializeField] Image characterBackgroundImage;
-    [SerializeField] Image[] weaponImages;
 
-    [SerializeField] Image[] scrollBarElements;
+    [Header("Center Stuff")]
+    [SerializeField] Image characterImage;
+
+    [Header("Right-Hand Stuff")]
+    // character info
+    [SerializeField] TextMeshProUGUI healthText;
+    [SerializeField] TextMeshProUGUI damageText;
+
+    // weapon info
+    [SerializeField] GameObject[] weaponSelectedBorder;
+    [SerializeField] TextMeshProUGUI weaponNameText;
+    [SerializeField] TextMeshProUGUI speedText;
+    [SerializeField] TextMeshProUGUI ammoText;
+    int currentlySelectedWeapon = 0;
+    int previouslySelectedWeapon = 0;
 
     private void Awake()
     {
-        SetCharacterBorderColors();
-        DisplaySelectedCharacter();
+        // animate first character border out
+        characterButtons[currentlySelectedCharacter].AnimateCharacterBorderOut();
+
+        UpdateCharacterInfo();
     }
 
-    void SetCharacterBorderColors()
-    {
-        for (int i = 0; i < characterColors.Length; i++)
-        {
-            characterButtons[i].GetComponent<Image>().color = characterColors[i];
-        }
-    }
-
+    // happens when player hovers over character border on the left of the screen
+    // animate character border in/out
     public void OnHoverCharacterButtonAnimation(int index)
     {
         if (index != currentlySelectedCharacter)
         {
+            previouslySelectedCharacter = currentlySelectedCharacter;
             currentlySelectedCharacter = index;
 
-            characterButtons[previouslySelectedCharacter].AnimateCharacterBorderIn();
-            characterButtons[currentlySelectedCharacter].AnimateCharacterBorderOut();
+            if (!characterList[currentlySelectedCharacter].IsLocked)
+            {
+                characterButtons[previouslySelectedCharacter].AnimateCharacterBorderIn();
+                characterButtons[currentlySelectedCharacter].AnimateCharacterBorderOut();
+            }
+            // TODO- play locked animation instead 
+            else
+            {
 
-            previouslySelectedCharacter = currentlySelectedCharacter;
+            }
         }
     }
 
-    public void DisplaySelectedCharacter()
+    // update character image in the center of the screen
+    void UpdateCharacterImage()
     {
-        // text stuff
-        nameText.text = characterList[currentlySelectedCharacter].Name;
-        nameText.color = characterColors[currentlySelectedCharacter];
-
-        titleText.text = characterList[currentlySelectedCharacter].CharacterTitle;
-        titleText.color = characterColors[currentlySelectedCharacter];
-
-        DisplaySelectedWeaponInfo(0);
-
-        statHeaderText.text = characterList[currentlySelectedCharacter].StatHeader;
-        statHeaderText.color = characterColors[currentlySelectedCharacter];
-        statDescriptionText.text = characterList[currentlySelectedCharacter].StatDescription;
-        statDescriptionText.color = characterColors[currentlySelectedCharacter];
-
-        // visual stuff
-        characterImage.sprite = characterList[currentlySelectedCharacter].CharacterSprite;
-
-        characterBackgroundImage.color = characterColors[currentlySelectedCharacter];
-
-        for (int i = 0; i < weaponImages.Length; i++)
-        {
-            weaponImages[i].sprite = characterList[currentlySelectedCharacter].WeaponSprites[i];
-        }
-
-        // 0- scroll bar, 1- scroll bar handle
-        scrollBarElements[0].color = characterColors[currentlySelectedCharacter];
-        scrollBarElements[1].color = characterColors[currentlySelectedCharacter];
+        characterImage.sprite = characterList[currentlySelectedCharacter].CharacterImage;
+        characterImage.SetNativeSize();
     }
 
+    // update character stats on the right of the screen
+    public void UpdateCharacterInfo()
+    {
+        if (!characterList[currentlySelectedCharacter].IsLocked)
+        {
+            UpdateCharacterImage();
+
+            // character info
+            healthText.text = characterList[currentlySelectedCharacter].Health.ToString() + " HP";
+            damageText.text = characterList[currentlySelectedCharacter].Damage.ToString();
+
+            // weapon info
+            DisplaySelectedWeaponInfo(0);
+        }
+    }
+
+    // happens when player clicks on a weapon image
+    // highlights button and displays currently selected weapon info
     public void DisplaySelectedWeaponInfo(int weaponIndex)
     {
-        weaponHeaderText.text = characterList[currentlySelectedCharacter].WeaponHeader[weaponIndex];
-        weaponHeaderText.color = characterColors[currentlySelectedCharacter];
+        previouslySelectedWeapon = currentlySelectedWeapon;
+        currentlySelectedWeapon = weaponIndex;
 
-        weaponDescriptionText.text = characterList[currentlySelectedCharacter].WeaponDescription[weaponIndex];
-        weaponDescriptionText.color = characterColors[currentlySelectedCharacter];
+        weaponSelectedBorder[previouslySelectedWeapon].SetActive(false);
+        weaponSelectedBorder[currentlySelectedWeapon].SetActive(true);
+
+        weaponNameText.text = characterList[currentlySelectedCharacter].WeaponName[weaponIndex];
+
+        // show speed and ammo stats for primary(0) and secondary(1) weap
+        if (weaponIndex == 0 || weaponIndex == 1)
+        {
+            speedText.text = characterList[currentlySelectedCharacter].Speed[weaponIndex];
+            ammoText.text = characterList[currentlySelectedCharacter].Ammo[weaponIndex] + " / " + characterList[currentlySelectedCharacter].Ammo[weaponIndex].ToString();
+        }
+        // TODO- show passive description
+        else
+        {
+
+        }
     }
 
-    public void ConfirmCharacter()
+    public void ConfirmCharacter(string sceneName)
     {
-
+        //For now just start the game. Later will actually change character.
+        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+        GameManager.Instance.GameState = DroseraGlobalEnums.GameState.MainOne; //Will probably be changed to cutscene
     }
 }

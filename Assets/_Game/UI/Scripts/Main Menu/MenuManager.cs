@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// 9/3 - worked on by Vinson Kok
 public class MenuManager : MonoBehaviour
 {
     [Header("Panels")]
@@ -14,15 +13,18 @@ public class MenuManager : MonoBehaviour
     [SerializeField] GameObject settingsPanel;
 
     [Header("Buttons")]
-    [SerializeField] Image[] buttons;
+    [SerializeField] Image[] hoverlineImages;
+    [SerializeField] Image[] buttonImages;
+    [SerializeField] Sprite[] whiteText;
+    [SerializeField] Sprite[] coloredText;
     int currentlySelectedButton = -1;
     int previouslySelectedButton = -1;
 
     private void Awake()
     {
-        foreach (Image b in buttons)
+        foreach (Image h in hoverlineImages)
         {
-            b.enabled = false;
+            h.enabled = false;
         }
     }
 
@@ -31,17 +33,26 @@ public class MenuManager : MonoBehaviour
         DisplayMainMenuPanel();
     }
 
+    // highlight menu button on hover
     public void OnHoverMenuButton(int index)
     {
         if (index != currentlySelectedButton)
         {
+            previouslySelectedButton = currentlySelectedButton;
             currentlySelectedButton = index;
 
-            buttons[currentlySelectedButton].enabled = true;
-            if (previouslySelectedButton >= 0)
-                buttons[previouslySelectedButton].enabled = false;
+            buttonImages[currentlySelectedButton].sprite = coloredText[currentlySelectedButton];
+            buttonImages[currentlySelectedButton].SetNativeSize();
 
-            previouslySelectedButton = currentlySelectedButton;
+            hoverlineImages[currentlySelectedButton].enabled = true;
+
+            if (previouslySelectedButton >= 0)
+            {
+                buttonImages[previouslySelectedButton].sprite = whiteText[previouslySelectedButton];
+                buttonImages[previouslySelectedButton].SetNativeSize();
+
+                hoverlineImages[previouslySelectedButton].enabled = false;
+            }
         }
     }
 

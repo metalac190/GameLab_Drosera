@@ -14,10 +14,13 @@ public class EnemyBaseEditor : Editor {
             enemy.ForceIdle();
         }
         if(GUILayout.Button("Turn Aggressive")) {
-            enemy.TurnAggressiveWrapper();
+            enemy.TurnAggressive.Invoke();
         }
         if(GUILayout.Button("Reset")) {
             enemy.ResetEnemy();
+        }
+        if(GUILayout.Button("Kill")) {
+            enemy.OnDeath.Invoke();
         }
     }
 
