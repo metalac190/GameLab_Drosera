@@ -52,6 +52,11 @@ public class PlayerBase : EntityBase
     protected float lastInteract = 0;
 
     [SerializeField]
+    GameObject _projectile;
+
+    Transform _gunEnd;
+
+    [SerializeField]
     protected int ammo = 5;
     [SerializeField]
     protected int maxAmmo = 20;
@@ -77,6 +82,8 @@ public class PlayerBase : EntityBase
     {
         base.Awake();
         instance = this;
+
+        _gunEnd = transform.GetChild(0).transform;
     }
 
     // Update is called once per frame
@@ -160,6 +167,7 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
+
         if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
@@ -190,9 +198,12 @@ public class PlayerBase : EntityBase
 
     protected virtual void Attacking()
     {
+
         if (ammo > 0) //have ammo
         {
             //attack stuff here
+            
+            Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
             currentState = PlayerState.Neutral;
         }
         else //no ammo
@@ -203,6 +214,7 @@ public class PlayerBase : EntityBase
 
     protected void Reloading()
     {
+
         if (heldAmmo != 0 && reloadCoolDown < 0.01) //have ammo to reload and reload time is up
         {
             if (ammo != maxAmmo) //full
