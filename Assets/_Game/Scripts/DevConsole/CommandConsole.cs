@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
+[RequireComponent(typeof(ConsoleLog))]
 public class CommandConsole : MonoBehaviour
 {
     public static event Action RevertConsole = delegate { };
@@ -11,6 +12,7 @@ public class CommandConsole : MonoBehaviour
 
     [HideInInspector] public static CommandConsole commandConsole;
     [Header("Settings")]
+    [SerializeField] private bool enableInBuild = true;
     [SerializeField] private bool enableConsole = true;
     [SerializeField] private bool enableHotkeysWhileClosed = true;
 
@@ -23,7 +25,8 @@ public class CommandConsole : MonoBehaviour
 
     [Header("Visuals")]
     [SerializeField] private GameObject consoleWindow = null;
-    
+
+    private ConsoleLog log = null;
 
     private bool isInEditor;
 
@@ -48,11 +51,16 @@ public class CommandConsole : MonoBehaviour
             commandConsole = this;
             DontDestroyOnLoad(this.gameObject);
         }
+
+        log = GetComponent<ConsoleLog>();
     }
 
     private void Start()
     {
         speedMultiplyerText.text = speedMultiplyer.ToString("F1") + "x";
+        consoleWindow?.SetActive(false);
+        if (isInEditor)
+            log.CloseLog();
     }
     #endregion
 
@@ -107,7 +115,7 @@ public class CommandConsole : MonoBehaviour
 
     private void Update()
     {
-        if (!isInEditor || !enableConsole)
+        if (!ConsoleEnabled())
             return;
 
         if(Input.GetKeyDown(KeyCode.BackQuote))
@@ -120,7 +128,7 @@ public class CommandConsole : MonoBehaviour
 
     private void SetConsole(bool toState)
     {
-        if (!isInEditor || !enableConsole)
+        if (!ConsoleEnabled())
             return;
 
         consoleWindow.SetActive(toState);
@@ -139,6 +147,15 @@ public class CommandConsole : MonoBehaviour
         SetConsole(false);
     }
 
+    private bool ConsoleEnabled()
+    {
+        if (!enableConsole)
+            return false;
+        if (!isInEditor && !enableInBuild)
+            return false;
+
+        return true;
+    }
 
 
 }
