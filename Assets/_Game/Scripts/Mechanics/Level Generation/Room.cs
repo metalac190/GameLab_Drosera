@@ -11,9 +11,9 @@ public class Room : MonoBehaviour
     [SerializeField]
     private Transform exit;
     public Transform Exit { get => exit; set => exit = value; }
-    [HideInInspector]
+    //[HideInInspector]
     public bool overlapping = false;
-    [HideInInspector]
+    //[HideInInspector]
     public bool activeGenerating = true;
     [SerializeField]
     private DroseraGlobalEnums.Biome biome;
