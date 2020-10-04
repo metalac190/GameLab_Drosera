@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class CharacterSelectManager : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class CharacterSelectManager : MonoBehaviour
 
     [Header("Right-Hand Stuff")]
     // character info
+    [SerializeField] GameObject[] rightHandPanel;
+    [SerializeField] Image backgroundImage;
     [SerializeField] TextMeshProUGUI healthText;
     [SerializeField] TextMeshProUGUI damageText;
 
@@ -39,6 +42,14 @@ public class CharacterSelectManager : MonoBehaviour
         UpdateCharacterInfo();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
+        }
+    }
+
     // happens when player hovers over character border on the left of the screen
     // animate character border in/out
     public void OnHoverCharacterButtonAnimation(int index)
@@ -48,32 +59,43 @@ public class CharacterSelectManager : MonoBehaviour
             previouslySelectedCharacter = currentlySelectedCharacter;
             currentlySelectedCharacter = index;
 
-            if (!characterList[currentlySelectedCharacter].IsLocked)
-            {
-                characterButtons[previouslySelectedCharacter].AnimateCharacterBorderIn();
-                characterButtons[currentlySelectedCharacter].AnimateCharacterBorderOut();
-            }
-            // TODO- play locked animation instead 
-            else
-            {
-
-            }
+            characterButtons[previouslySelectedCharacter].AnimateCharacterBorderIn();
+            characterButtons[currentlySelectedCharacter].AnimateCharacterBorderOut();
         }
     }
 
     // update character image in the center of the screen
     void UpdateCharacterImage()
     {
-        characterImage.sprite = characterList[currentlySelectedCharacter].CharacterImage;
-        characterImage.SetNativeSize();
+        if (!characterList[currentlySelectedCharacter].IsLocked)
+        {
+            characterImage.sprite = characterList[currentlySelectedCharacter].CharacterImage;
+            characterImage.transform.localScale = new Vector3(1f, 1f, 1f);
+            characterImage.SetNativeSize();
+        }
+        else
+        {
+            characterImage.sprite = characterList[currentlySelectedCharacter].CharacterImage;
+            characterImage.SetNativeSize();
+            characterImage.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+            characterImage.transform.localPosition = new Vector3(-690, characterImage.transform.localPosition.y, characterImage.transform.localPosition.z);
+        }
     }
 
     // update character stats on the right of the screen
     public void UpdateCharacterInfo()
     {
+        UpdateCharacterImage();
+
         if (!characterList[currentlySelectedCharacter].IsLocked)
         {
-            UpdateCharacterImage();
+            foreach(GameObject o in rightHandPanel)
+            {
+                o.SetActive(true);
+            }
+            backgroundImage.sprite = characterList[currentlySelectedCharacter].BackgroundImage;
+            backgroundImage.SetNativeSize();
+            backgroundImage.transform.localPosition = new Vector3(60, backgroundImage.transform.localPosition.y, backgroundImage.transform.localPosition.z);
 
             // character info
             healthText.text = characterList[currentlySelectedCharacter].Health.ToString() + " HP";
@@ -81,6 +103,17 @@ public class CharacterSelectManager : MonoBehaviour
 
             // weapon info
             DisplaySelectedWeaponInfo(0);
+        }
+        else
+        {
+            foreach (GameObject o in rightHandPanel)
+            {
+                o.SetActive(false);
+            }
+
+            backgroundImage.sprite = characterList[currentlySelectedCharacter].LockedImage;
+            backgroundImage.SetNativeSize();
+            backgroundImage.transform.localPosition = new Vector3(82, backgroundImage.transform.localPosition.y, backgroundImage.transform.localPosition.z);
         }
     }
 
@@ -109,8 +142,13 @@ public class CharacterSelectManager : MonoBehaviour
         }
     }
 
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     public void ConfirmCharacter()
     {
-
+        SceneManager.LoadScene(2);
     }
 }
