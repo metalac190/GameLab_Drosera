@@ -42,6 +42,12 @@ public class PlayerBase : EntityBase
     protected float playerY = .5f;
 
     [SerializeField]
+    protected float dodgeCooldownTime = 2.0f;
+    protected float dodgeCooldown = 0.0f;
+    [SerializeField]
+    protected float dodgeSpeed = 100;
+
+    [SerializeField]
     protected float abilityCooldownTime = 6.0f;
     protected float abilityCooldown = 0.0f;
 
@@ -103,6 +109,7 @@ public class PlayerBase : EntityBase
                 abilityButton = Input.GetKey(KeyCode.JoystickButton4) || Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
+                dodgeButtonKey = Input.GetKey(KeyCode.Space);
                 dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
                 shootButtonGamepad = Input.GetAxisRaw("Shoot");
                 adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
@@ -118,6 +125,7 @@ public class PlayerBase : EntityBase
                 abilityButton = Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.Escape);
+                dodgeButtonKey = Input.GetKey(KeyCode.Space);
                 altFireButton = Input.GetMouseButton(1);
                 swapAbilityButton = Input.GetKey(KeyCode.Q);
             }
@@ -148,6 +156,7 @@ public class PlayerBase : EntityBase
         //cooldowns
         abilityCooldown -= Time.deltaTime;
         reloadCoolDown -= Time.deltaTime;
+        dodgeCooldown -= Time.deltaTime;
 
         //states
         switch (currentState)
@@ -180,7 +189,7 @@ public class PlayerBase : EntityBase
         {
             currentState = PlayerState.Ability;
         }
-        if (dodgeButtonGamepad == 1 || dodgeButtonKey)
+        if (dodgeButtonGamepad == 1 || dodgeButtonKey && dodgeCooldown < 0.01)
         {
             currentState = PlayerState.Dodging;
         }
@@ -246,6 +255,7 @@ public class PlayerBase : EntityBase
 
     protected void Dodging()
     {
+        controller.Move(move * Time.deltaTime * dodgeSpeed);
         currentState = PlayerState.Neutral;
     }
 
