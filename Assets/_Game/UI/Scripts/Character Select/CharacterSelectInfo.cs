@@ -13,6 +13,18 @@ public class CharacterSelectInfo : MonoBehaviour
         set => IsLocked = true;
     }
 
+    [SerializeField] Sprite backgroundImage;
+    public Sprite BackgroundImage
+    {
+        get => backgroundImage;
+    }
+
+    [SerializeField] Sprite lockedImage;
+    public Sprite LockedImage
+    {
+        get => lockedImage;
+    }
+
     // character
     [SerializeField] Sprite characterImage;
     public Sprite CharacterImage
