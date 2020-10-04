@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI; // for nav meshs
+using UnityEngine.AI;
 
-public class GenBackUo : MonoBehaviour
+public class LevelGeneration : MonoBehaviour
 {
     [SerializeField]
     private int levelNumber = 0;
@@ -38,8 +38,7 @@ public class GenBackUo : MonoBehaviour
     private DroseraGlobalEnums.Biome level6Biome;
     public DroseraGlobalEnums.Biome Level6Biome { get => level6Biome; set => level6Biome = value; }
 
-    private List<DroseraGlobalEnums.Biome> levelBiomesList = new List<DroseraGlobalEnums.Biome>();
-    //possible list of instantiated room coliiders
+    public List<DroseraGlobalEnums.Biome> levelBiomesList = new List<DroseraGlobalEnums.Biome>();
 
     [Header("Level Information")]
     [SerializeField]
@@ -78,15 +77,24 @@ public class GenBackUo : MonoBehaviour
     {
         if (Input.GetKeyDown("space"))
         {
-            if (levelNumber < 6)
+            GenerateLevelTrigger();
+        }
+    }
+    public void GenerateLevelTrigger()
+    {
+        if (levelNumber < 6)
+        {
+            levelNumber += 1;
+            bool levelGenTest = false;
+            while (levelGenTest == false)
             {
-                CreateLevel(roomMasterPrefab.GetComponent<StoreRooms>().AllRooms);
-                //if return false regen exact level
+                levelGenTest = CreateLevel(levelNumber, roomMasterPrefab.GetComponent<StoreRooms>().AllRooms);
             }
-            else
-            {
-                Debug.Log("At Max Level.");
-            }           
+            //if return false regen exact level
+        }
+        else
+        {
+            Debug.Log("At Max Level.");
         }
     }
 
@@ -128,27 +136,30 @@ public class GenBackUo : MonoBehaviour
 
                 if (plz.GetComponent<Room>().overlapping == true)
                 {
-                    Debug.Log("Overlapping Collider. Room: " + plz.name);
+                    //Debug.Log("Overlapping Collider. Room: " + plz.name);
                 }
                 else
                 {
-                    Debug.Log(" Room overlap. Nah: " + plz.name);
+                    //Debug.Log(" Room overlap. Nah: " + plz.name);
                 }
                 //check if room intersect, if so regen level ?                   
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
                 int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
                 plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-                //activate nav mesh
-                
+                //activate nav mesh (find compnenets in children and bake)
+                NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
+                foreach (NavMeshSurface comp in navComponents)
+                {
+                    comp.BuildNavMesh();
+                }
+
                 //Debug.Log("Layout Activated: " + plz.GetComponent<Room>().Layouts[randomLayout].name + " Diff: " + plz.GetComponent<Room>().Layouts[randomLayout].difficulty);
                 currentLevelDifficulty += plz.GetComponent<Room>().Layouts[randomLayout].difficulty;
                 break;
             }
         }
-
         //if to Remove != null *************
         roomList.Remove(toRemove);
-
         if (roomList.Count == 0)
         {
             whileCheck = false; //safety check in case room runs out defor desired difficulty
@@ -175,10 +186,7 @@ public class GenBackUo : MonoBehaviour
         return returnVal;
     }
 
-    private Vector3 FixTransformDeficit(GameObject genericRoom)
-    {
-        return (genericRoom.transform.position - genericRoom.GetComponent<Room>().Entrance.transform.position);
-    }
+    private Vector3 FixTransformDeficit(GameObject genericRoom) {return (genericRoom.transform.position - genericRoom.GetComponent<Room>().Entrance.transform.position);}
 
     private float RotateRoom(Quaternion previousRoom, GameObject genericRoom)
     {
@@ -196,9 +204,8 @@ public class GenBackUo : MonoBehaviour
         return neededRotate;
     }
 
-    void CreateLevel(List<GameObject> masterList) //on new level; similar to start function but additional stuff to erase.
+    public bool CreateLevel(int currentLevel, List<GameObject> masterList) //on new level; similar to start function but additional stuff to erase.
     {
-        levelNumber += 1;
         DestroyInstantiatedRooms();
         whileCheck = true;
         List<GameObject> currentListOptions = new List<GameObject>();
@@ -211,16 +218,18 @@ public class GenBackUo : MonoBehaviour
         ShuffleRoomList(currentListOptions);
         Instantiate(dropShipRoom);
         currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
-            int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
-            dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+        int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
+        dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
 
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
-        currentListOptions = getBiomeSpecificList(currentListOptions, levelNumber);   //makes list biome specific
+        currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);   //makes list biome specific
         while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)
         {
             InstantiateValidRoom(currentListOptions);
         }
         InstantiateEndRoom(endRoom);
+        //
+        return true; 
     }
 
     private void DestroyInstantiatedRooms()
@@ -245,15 +254,14 @@ public class GenBackUo : MonoBehaviour
         levelBiomesList.Add(level5Biome);
         levelBiomesList.Add(level6Biome);
     }
-
     private List<GameObject> getBiomeSpecificList(List<GameObject> overallList, int currentLevel)
     {
         List<GameObject> biomeSpecificList = new List<GameObject>();
         for (int i = 0; i < overallList.Count; i++)
         {
-            if(overallList[i].GetComponent<Room>().Biome == levelBiomesList[currentLevel - 1] ||
+            if (overallList[i].GetComponent<Room>().Biome == levelBiomesList[currentLevel - 1] ||
                 overallList[i].GetComponent<Room>().Biome == DroseraGlobalEnums.Biome.None)
-            biomeSpecificList.Add(overallList[i]);
+                biomeSpecificList.Add(overallList[i]);
         }
         return biomeSpecificList;
     }
