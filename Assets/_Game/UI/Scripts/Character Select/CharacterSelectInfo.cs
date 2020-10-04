@@ -3,65 +3,57 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 9/6 - worked on by Vinson Kok
-// 9/13 - worked on by Vinson Kok
 public class CharacterSelectInfo : MonoBehaviour
 {
-    [SerializeField] Sprite characterSprite;
-    public Sprite CharacterSprite
+    // general
+    [SerializeField] bool isLocked;
+    public bool IsLocked
     {
-        get => characterSprite;
-        set => characterSprite = value;
+        get => isLocked;
+        set => IsLocked = true;
     }
 
-    [SerializeField] string characterName;
-    public string Name
+    // character
+    [SerializeField] Sprite characterImage;
+    public Sprite CharacterImage
     {
-        get => characterName;
-        set => characterName = value;
+        get => characterImage;
+        set => characterImage = value;
     }
 
-    [SerializeField] string characterTitle;
-    public string CharacterTitle
+    [SerializeField] int health;
+    public int Health
     {
-        get => characterTitle;
-        set => characterTitle = value;
+        get => health;
+        set => health = value;
     }
 
-    [SerializeField] Sprite[] weaponSprites;
-    public Sprite[] WeaponSprites
+    [SerializeField] string damage;
+    public string Damage
     {
-        get => weaponSprites;
-        set => weaponSprites = value;
+        get => damage;
+        set => damage = value;
     }
 
-    [SerializeField] string[] weaponHeader;
-    public string[] WeaponHeader
+    // weapon
+    [SerializeField] string[] weaponName;
+    public string[] WeaponName
     {
-        get => weaponHeader;
-        set => weaponHeader = value;
+        get => weaponName;
+        set => weaponName = value;
     }
 
-    [TextArea(1, 100)]
-    [SerializeField] string[] weaponDescription;
-    public string[] WeaponDescription
+    [SerializeField] string[] speed;
+    public string[] Speed
     {
-        get => weaponDescription;
-        set => weaponDescription = value;
+        get => speed;
+        set => speed = value;
     }
 
-    [SerializeField] string statHeader;
-    public string StatHeader
+    [SerializeField] int[] ammo;
+    public int[] Ammo
     {
-        get => statHeader;
-        set => statHeader = value;
-    }
-
-    [TextArea(1, 100)]
-    [SerializeField] string statDescription;
-    public string StatDescription
-    {
-        get => statDescription;
-        set => statDescription = value;
+        get => ammo;
+        set => ammo = value;
     }
 }
