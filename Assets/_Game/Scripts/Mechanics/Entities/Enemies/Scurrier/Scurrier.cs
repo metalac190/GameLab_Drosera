@@ -25,7 +25,7 @@ public class Scurrier : EnemyBase {
 
     protected override void Awake() {
         base.Awake();
-        crashDetector = GetComponentInChildren<ScurrierCrashDetector>();
+        crashDetector = GetComponentInChildren<ScurrierCrashDetector>(true);
         crashDetector.gameObject.SetActive(false);
     }
 
@@ -92,6 +92,7 @@ public class Scurrier : EnemyBase {
 
     protected override IEnumerator AggressiveMove() {
         _agent.stoppingDistance = stoppingDistance;
+        attackDone = false;
 
         GoreReset();
 
@@ -154,6 +155,8 @@ public class Scurrier : EnemyBase {
         yield return null;
     }
 
+    // -----
+
     /// <summary>
     /// Gore (charge) attack
     /// </summary>
@@ -196,6 +199,7 @@ public class Scurrier : EnemyBase {
 
         // Charge
         crashDetector.gameObject.SetActive(true);
+        _animator.SetTrigger("Gore");
         _agent.isStopped = false;
         float timeout = 0; // Failsafe to prevent infinite gore
         while(_agent.remainingDistance > 1) {
@@ -249,6 +253,7 @@ public class Scurrier : EnemyBase {
             yield return null;
         }
         _agent.velocity = Vector3.zero;
+        _animator.SetTrigger("Gore Done");
         yield return new WaitForSeconds(0.25f);
 
         // Set cooldown & return to movement
@@ -275,6 +280,7 @@ public class Scurrier : EnemyBase {
     /// Reset scurrier stats after gore in case of interruption
     /// </summary>
     private void GoreReset() {
+        crashDetector.gameObject.SetActive(false);
         _agent.isStopped = false;
         _agent.autoBraking = true;
         _agent.speed = _moveSpeed;
@@ -289,7 +295,11 @@ public class Scurrier : EnemyBase {
     /// </summary>
     private IEnumerator AttackSwat() {
         currentState = EnemyState.Attacking;
-        yield return new WaitForSeconds(1f);
+        _animator.SetTrigger("Swat");
+
+        while(!attackDone) {
+            yield return null;
+        }
 
         cooldownTimer = _cooldown;
         currentBehavior = StartCoroutine(AggressiveMove());

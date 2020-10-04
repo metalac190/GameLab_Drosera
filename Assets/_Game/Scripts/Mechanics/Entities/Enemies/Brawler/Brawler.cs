@@ -84,6 +84,7 @@ public class Brawler : EnemyBase {
 
     protected override IEnumerator AggressiveMove() {
         _agent.stoppingDistance = stoppingDistance;
+        attackDone = false;
         currentState = EnemyState.Aggressive;
 
         while(true) {
@@ -123,7 +124,11 @@ public class Brawler : EnemyBase {
 
     protected override IEnumerator Attack() {
         currentState = EnemyState.Attacking;
-        yield return new WaitForSeconds(1f);
+        _animator.SetTrigger("Attack");
+
+        while(!attackDone) {
+            yield return null;
+        }
 
         cooldownTimer = _cooldown;
         currentBehavior = StartCoroutine(AggressiveMove());

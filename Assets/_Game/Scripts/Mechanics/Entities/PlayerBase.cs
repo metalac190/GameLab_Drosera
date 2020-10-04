@@ -76,7 +76,7 @@ public class PlayerBase : EntityBase
     protected float reloadCoolDownTime = 1.0f;
     protected float reloadCoolDown = 0f;
 
-    new void Start()
+    protected override void Start()
     {
         base.Start();
         controller = gameObject.AddComponent<CharacterController>();
@@ -84,7 +84,7 @@ public class PlayerBase : EntityBase
     }
 
     public static PlayerBase instance;
-    new void Awake()
+    protected override void Awake()
     {
         base.Awake();
         instance = this;

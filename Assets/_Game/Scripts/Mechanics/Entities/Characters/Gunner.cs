@@ -9,7 +9,7 @@ public class Gunner : PlayerBase
     GunnerGrenade _grenade;
     GunnerDOTGrenade _dotGrenade;
 
-    new void Awake()
+    protected override void Awake()
     {
         base.Awake();
         _primaryFire = GetComponent<GunnerPrimaryFire>();
