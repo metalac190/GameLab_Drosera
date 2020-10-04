@@ -7,11 +7,15 @@ public class Hitbox : MonoBehaviour {
 
     public enum HitboxTarget { Player, Enemy, Neutral };
 
-    public float damage;
+    public float baseDamage, damage;
     public bool canDamageWalls;
     [SerializeField] protected HitboxTarget hitboxTarget;
 
     protected List<GameObject> hitTargets = new List<GameObject>();
+
+    private void Awake() {
+        damage = baseDamage;
+    }
 
     protected virtual void OnTriggerEnter(Collider other) {
         // Check if target has already been hit - avoid double hitting
@@ -24,9 +28,13 @@ public class Hitbox : MonoBehaviour {
             (other.gameObject.layer == LayerMask.NameToLayer("BreakableWall") && canDamageWalls)) { // Hit wall
 
             // Deal damage
-            other.GetComponent<EntityBase>()?.TakeDamage(damage);
+            other.GetComponentInParent<EntityBase>()?.TakeDamage(damage);
             hitTargets.Add(other.gameObject);
         }
+    }
+
+    protected void OnDisable() {
+        ResetHitbox();
     }
 
     /// <summary>
@@ -48,6 +56,7 @@ public class Hitbox : MonoBehaviour {
     /// </summary>
     public void ResetHitbox() {
         hitTargets.Clear();
+        damage = baseDamage;
     }
 
 }
