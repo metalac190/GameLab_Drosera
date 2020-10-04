@@ -14,6 +14,7 @@ public class LevelGeneration : MonoBehaviour
     private GameObject roomMasterPrefab;
     public GameObject RoomMasterPrefab { get => roomMasterPrefab; }
     private List<GameObject> roomMasterList = new List<GameObject>();
+    private GameObject playerObject;        //AUTOMATICALLY SEARCHES FOR OBJECT WITH "Player" TAG
     [Header("Difficulty Scale Ratio")]
     [SerializeField]
     private float levelScaleRatio;
@@ -71,6 +72,7 @@ public class LevelGeneration : MonoBehaviour
     void Start() //on scene start, generate level
     {
         desiredLevelDifficulty = baseDifficulty;
+        playerObject = GameObject.FindGameObjectWithTag("Player");
         putBiomesInList();      //will eventually just be a array randomizer script, uses preset types for testing
     }
     private void Update()
@@ -152,8 +154,6 @@ public class LevelGeneration : MonoBehaviour
                 {
                     comp.BuildNavMesh();
                 }
-
-                //Debug.Log("Layout Activated: " + plz.GetComponent<Room>().Layouts[randomLayout].name + " Diff: " + plz.GetComponent<Room>().Layouts[randomLayout].difficulty);
                 currentLevelDifficulty += plz.GetComponent<Room>().Layouts[randomLayout].difficulty;
                 break;
             }
@@ -174,6 +174,11 @@ public class LevelGeneration : MonoBehaviour
         plz.GetComponent<Room>().Entrance.transform.SetParent(null);
         plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
         plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
+        NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
+        foreach (NavMeshSurface comp in navComponents)
+        {
+            comp.BuildNavMesh();
+        }
         //scale level difficulty
         desiredLevelDifficulty = ScaleDifficulty();
     }
@@ -206,7 +211,9 @@ public class LevelGeneration : MonoBehaviour
 
     public bool CreateLevel(int currentLevel, List<GameObject> masterList) //on new level; similar to start function but additional stuff to erase.
     {
-        DestroyInstantiatedRooms();
+        DestroyInstantiatedRooms(); //destroys previous level
+        NavMesh.RemoveAllNavMeshData();
+
         whileCheck = true;
         List<GameObject> currentListOptions = new List<GameObject>();
         for (int i = 0; i < masterList.Count; i++)
@@ -220,6 +227,12 @@ public class LevelGeneration : MonoBehaviour
         currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
         int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
         dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+        NavMeshSurface[] navComponents = dropShipRoom.GetComponentsInChildren<NavMeshSurface>();
+        foreach (NavMeshSurface comp in navComponents)
+        {
+            comp.BuildNavMesh();
+        }
+        playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
 
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
         currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);   //makes list biome specific
@@ -228,7 +241,6 @@ public class LevelGeneration : MonoBehaviour
             InstantiateValidRoom(currentListOptions);
         }
         InstantiateEndRoom(endRoom);
-        //
         return true; 
     }
 
@@ -242,7 +254,7 @@ public class LevelGeneration : MonoBehaviour
         GameObject[] iRooms = GameObject.FindGameObjectsWithTag("InstantiatedRoom");
         for (int i = 0; i < iRooms.Length; i++)
         {
-            Destroy(iRooms[i]);
+            Destroy(iRooms[i]); 
         }
     }
     private void putBiomesInList()
