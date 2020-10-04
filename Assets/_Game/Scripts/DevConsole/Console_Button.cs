@@ -87,6 +87,8 @@ public class Console_Button : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             hotkeyIcon.SetActive(true);
             Text childText = hotkeyIcon.GetComponentInChildren<Text>();
             childText.text = hotkeyNickName;
+            if(CommandConsole.commandConsole.enableHotkeys)
+                _listenForHotkey = true;
         }
 
         if (notImplemented)

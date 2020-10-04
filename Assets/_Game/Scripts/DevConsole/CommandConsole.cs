@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System;
 
@@ -14,7 +15,8 @@ public class CommandConsole : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private bool enableInBuild = true;
     [SerializeField] private bool enableConsole = true;
-    [SerializeField] private bool enableHotkeysWhileClosed = true;
+    [SerializeField] public bool enableHotkeys = true;
+    [SerializeField] private bool debugInEditor = false;
 
     [Header("Scene Settings")]
     [SerializeField] bool generateLevel = true;
@@ -30,8 +32,9 @@ public class CommandConsole : MonoBehaviour
 
     private bool isInEditor;
 
-    private float lastTimeScale = 1f;
+    private bool isPaused = false;
     private float speedMultiplyer = 1f;
+    private bool hotkeyMode;
 
 
     #region Init
@@ -53,13 +56,14 @@ public class CommandConsole : MonoBehaviour
         }
 
         log = GetComponent<ConsoleLog>();
+        hotkeyMode = enableHotkeys;
     }
 
     private void Start()
     {
         speedMultiplyerText.text = speedMultiplyer.ToString("F1") + "x";
         consoleWindow?.SetActive(false);
-        if (isInEditor)
+        if (!debugInEditor && isInEditor)
             log.CloseLog();
     }
     #endregion
@@ -73,22 +77,40 @@ public class CommandConsole : MonoBehaviour
 
     public void PauseCommand()
     {
-        lastTimeScale = Time.timeScale;
         Time.timeScale = 0f;
+        isPaused = true;
     }
 
     public void PlayCommand()
     {
-        Time.timeScale = lastTimeScale;
+        Time.timeScale = speedMultiplyer;
+        isPaused = false;
     }
 
     public void FastForwardCommand()
     {
         IncrementSpeedMultiplyer();
-        Time.timeScale = speedMultiplyer;
+        if(!isPaused)
+            Time.timeScale = speedMultiplyer;
     }
 
+    public void QuitCommand()
+    {
+        if (isInEditor)
+            UnityEditor.EditorApplication.isPlaying = false;
+        else
+            Application.Quit();
+    }
 
+    public void ResetSceneCommand()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ActivateHyperSeedCommand()
+    {
+        Debug.Log("Activating the hyperseed has not been implemented yet.");
+    }
 
 
 
@@ -123,6 +145,13 @@ public class CommandConsole : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
             RevertConsole.Invoke();
+
+        //Check for change in editor during play
+        if(isInEditor && enableHotkeys != hotkeyMode)
+        {
+            ToggleHotkeys.Invoke(enableHotkeys);
+            hotkeyMode = enableHotkeys;
+        }
         
     }
 
@@ -132,7 +161,7 @@ public class CommandConsole : MonoBehaviour
             return;
 
         consoleWindow.SetActive(toState);
-        if (!enableHotkeysWhileClosed)
+        if (!enableHotkeys)
             ToggleHotkeys.Invoke(toState);
         if(!toState)
             RevertConsole();
