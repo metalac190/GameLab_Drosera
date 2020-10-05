@@ -35,8 +35,10 @@ public class PlayerBase : EntityBase
     public bool CycleTargetLeft { get { return cycleTargetLeft; } }
     public bool AltFireButton { get { return altFireButton; } }
 
-    protected Vector3 move;
     private CharacterController controller;
+
+    protected Vector3 xMove;
+    protected Vector3 zMove;
 
     [SerializeField]
     protected float playerY = .5f;
@@ -135,16 +137,18 @@ public class PlayerBase : EntityBase
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
             adjustCameraRightKey = Input.GetKey(KeyCode.X);
         }
-               
+
 
         //movement
-        move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        controller.Move(move * Time.deltaTime * _moveSpeed);
-        if(transform.position.y != playerY)
+        zMove = Input.GetAxis("Vertical") * Camera.main.transform.forward;
+        xMove = Input.GetAxis("Horizontal") * Camera.main.transform.right;
+        controller.Move(xMove * Time.deltaTime * _moveSpeed);
+        controller.Move(zMove * Time.deltaTime * _moveSpeed);
+        if (transform.position.y != playerY)
         {
             transform.position = new Vector3(transform.position.x, playerY, transform.position.z);
         }
-        if (move != Vector3.zero) //moving
+        if (zMove != Vector3.zero && zMove != Vector3.zero) //moving
         {
 
         }
@@ -255,7 +259,8 @@ public class PlayerBase : EntityBase
 
     protected void Dodging()
     {
-        controller.Move(move * Time.deltaTime * dodgeSpeed);
+        controller.Move(xMove * Time.deltaTime * dodgeSpeed);
+        controller.Move(zMove * Time.deltaTime * dodgeSpeed);
         currentState = PlayerState.Neutral;
     }
 
@@ -268,6 +273,16 @@ public class PlayerBase : EntityBase
 
     protected void Dead()
     {
-        
+        Debug.Log("You are dead.");
+    }
+
+    public override void TakeDamage(float value)
+    {
+        OnTakeDamage?.Invoke();
+        _health -= value;
+        if (_health <= 0)
+        {
+            currentState = PlayerState.Dead;
+        }
     }
 }
