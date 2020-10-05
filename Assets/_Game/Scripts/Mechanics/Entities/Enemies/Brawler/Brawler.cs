@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Brawler : EnemyBase {
 
@@ -11,6 +12,15 @@ public class Brawler : EnemyBase {
     [SerializeField] private List<GameObject> waypoints;
     private List<Vector3> waypointPositions = new List<Vector3>();
     private int currentWaypoint;
+
+    [System.Serializable]
+    public class FX {
+        [Header("VFX")]
+
+        [Header("SFX")]
+        public UnityEvent OnHit;
+    }
+    [Header("Brawler VFX & SFX")] [SerializeField] private FX _brawlerFX;
 
 #pragma warning restore 0649
 
@@ -23,6 +33,13 @@ public class Brawler : EnemyBase {
         foreach(GameObject waypoint in waypoints)
            waypointPositions.Add(waypoint.transform.position);
         currentWaypoint = 0;
+    }
+
+    protected override void Start() {
+        base.Start();
+        GetComponentInChildren<Hitbox>(true).OnHit.AddListener(() => {
+            _brawlerFX.OnHit.Invoke();
+        });
     }
 
     // -------------------------------------------------------------------------------------------

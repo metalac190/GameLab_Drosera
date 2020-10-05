@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7651754112738873583}
   - component: {fileID: 3516009760067836367}
   - component: {fileID: 2982456699021135885}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Attack Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,6 +110,9 @@ MonoBehaviour:
   damage: 7
   canDamageWalls: 0
   hitboxTarget: 0
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2876863880597785587
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,6 +213,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _maxHealth: 200
+  _health: 0
   _canAct: 0
   _canStun: 0
   _knockbackResistance: 0
@@ -234,6 +238,10 @@ MonoBehaviour:
   attackDone: 0
   attackRange: 4
   waypoints: []
+  _sounds:
+    OnHit:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!114 &5490218163162472708
 MonoBehaviour:
   m_ObjectHideFlags: 0

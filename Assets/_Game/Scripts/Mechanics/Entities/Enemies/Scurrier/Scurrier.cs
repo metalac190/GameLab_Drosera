@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class Scurrier : EnemyBase {
@@ -17,7 +18,23 @@ public class Scurrier : EnemyBase {
     [SerializeField] private float goreSkidDistance; // Distance scurrier will travel during gore skid
     private float cooldownTimerGore; // Timer for gore (charge) attack cooldowns
 
+    [Header("Hitboxes")]
+    [SerializeField] private Hitbox swatHitbox;
+    [SerializeField] private Hitbox goreHitbox;
+
     private ScurrierCrashDetector crashDetector;
+
+    [System.Serializable]
+    public class FX {
+        [Header("VFX")]
+        public GameObject shockwave; // TODO
+        public GameObject goreTrail, goreImpact;
+
+        [Header("SFX")]
+        public UnityEvent OnSwatHit;
+        public UnityEvent OnGoreTarget, OnGoreHit;
+    }
+    [Header("Scurrier VFX & SFX")] [SerializeField] private FX _scurrierFX;
 
 #pragma warning disable 0649
 
@@ -27,6 +44,16 @@ public class Scurrier : EnemyBase {
         base.Awake();
         crashDetector = GetComponentInChildren<ScurrierCrashDetector>(true);
         crashDetector.gameObject.SetActive(false);
+    }
+
+    protected override void Start() {
+        base.Start();
+        swatHitbox.OnHit.AddListener(() => {
+            _scurrierFX.OnSwatHit.Invoke();
+        });
+        goreHitbox.OnHit.AddListener(() => {
+            _scurrierFX.OnGoreHit.Invoke();
+        });
     }
 
     // -------------------------------------------------------------------------------------------
@@ -172,6 +199,8 @@ public class Scurrier : EnemyBase {
         Vector3 forward = Vector3.zero;
         Vector3 initialTargetPos = targetPlayer.transform.position;
         forward.y = 0;
+        _scurrierFX.OnGoreTarget.Invoke();
+
         for(float i = 0; i < 0.5; i += Time.deltaTime) {
             // Check if player left line of sight or left max range - exit
             if(Physics.Raycast(transform.position, VectorToPlayer(), goreRange.y, LayerMask.GetMask("Terrain")) || // Raycast
@@ -199,6 +228,7 @@ public class Scurrier : EnemyBase {
 
         // Charge
         crashDetector.gameObject.SetActive(true);
+        _scurrierFX.goreTrail.SetActive(true);
         _animator.SetTrigger("Gore");
         _agent.isStopped = false;
         float timeout = 0; // Failsafe to prevent infinite gore
@@ -267,7 +297,11 @@ public class Scurrier : EnemyBase {
     /// </summary>
     private IEnumerator GoreCrash() {
         Debug.Log("Gore crashed into wall");
+        _animator.SetTrigger("Gore Done");
         _agent.isStopped = true;
+
+        VFXSpawner.vfx.SpawnVFX(_scurrierFX.goreImpact, 1, transform.position + Vector3.up + (transform.forward * 0.5f), transform.rotation);
+
         yield return new WaitForSeconds(1f);
 
         // Set cooldown & return to movement
@@ -281,10 +315,11 @@ public class Scurrier : EnemyBase {
     /// </summary>
     private void GoreReset() {
         crashDetector.gameObject.SetActive(false);
+        _scurrierFX.goreTrail.SetActive(false);
+
         _agent.isStopped = false;
         _agent.autoBraking = true;
         _agent.speed = _moveSpeed;
-
         _agent.updatePosition = true;
     }
 
