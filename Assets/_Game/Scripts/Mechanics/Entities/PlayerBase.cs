@@ -273,6 +273,7 @@ public class PlayerBase : EntityBase
 
     protected void Dead()
     {
+        GameManager.Instance.GameLost();
         Debug.Log("You are dead.");
     }
 
