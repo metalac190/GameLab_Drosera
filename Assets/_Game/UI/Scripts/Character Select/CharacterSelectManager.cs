@@ -147,7 +147,7 @@ public class CharacterSelectManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-    public void ConfirmCharacter()
+    public void ConfirmCharacter(string sceneName)
     {
         //For now just start the game. Later will actually change character.
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
