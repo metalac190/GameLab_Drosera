@@ -42,6 +42,12 @@ public class PlayerBase : EntityBase
     protected float playerY = .5f;
 
     [SerializeField]
+    protected float dodgeCooldownTime = 2.0f;
+    protected float dodgeCooldown = 0.0f;
+    [SerializeField]
+    protected float dodgeSpeed = 100;
+
+    [SerializeField]
     protected float abilityCooldownTime = 6.0f;
     protected float abilityCooldown = 0.0f;
 
@@ -50,6 +56,11 @@ public class PlayerBase : EntityBase
     [SerializeField]
     protected float interactCooldown = 0.2f;
     protected float lastInteract = 0;
+
+    [SerializeField]
+    GameObject _projectile;
+
+    Transform _gunEnd;
 
     [SerializeField]
     protected int ammo = 5;
@@ -65,7 +76,7 @@ public class PlayerBase : EntityBase
     protected float reloadCoolDownTime = 1.0f;
     protected float reloadCoolDown = 0f;
 
-    new void Start()
+    protected override void Start()
     {
         base.Start();
         controller = gameObject.AddComponent<CharacterController>();
@@ -73,10 +84,12 @@ public class PlayerBase : EntityBase
     }
 
     public static PlayerBase instance;
-    new void Awake()
+    protected override void Awake()
     {
         base.Awake();
         instance = this;
+
+        _gunEnd = transform.GetChild(0).transform;
     }
 
     // Update is called once per frame
@@ -96,6 +109,7 @@ public class PlayerBase : EntityBase
                 abilityButton = Input.GetKey(KeyCode.JoystickButton4) || Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
+                dodgeButtonKey = Input.GetKey(KeyCode.Space);
                 dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
                 shootButtonGamepad = Input.GetAxisRaw("Shoot");
                 adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
@@ -111,6 +125,7 @@ public class PlayerBase : EntityBase
                 abilityButton = Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.Escape);
+                dodgeButtonKey = Input.GetKey(KeyCode.Space);
                 altFireButton = Input.GetMouseButton(1);
                 swapAbilityButton = Input.GetKey(KeyCode.Q);
             }
@@ -141,6 +156,7 @@ public class PlayerBase : EntityBase
         //cooldowns
         abilityCooldown -= Time.deltaTime;
         reloadCoolDown -= Time.deltaTime;
+        dodgeCooldown -= Time.deltaTime;
 
         //states
         switch (currentState)
@@ -160,6 +176,7 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
+
         if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
@@ -172,7 +189,7 @@ public class PlayerBase : EntityBase
         {
             currentState = PlayerState.Ability;
         }
-        if (dodgeButtonGamepad == 1 || dodgeButtonKey)
+        if (dodgeButtonGamepad == 1 || dodgeButtonKey && dodgeCooldown < 0.01)
         {
             currentState = PlayerState.Dodging;
         }
@@ -190,9 +207,12 @@ public class PlayerBase : EntityBase
 
     protected virtual void Attacking()
     {
+
         if (ammo > 0) //have ammo
         {
             //attack stuff here
+            
+            Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
             currentState = PlayerState.Neutral;
         }
         else //no ammo
@@ -203,6 +223,7 @@ public class PlayerBase : EntityBase
 
     protected void Reloading()
     {
+
         if (heldAmmo != 0 && reloadCoolDown < 0.01) //have ammo to reload and reload time is up
         {
             if (ammo != maxAmmo) //full
@@ -234,6 +255,7 @@ public class PlayerBase : EntityBase
 
     protected void Dodging()
     {
+        controller.Move(move * Time.deltaTime * dodgeSpeed);
         currentState = PlayerState.Neutral;
     }
 
