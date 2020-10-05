@@ -10,6 +10,8 @@ public class LevelCompleteTrigger : MonoBehaviour
     {
         if(!levelGen)
             levelGen = FindObjectOfType<LevelGeneration>();
+
+        levelGen.GenerateLevelTrigger();
     }
 
     private void OnTriggerEnter(Collider other)
