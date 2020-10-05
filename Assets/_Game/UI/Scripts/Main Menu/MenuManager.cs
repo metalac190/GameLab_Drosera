@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class MenuManager : MonoBehaviour
 {
+    [Header("Animations")]
+    [SerializeField] float fadeInTime;
+
     [Header("Panels")]
     [SerializeField] GameObject mainMenuPanel;
     [SerializeField] GameObject instructionsPanel;
@@ -30,7 +34,26 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
+        FadeInMainMenuPanel();
         DisplayMainMenuPanel();
+    }
+
+    void FadeInMainMenuPanel()
+    {
+        Image[] imagesInMainMenu = mainMenuPanel.GetComponentsInChildren<Image>();
+
+        foreach (Image i in imagesInMainMenu)
+        {
+            i.DOFade(1, fadeInTime);
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            DisplayMainMenuPanel();
+        }
     }
 
     // highlight menu button on hover
