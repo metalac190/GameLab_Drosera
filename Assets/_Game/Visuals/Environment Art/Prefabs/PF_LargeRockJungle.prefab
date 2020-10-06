@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df43a6039fb0d134ebedf11e64de9f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 0}
+  materials:
+  - {fileID: 2100000, guid: c6cdb84dc4436814eb6e2d77c1c417d6, type: 2}
   instanceMaterial: 1
   showRaycasts: 1
   meshCenter: {x: 0, y: 0, z: 0}
@@ -34,6 +35,11 @@ PrefabInstance:
       propertyPath: material
       value: 
       objectReference: {fileID: 2100000, guid: c6cdb84dc4436814eb6e2d77c1c417d6, type: 2}
+    - target: {fileID: 5583028322272187235, guid: aeddaff4f48d1204f8676e2c41fbc6aa,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5583028322272187235, guid: aeddaff4f48d1204f8676e2c41fbc6aa,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
