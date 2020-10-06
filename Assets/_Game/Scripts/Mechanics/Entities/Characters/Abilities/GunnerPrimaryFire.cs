@@ -8,6 +8,8 @@ public class GunnerPrimaryFire : Ability
 {
     public UnityEvent OnFire;
 
+    [SerializeField] GameObject _projectile;
+
     Transform _gunEnd;
     Gunner _gunner;
 
@@ -21,7 +23,7 @@ public class GunnerPrimaryFire : Ability
     {
         StartCoroutine(CooldownTimer());
         OnFire?.Invoke();
-        Instantiate(AssetDatabase.LoadAssetAtPath("Assets/_Game/Prefabs/Bullet.prefab", typeof(GameObject)), _gunEnd.position, _gunEnd.rotation);
+        Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
         _gunner.Ammo -= _ammoCost;
     }
 }
