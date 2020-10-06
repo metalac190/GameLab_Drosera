@@ -21,31 +21,16 @@ public class LevelGeneration : MonoBehaviour
     public float LevelScaleRatio { get => levelScaleRatio; }
     [Header("Level Biomes")]
     [SerializeField]
-    private DroseraGlobalEnums.Biome level1Biome;
-    public DroseraGlobalEnums.Biome Level1Biome { get => level1Biome; set => level1Biome = value; }
-    [SerializeField]
-    private DroseraGlobalEnums.Biome level2Biome;
-    public DroseraGlobalEnums.Biome Level2Biome { get => level2Biome; set => level2Biome = value; }
-    [SerializeField]
-    private DroseraGlobalEnums.Biome level3Biome;
-    public DroseraGlobalEnums.Biome Level3Biome { get => level3Biome; set => level3Biome = value; }
-    [SerializeField]
-    private DroseraGlobalEnums.Biome level4Biome;
-    public DroseraGlobalEnums.Biome Level4Biome { get => level4Biome; set => level4Biome = value; }
-    [SerializeField]
-    private DroseraGlobalEnums.Biome level5Biome;
-    public DroseraGlobalEnums.Biome Level5Biome { get => level5Biome; set => level5Biome = value; }
-    [SerializeField]
-    private DroseraGlobalEnums.Biome level6Biome;
-    public DroseraGlobalEnums.Biome Level6Biome { get => level6Biome; set => level6Biome = value; }
-
-    public List<DroseraGlobalEnums.Biome> levelBiomesList = new List<DroseraGlobalEnums.Biome>();
+    private List<DroseraGlobalEnums.Biome> levelBiomesList = new List<DroseraGlobalEnums.Biome>();
+    public List<DroseraGlobalEnums.Biome> LevelBiomesList { get => levelBiomesList; }
 
     [Header("Level Information")]
     [SerializeField]
     private float baseDifficulty;
     public float BaseDifficulty { get => baseDifficulty; set => baseDifficulty = value; }
-
+    [SerializeField]
+    private float desiredLevelDifficulty;
+    public float DesiredLevelDifficulty { get => desiredLevelDifficulty; set => desiredLevelDifficulty = value; }
     [SerializeField]
     [Tooltip("The difficulty at end of level. DO NOT EDIT")]
     private float currentLevelDifficulty = 0;
@@ -57,11 +42,6 @@ public class LevelGeneration : MonoBehaviour
     private GameObject endRoom;
     public GameObject EndRoom { get => endRoom; set => endRoom = value; }
 
-    [Header("Next Level")]
-    [SerializeField]
-    private float desiredLevelDifficulty;
-    public float DesiredLevelDifficulty { get => desiredLevelDifficulty; set => desiredLevelDifficulty = value; }
-
     //Variables to detect Entrance/Exit Rotations
     private Vector3 currentExitLocation;
     private float priorRoomExitRotation = 0;    //default should = dropship room exit rotation
@@ -69,35 +49,45 @@ public class LevelGeneration : MonoBehaviour
     private Quaternion priorRoomRotation;
     private bool whileCheck = true;
 
+    //level Generation check bool
+    private bool genTest = false;
+
     void Start() //on scene start, generate level
     {
-        desiredLevelDifficulty = baseDifficulty;
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        putBiomesInList();      //will eventually just be a array randomizer script, uses preset types for testing
+        randomizeBiomes();
     }
+    /*
     private void Update()
     {
         if (Input.GetKeyDown("space"))
         {
             GenerateLevelTrigger();
         }
-    }
+    }*/
+    
     public void GenerateLevelTrigger()
     {
+        StartCoroutine(GenerateLevelCoroutine());
+    }
+    IEnumerator GenerateLevelCoroutine()
+    {
+        genTest = false;
         if (levelNumber < 6)
         {
             levelNumber += 1;
-            bool levelGenTest = false;
-            while (levelGenTest == false)
+            while (genTest == false)
             {
-                levelGenTest = CreateLevel(levelNumber, roomMasterPrefab.GetComponent<StoreRooms>().AllRooms);
+                StartCoroutine(CreateLevelCoroutine(levelNumber, roomMasterPrefab.GetComponent<StoreRooms>().AllRooms));
+                yield return new WaitForSeconds(.02f);
             }
-            //if return false regen exact level
+
         }
         else
         {
             Debug.Log("At Max Level.");
         }
+        yield return null;
     }
 
     private void ShuffleRoomList(List<GameObject> roomList)         //will shuffle room array
@@ -115,9 +105,10 @@ public class LevelGeneration : MonoBehaviour
     /// This fucntion will take in the the randomized roomList and instantiate the first room if it passes check.
     /// Room is removed from list when instantiated.
     /// </summary>
-    private void InstantiateValidRoom(List<GameObject> roomList)
+    private bool InstantiateValidRoom(List<GameObject> roomList)
     {
         GameObject toRemove = null;
+        bool roomCheck = true;
         float blank = 0;
         for (int i = 0; i < roomList.Count; i++) //goes through list until a break (will break on chosen room/continues on failed room check)
         {
@@ -138,11 +129,13 @@ public class LevelGeneration : MonoBehaviour
 
                 if (plz.GetComponent<Room>().overlapping == true)
                 {
-                    //Debug.Log("Overlapping Collider. Room: " + plz.name);
+                    Debug.Log(plz.name + " is overlapping a previous room");
+                    //return false;
+                    roomCheck = false;
                 }
                 else
                 {
-                    //Debug.Log(" Room overlap. Nah: " + plz.name);
+                    Debug.Log("Safe: " + plz.name);
                 }
                 //check if room intersect, if so regen level ?                   
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
@@ -164,28 +157,42 @@ public class LevelGeneration : MonoBehaviour
         {
             whileCheck = false; //safety check in case room runs out defor desired difficulty
         }
+        return roomCheck;
     }
 
-    private void InstantiateEndRoom(GameObject lastRoom)
+    private bool InstantiateEndRoom(GameObject lastRoom)
     {
+        bool roomCheck = true;
         GameObject plz = Instantiate(lastRoom, currentExitLocation + FixTransformDeficit(lastRoom), priorRoomRotation);
         plz.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, lastRoom));
         priorRoomRotation = plz.GetComponent<Room>().Exit.transform.rotation;
         plz.GetComponent<Room>().Entrance.transform.SetParent(null);
         plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
         plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
+        if (plz.GetComponent<Room>().overlapping == true)
+        {
+            Debug.Log(plz.name + " is overlapping a previous room");
+            roomCheck = false;
+        }
+        else
+        {
+            Debug.Log("Safe: " + plz.name);
+        }
         NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
         foreach (NavMeshSurface comp in navComponents)
         {
             comp.BuildNavMesh();
         }
-        //scale level difficulty
-        desiredLevelDifficulty = ScaleDifficulty();
+        return roomCheck;
     }
 
     public float ScaleDifficulty()
     {
         float returnVal = 0;
+        if (levelNumber == 1)
+        {
+            return baseDifficulty;
+        }
         returnVal = BaseDifficulty * Mathf.Pow(LevelScaleRatio, levelNumber);
         //its non updated level diff since formula would be actual level - 1 anyway.
         return returnVal;
@@ -209,9 +216,13 @@ public class LevelGeneration : MonoBehaviour
         return neededRotate;
     }
 
-    public bool CreateLevel(int currentLevel, List<GameObject> masterList) //on new level; similar to start function but additional stuff to erase.
+    IEnumerator CreateLevelCoroutine(int currentLevel, List<GameObject> masterList)
     {
         DestroyInstantiatedRooms(); //destroys previous level
+        yield return new WaitForEndOfFrame();
+        Physics.autoSimulation = false;
+        Physics.Simulate(0.01f);
+        Physics.autoSimulation = true;
         NavMesh.RemoveAllNavMeshData();
 
         whileCheck = true;
@@ -235,13 +246,27 @@ public class LevelGeneration : MonoBehaviour
         playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
 
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
-        currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);   //makes list biome specific
+        currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);   //makes list biome specific                                                                                       //scale level difficulty
+        desiredLevelDifficulty = ScaleDifficulty();
         while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)
         {
-            InstantiateValidRoom(currentListOptions);
+            genTest = InstantiateValidRoom(currentListOptions);
+            if (genTest == false)
+            {
+                Debug.Log("FALSE LEVEL RETURNED (room)");
+                genTest = false;
+                yield break;
+            }
         }
-        InstantiateEndRoom(endRoom);
-        return true; 
+        if (genTest == true)
+        {
+            genTest = InstantiateEndRoom(endRoom);
+        }
+        if (genTest == true)
+        {
+            Debug.Log("TRUUUE LEVEL RETURNED (room)");
+        }
+        yield return null;
     }
 
     private void DestroyInstantiatedRooms()
@@ -257,14 +282,20 @@ public class LevelGeneration : MonoBehaviour
             Destroy(iRooms[i]); 
         }
     }
-    private void putBiomesInList()
+    private void randomizeBiomes()
     {
-        levelBiomesList.Add(level1Biome);
-        levelBiomesList.Add(level2Biome);
-        levelBiomesList.Add(level3Biome);
-        levelBiomesList.Add(level4Biome);
-        levelBiomesList.Add(level5Biome);
-        levelBiomesList.Add(level6Biome);
+        for (int i = 0; i < 6; i++)
+        {
+            int fill = Random.Range(0, 2);
+            if (fill == 0)
+            {
+                levelBiomesList.Add(DroseraGlobalEnums.Biome.Jungle);
+            }
+            else if (fill == 1)
+            {
+                levelBiomesList.Add(DroseraGlobalEnums.Biome.Desert);
+            }
+        }
     }
     private List<GameObject> getBiomeSpecificList(List<GameObject> overallList, int currentLevel)
     {
