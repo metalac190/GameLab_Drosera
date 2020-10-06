@@ -39,6 +39,7 @@ public class PlayerBase : EntityBase
 
     protected Vector3 xMove;
     protected Vector3 zMove;
+    protected Vector3 movement;
 
     [SerializeField]
     protected float playerY = .5f;
@@ -147,8 +148,17 @@ public class PlayerBase : EntityBase
         //movement
         zMove = Input.GetAxis("Vertical") * Camera.main.transform.forward;
         xMove = Input.GetAxis("Horizontal") * Camera.main.transform.right;
-        controller.Move(xMove * Time.deltaTime * _moveSpeed);
-        controller.Move(zMove * Time.deltaTime * _moveSpeed);
+        movement = zMove + xMove;
+
+        if (currentState != PlayerState.Dodging)
+        {
+            controller.Move(movement * Time.deltaTime * _moveSpeed);
+        }
+        else
+        {
+            controller.Move(movement * Time.deltaTime * dodgeSpeed);
+        }
+        
         if (transform.position.y != playerY)
         {
             transform.position = new Vector3(transform.position.x, playerY, transform.position.z);
@@ -273,8 +283,6 @@ public class PlayerBase : EntityBase
     {
         if (dodgeTimer < dodgeTime)
         {
-            controller.Move(xMove * Time.deltaTime * dodgeSpeed);
-            controller.Move(zMove * Time.deltaTime * dodgeSpeed);
             dodgeTimer += Time.deltaTime;
         }
         else
