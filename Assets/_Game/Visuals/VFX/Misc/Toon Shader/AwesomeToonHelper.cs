@@ -26,7 +26,7 @@ namespace AwesomeToon {
     public class AwesomeToonHelper : MonoBehaviour {
 
         // Params
-        [SerializeField] Material material = null;
+        [SerializeField] Material[] materials = null;
         [SerializeField] bool instanceMaterial = true;
         [SerializeField] bool showRaycasts = true;
         [SerializeField] Vector3 meshCenter = Vector3.zero;
@@ -42,7 +42,7 @@ namespace AwesomeToon {
         Dictionary<int, LightSet> lightSets;
 
         // Refs
-        Material materialInstance;
+        List<Material> materialInstances = new List<Material>();
         SkinnedMeshRenderer skinRenderer;
         MeshRenderer meshRenderer;
 
@@ -57,18 +57,41 @@ namespace AwesomeToon {
         }
 
         void Init() {
-            if (!material) return;
-            if (instanceMaterial) {
-                materialInstance = new Material(material);
-                materialInstance.name = "Instance of " + material.name;
-            } else {
-                materialInstance = material;
+            // Ensure the list is empty so we can add all new elements
+            materialInstances.Clear();
+
+            if (instanceMaterial) { //Add instances of the specified materials
+                for (int i = 0; i < materials.Length; i++) {
+                    if (materials[i] != null) {
+                        materialInstances.Add(new Material(materials[i]));
+                        materialInstances[i].name = "Instance of " + materials[i].name;
+                    }
+                }
+            } else { //Add references to the specified materials
+                for (int i = 0; i < materials.Length; i++)
+                {
+                    if (materials[i] != null)
+                    {
+                        materialInstances.Add(materials[i]);
+                    }
+                }
             }
 
+            //Convert the list into an identical array
+            Material[] materialInstancesArr = new Material[materialInstances.Count];
+            for (int i = 0; i < materialInstances.Count; i++)
+            {
+                if (materialInstances[i] != null)
+                {
+                    materialInstancesArr[i] = materialInstances[i];
+                }
+            }
+
+            //Assign desired materials to object renderer
             skinRenderer = GetComponent<SkinnedMeshRenderer>();
             meshRenderer = GetComponent<MeshRenderer>();
-            if (skinRenderer) skinRenderer.sharedMaterial = materialInstance;
-            if (meshRenderer) meshRenderer.sharedMaterial = materialInstance;
+            if (skinRenderer) skinRenderer.sharedMaterials = materialInstancesArr;
+            if (meshRenderer) meshRenderer.sharedMaterials = materialInstancesArr;
         }
 
         // NOTE: If your game loads lights dynamically, this should be called to init new lights
@@ -110,7 +133,7 @@ namespace AwesomeToon {
         }
 
         void UpdateMaterial() {
-            if (!material) return;
+            if(materialInstances == null) return;
 
             // Refresh light data
             List<LightSet> sortedLights = new List<LightSet>();
@@ -137,15 +160,23 @@ namespace AwesomeToon {
                 Color color = lightSet.color;
                 color.a = Mathf.Clamp(lightSet.atten, 0.01f, 0.99f); // UV might wrap around if attenuation is >1 or 0<
 
-                materialInstance.SetVector($"_L{i}_dir", lightSet.dir.normalized);
-                materialInstance.SetColor($"_L{i}_color", color);
+                for (int j = 0; j < materialInstances.Count; j++) {
+                    if (materialInstances[j] != null) {
+                        materialInstances[j].SetVector($"_L{i}_dir", lightSet.dir.normalized);
+                        materialInstances[j].SetColor($"_L{i}_color", color);
+                    }
+                }
                 i++;
             }
 
             // Turn off the remaining light slots
             while (i <= 6) {
-                materialInstance.SetVector($"_L{i}_dir", Vector3.up);
-                materialInstance.SetColor($"_L{i}_color", Color.black);
+                for (int j = 0; j < materialInstances.Count; j++) {
+                    if (materialInstances[j] != null) {
+                        materialInstances[j].SetVector($"_L{i}_dir", Vector3.up);
+                        materialInstances[j].SetColor($"_L{i}_color", Color.black);
+                    }
+                }
                 i++;
             }
 
