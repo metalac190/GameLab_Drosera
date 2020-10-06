@@ -164,7 +164,6 @@ public class PlayerBase : EntityBase
 
         //cooldowns
         abilityCooldown -= Time.deltaTime;
-        reloadCoolDown -= Time.deltaTime;
         dodgeCooldown -= Time.deltaTime;
 
         //states
@@ -212,6 +211,7 @@ public class PlayerBase : EntityBase
             currentState = PlayerState.Dead;
         }
         dodgeTimer = 0;
+        reloadCoolDown = 0;
     }
 
     protected virtual void Attacking()
@@ -249,9 +249,16 @@ public class PlayerBase : EntityBase
                     heldAmmo = 0;
                 }
             }
-            reloadCoolDown = reloadCoolDownTime;
         }
-        currentState = PlayerState.Neutral;
+        if(reloadCoolDown<reloadCoolDownTime)
+        {
+            reloadCoolDown += Time.deltaTime;
+        }
+        else
+        {
+            currentState = PlayerState.Neutral;
+        }
+        
     }
 
     protected virtual void Ability()
