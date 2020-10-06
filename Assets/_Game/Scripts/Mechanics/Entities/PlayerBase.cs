@@ -48,6 +48,9 @@ public class PlayerBase : EntityBase
     protected float dodgeCooldown = 0.0f;
     [SerializeField]
     protected float dodgeSpeed = 100;
+    [SerializeField]
+    protected float dodgeTime = .2f;
+    protected float dodgeTimer = 0.0f;
 
     [SerializeField]
     protected float abilityCooldownTime = 6.0f;
@@ -89,13 +92,15 @@ public class PlayerBase : EntityBase
     protected override void Awake()
     {
         base.Awake();
-        instance = this;
 
         _gunEnd = transform.GetChild(0).transform;
+
+        Physics.IgnoreLayerCollision(11, 16);
+        Physics.IgnoreLayerCollision(16, 15);
     }
 
     // Update is called once per frame
-    protected void Update()
+    protected virtual void Update()
     {
         //note: for dodge and shoot on controller need to use != 0
 
@@ -108,15 +113,15 @@ public class PlayerBase : EntityBase
                 cycleTargetRight = Input.GetAxis("Controller Right Stick X") > 0 || Input.mouseScrollDelta.y > 0;
                 cycleTargetLeft = Input.GetAxis("Controller Right Stick X") < 0 || Input.mouseScrollDelta.y < 0;
                 reloadButton = Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.R);
-                abilityButton = Input.GetKey(KeyCode.JoystickButton4) || Input.GetKey(KeyCode.LeftShift);
+                abilityButton = Input.GetKeyDown(KeyCode.JoystickButton4) || Input.GetKeyDown(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
-                dodgeButtonKey = Input.GetKey(KeyCode.Space);
+                dodgeButtonKey = Input.GetKeyDown(KeyCode.Space);
                 dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
                 shootButtonGamepad = Input.GetAxisRaw("Shoot");
                 adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
                 altFireButton = Input.GetKey(KeyCode.JoystickButton3) || Input.GetMouseButton(1);
-                swapAbilityButton = Input.GetKey(KeyCode.JoystickButton5) || Input.GetKey(KeyCode.Q);
+                swapAbilityButton = Input.GetKeyDown(KeyCode.JoystickButton5) || Input.GetKeyDown(KeyCode.Q);
             }
             else //keyboard only
             {
@@ -127,9 +132,9 @@ public class PlayerBase : EntityBase
                 abilityButton = Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.Escape);
-                dodgeButtonKey = Input.GetKey(KeyCode.Space);
+                dodgeButtonKey = Input.GetKeyDown(KeyCode.Space);
                 altFireButton = Input.GetMouseButton(1);
-                swapAbilityButton = Input.GetKey(KeyCode.Q);
+                swapAbilityButton = Input.GetKeyDown(KeyCode.Q);
             }
 
             dodgeButtonKey = Input.GetKey(KeyCode.Space);
@@ -159,7 +164,6 @@ public class PlayerBase : EntityBase
 
         //cooldowns
         abilityCooldown -= Time.deltaTime;
-        reloadCoolDown -= Time.deltaTime;
         dodgeCooldown -= Time.deltaTime;
 
         //states
@@ -206,7 +210,8 @@ public class PlayerBase : EntityBase
         {
             currentState = PlayerState.Dead;
         }
-
+        dodgeTimer = 0;
+        reloadCoolDown = 0;
     }
 
     protected virtual void Attacking()
@@ -244,9 +249,16 @@ public class PlayerBase : EntityBase
                     heldAmmo = 0;
                 }
             }
-            reloadCoolDown = reloadCoolDownTime;
         }
-        currentState = PlayerState.Neutral;
+        if(reloadCoolDown<reloadCoolDownTime)
+        {
+            reloadCoolDown += Time.deltaTime;
+        }
+        else
+        {
+            currentState = PlayerState.Neutral;
+        }
+        
     }
 
     protected virtual void Ability()
@@ -259,9 +271,18 @@ public class PlayerBase : EntityBase
 
     protected void Dodging()
     {
-        controller.Move(xMove * Time.deltaTime * dodgeSpeed);
-        controller.Move(zMove * Time.deltaTime * dodgeSpeed);
-        currentState = PlayerState.Neutral;
+        if (dodgeTimer < dodgeTime)
+        {
+            controller.Move(xMove * Time.deltaTime * dodgeSpeed);
+            controller.Move(zMove * Time.deltaTime * dodgeSpeed);
+            dodgeTimer += Time.deltaTime;
+        }
+        else
+        {
+            dodgeCooldown = dodgeCooldownTime;
+            currentState = PlayerState.Neutral;
+        }
+        
     }
 
     protected void Interacting()
