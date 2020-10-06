@@ -19,6 +19,7 @@ public class GunnerAltFire : Ability
     [SerializeField] float _maxCharge;
 
     public float Charge { get { return _charge; } }
+    public Transform GunEnd { get { return _gunEnd; } }
 
     private void Awake()
     {
