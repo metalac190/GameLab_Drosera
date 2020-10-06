@@ -78,7 +78,7 @@ public class PlayerBase : EntityBase
     protected float reloadCoolDownTime = 1.0f;
     protected float reloadCoolDown = 0f;
 
-    new void Start()
+    protected override void Start()
     {
         base.Start();
         controller = gameObject.AddComponent<CharacterController>();
@@ -275,6 +275,7 @@ public class PlayerBase : EntityBase
 
     protected void Dead()
     {
+        GameManager.Instance.GameLost();
         Debug.Log("You are dead.");
     }
 
