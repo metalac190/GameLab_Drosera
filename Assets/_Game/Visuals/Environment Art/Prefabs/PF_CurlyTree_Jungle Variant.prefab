@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df43a6039fb0d134ebedf11e64de9f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 69febc8dddd9bd64c99e44684a6ed005, type: 2}
+  materials:
+  - {fileID: 2100000, guid: 69febc8dddd9bd64c99e44684a6ed005, type: 2}
   instanceMaterial: 1
   showRaycasts: 1
   meshCenter: {x: 0, y: 0, z: 0}
@@ -34,7 +35,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df43a6039fb0d134ebedf11e64de9f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 3d120ce584182f441afea35830787436, type: 2}
+  materials:
+  - {fileID: 2100000, guid: 3d120ce584182f441afea35830787436, type: 2}
   instanceMaterial: 1
   showRaycasts: 1
   meshCenter: {x: 0, y: 0, z: 0}
@@ -108,8 +110,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7128183126169924645, guid: 66be404d5ecdf8849b66b099f6eb8d8a,
         type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7128183126169924645, guid: 66be404d5ecdf8849b66b099f6eb8d8a,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: -7128183126169924645, guid: 66be404d5ecdf8849b66b099f6eb8d8a,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 584855923758527653, guid: 66be404d5ecdf8849b66b099f6eb8d8a,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 584855923758527653, guid: 66be404d5ecdf8849b66b099f6eb8d8a,
         type: 3}
