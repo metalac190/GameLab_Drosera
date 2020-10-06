@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public class Pause : MonoBehaviour
 {
     [Header("Pause Panels")]
+    [SerializeField] GameObject playerHUD;
+    [SerializeField] GameObject inGameHUD;
     [SerializeField] GameObject pauseHUD;
     [SerializeField] GameObject[] panels;
     bool isPaused = false;
@@ -35,6 +37,9 @@ public class Pause : MonoBehaviour
 
     public void PauseGame()
     {
+        playerHUD.SetActive(false);
+        inGameHUD.SetActive(false);
+
         isPaused = true;
         Time.timeScale = 0;
 
@@ -63,6 +68,9 @@ public class Pause : MonoBehaviour
 
     public void ResumeGame()
     {
+        playerHUD.SetActive(true);
+        inGameHUD.SetActive(true);
+
         isPaused = false;
         Time.timeScale = 1;
 

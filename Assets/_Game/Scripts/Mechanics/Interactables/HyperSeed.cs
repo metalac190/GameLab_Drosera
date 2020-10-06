@@ -8,13 +8,23 @@ public class HyperSeed : InteractableBase
 
     public override bool Interact(PlayerBase player)
     {
-        Debug.Log(player.name + "interacted with " + name);
         if (!base.Interact(player))
             return false;
-        print(GameManager.Instance.GameState);
-        GameManager.Instance.GameState = DroseraGlobalEnums.GameState.MainTwo;
-        print(GameManager.Instance.GameState);
+
         seedModel.SetActive(false);
+        Debug.Log(seedModel + " turned off.");
+
+        // When hyperseed is grabbed - all enemies turn aggressive
+        EnemyGroup[] enemies = FindObjectsOfType<EnemyGroup>();
+        foreach(EnemyGroup group in enemies)
+        {
+            group.GrabHyperseed.Invoke();
+        }
+
+        //Go to Main stage two game state
+        GameManager.Instance.GameState = DroseraGlobalEnums.GameState.MainTwo;
+        Debug.Log("Game State changed to: " + GameManager.Instance.GameState);
+
         return true;
     }
 }
