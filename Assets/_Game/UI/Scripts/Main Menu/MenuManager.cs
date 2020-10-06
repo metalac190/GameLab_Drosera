@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class MenuManager : MonoBehaviour
 {
+    [Header("Animations")]
+    [SerializeField] float fadeInTime;
+
     [Header("Panels")]
     [SerializeField] GameObject mainMenuPanel;
     [SerializeField] GameObject instructionsPanel;
@@ -13,34 +17,65 @@ public class MenuManager : MonoBehaviour
     [SerializeField] GameObject settingsPanel;
 
     [Header("Buttons")]
-    [SerializeField] Image[] buttons;
+    [SerializeField] Image[] hoverlineImages;
+    [SerializeField] Image[] buttonImages;
+    [SerializeField] Sprite[] whiteText;
+    [SerializeField] Sprite[] coloredText;
     int currentlySelectedButton = -1;
     int previouslySelectedButton = -1;
 
     private void Awake()
     {
-        foreach (Image b in buttons)
+        foreach (Image h in hoverlineImages)
         {
-            b.enabled = false;
+            h.enabled = false;
         }
     }
 
     private void Start()
     {
+        FadeInMainMenuPanel();
         DisplayMainMenuPanel();
     }
 
+    void FadeInMainMenuPanel()
+    {
+        Image[] imagesInMainMenu = mainMenuPanel.GetComponentsInChildren<Image>();
+
+        foreach (Image i in imagesInMainMenu)
+        {
+            i.DOFade(1, fadeInTime);
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            DisplayMainMenuPanel();
+        }
+    }
+
+    // highlight menu button on hover
     public void OnHoverMenuButton(int index)
     {
         if (index != currentlySelectedButton)
         {
+            previouslySelectedButton = currentlySelectedButton;
             currentlySelectedButton = index;
 
-            buttons[currentlySelectedButton].enabled = true;
-            if (previouslySelectedButton >= 0)
-                buttons[previouslySelectedButton].enabled = false;
+            buttonImages[currentlySelectedButton].sprite = coloredText[currentlySelectedButton];
+            buttonImages[currentlySelectedButton].SetNativeSize();
 
-            previouslySelectedButton = currentlySelectedButton;
+            hoverlineImages[currentlySelectedButton].enabled = true;
+
+            if (previouslySelectedButton >= 0)
+            {
+                buttonImages[previouslySelectedButton].sprite = whiteText[previouslySelectedButton];
+                buttonImages[previouslySelectedButton].SetNativeSize();
+
+                hoverlineImages[previouslySelectedButton].enabled = false;
+            }
         }
     }
 

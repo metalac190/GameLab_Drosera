@@ -6,7 +6,7 @@ using UnityEngine.AI; // for nav meshs
 public class GenBackUo : MonoBehaviour
 {
     [SerializeField]
-    private int levelNumber = 1;
+    private int levelNumber = 0;
     public int LevelNumber { get => levelNumber; }
 
     [Header("Master Room Prefab")]
@@ -72,23 +72,7 @@ public class GenBackUo : MonoBehaviour
     void Start() //on scene start, generate level
     {
         desiredLevelDifficulty = baseDifficulty;
-        putBiomesInList();
-        List<GameObject> roomPrefabs = new List<GameObject>();
-        for (int i = 0; i < roomMasterPrefab.GetComponent<StoreRooms>().AllRooms.Count; i++)
-        {
-            roomPrefabs.Add(roomMasterPrefab.GetComponent<StoreRooms>().AllRooms[i]);
-        }
-
-        ShuffleRoomList(roomPrefabs);       //randomizes room array
-        currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
-        priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
-
-        roomPrefabs = getBiomeSpecificList(roomPrefabs, levelNumber);   //makes list biome specific
-        while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)       //instatiate rooms till desiredDiff reached
-        {
-            InstantiateValidRoom(roomPrefabs);
-        }
-        InstantiateEndRoom(endRoom);
+        putBiomesInList();      //will eventually just be a array randomizer script, uses preset types for testing
     }
     private void Update()
     {
@@ -96,11 +80,12 @@ public class GenBackUo : MonoBehaviour
         {
             if (levelNumber < 6)
             {
-                NextLevel(roomMasterPrefab.GetComponent<StoreRooms>().AllRooms);
+                CreateLevel(roomMasterPrefab.GetComponent<StoreRooms>().AllRooms);
+                //if return false regen exact level
             }
             else
             {
-                Debug.Log("At Last Level.");
+                Debug.Log("At Max Level.");
             }           
         }
     }
@@ -115,7 +100,6 @@ public class GenBackUo : MonoBehaviour
             roomList[randomNum] = placeHolder;
         }
     }
-
 
     /// <summary>
     /// This fucntion will take in the the randomized roomList and instantiate the first room if it passes check.
@@ -138,30 +122,30 @@ public class GenBackUo : MonoBehaviour
                 plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
                 plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
                 currentExitLocation = plz.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
-                //check if room intersect, if so delete and continue(if not last room in list)
-                // ? maybe check if any or children colliders in room intersect
-                //if plz.collider.bounds intersect with any room then delete
-                /*
-                for(int i = 0; i< list of  previous room colliders; i++)
+                Physics.autoSimulation = false;
+                Physics.Simulate(0.001f);
+                Physics.autoSimulation = true;
+
+                if (plz.GetComponent<Room>().overlapping == true)
                 {
-                    if(plz.collider intersects with colliderList[i])
-                    {
-                        delete plz
-                        if plz is last (i != roomlist.count - 1) -->
-                        if plz(i != roomlist.count - 1) is not last in list  --> continue
-                    }
+                    Debug.Log("Overlapping Collider. Room: " + plz.name);
                 }
-
-                */
-
+                else
+                {
+                    Debug.Log(" Room overlap. Nah: " + plz.name);
+                }
+                //check if room intersect, if so regen level ?                   
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
                 int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
                 plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+                //activate nav mesh
+                
                 //Debug.Log("Layout Activated: " + plz.GetComponent<Room>().Layouts[randomLayout].name + " Diff: " + plz.GetComponent<Room>().Layouts[randomLayout].difficulty);
                 currentLevelDifficulty += plz.GetComponent<Room>().Layouts[randomLayout].difficulty;
                 break;
             }
         }
+
         //if to Remove != null *************
         roomList.Remove(toRemove);
 
@@ -179,10 +163,8 @@ public class GenBackUo : MonoBehaviour
         plz.GetComponent<Room>().Entrance.transform.SetParent(null);
         plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
         plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
-
         //scale level difficulty
         desiredLevelDifficulty = ScaleDifficulty();
-
     }
 
     public float ScaleDifficulty()
@@ -190,8 +172,6 @@ public class GenBackUo : MonoBehaviour
         float returnVal = 0;
         returnVal = BaseDifficulty * Mathf.Pow(LevelScaleRatio, levelNumber);
         //its non updated level diff since formula would be actual level - 1 anyway.
-
-
         return returnVal;
     }
 
@@ -216,7 +196,7 @@ public class GenBackUo : MonoBehaviour
         return neededRotate;
     }
 
-    void NextLevel(List<GameObject> masterList) //on new level; similar to start function but additional stuff to erase.
+    void CreateLevel(List<GameObject> masterList) //on new level; similar to start function but additional stuff to erase.
     {
         levelNumber += 1;
         DestroyInstantiatedRooms();
@@ -229,8 +209,11 @@ public class GenBackUo : MonoBehaviour
         currentLevelDifficulty = 0;
 
         ShuffleRoomList(currentListOptions);
+        Instantiate(dropShipRoom);
         currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
-        //add so can chose random layout for drop ship room.
+            int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
+            dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
         currentListOptions = getBiomeSpecificList(currentListOptions, levelNumber);   //makes list biome specific
         while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)

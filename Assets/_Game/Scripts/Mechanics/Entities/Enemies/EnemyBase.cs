@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -31,6 +32,7 @@ public abstract class EnemyBase : EntityBase {
     protected float hyperseedHealthMultiplier = 0.7f;
     protected float hyperseedDamageMultiplier = 1.2f;
     protected float cooldownTimer; // Timer for attack cooldowns
+    [HideInInspector] public bool attackDone;
 
     // -------------------------------------------------------------------------------------------
 
@@ -40,6 +42,10 @@ public abstract class EnemyBase : EntityBase {
         _agent.speed = _moveSpeed;
 
         spawnPosition = transform.position;
+    }
+
+    protected override void Start() {
+        base.Start();
 
         // Add turn aggressive listeners
         TurnAggressive.AddListener(() => {
@@ -50,18 +56,13 @@ public abstract class EnemyBase : EntityBase {
         });
         // Aggro scurriers when damage is taken
         OnTakeDamage.AddListener(() => {
-            GetComponentInParent<EnemyGroup>().OnEnemyDamage.Invoke();
+            GetComponentInParent<EnemyGroup>()?.OnEnemyDamage.Invoke();
         });
-
         // Death Event
         OnDeath.AddListener(() => {
             StopCoroutine(currentBehavior);
             currentBehavior = StartCoroutine(Die());
         });
-    }
-
-    protected override void Start() {
-        base.Start();
 
         if(currentState == EnemyState.Aggressive) {
             currentBehavior = StartCoroutine(Idle());
@@ -106,7 +107,12 @@ public abstract class EnemyBase : EntityBase {
             this.hyperseed = true;
             _health *= hyperseedHealthMultiplier;
             _maxHealth *= hyperseedHealthMultiplier;
-            // TODO - damage multiplier
+
+            Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
+            foreach(Hitbox hitbox in hitboxes) {
+                hitbox.baseDamage *= hyperseedDamageMultiplier;
+                hitbox.damage *= hyperseedDamageMultiplier;
+            }
         }
 
         // Set stats
@@ -126,7 +132,8 @@ public abstract class EnemyBase : EntityBase {
     /// Determines which player the enemy should target
     /// </summary>
     protected virtual void FindTarget() {
-
+        // TODO - check player room
+        targetPlayer = PlayerBase.instance?.gameObject;
     }
 
     /// <summary>
@@ -164,7 +171,10 @@ public abstract class EnemyBase : EntityBase {
     /// <summary>
     /// Death function of the enemy
     /// </summary>
-    protected abstract IEnumerator Die();
+    protected virtual IEnumerator Die() {
+        Destroy(gameObject);
+        yield return null;
+    }
 
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Other
@@ -172,7 +182,7 @@ public abstract class EnemyBase : EntityBase {
     /// <summary>
     /// Checks whether the aggressive condition for the enemy is true
     /// </summary>
-    protected abstract void CheckAggression();
+    protected virtual void CheckAggression() { }
 
     /// <summary>
     /// Heals the enemy over time, at a total rate of healRate / 1 sec, healing once every 0.1 seconds

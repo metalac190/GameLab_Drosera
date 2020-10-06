@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df43a6039fb0d134ebedf11e64de9f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 78094b16010a8a7469855c9910da675d, type: 2}
+  materials:
+  - {fileID: 2100000, guid: 78094b16010a8a7469855c9910da675d, type: 2}
   instanceMaterial: 1
   showRaycasts: 1
   meshCenter: {x: 0, y: 0, z: 0}
@@ -20,7 +21,7 @@ MonoBehaviour:
   raycast: 1
   raycastMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   raycastFadeSpeed: 10
 --- !u!114 &5897943374908250002
 MonoBehaviour:
@@ -34,7 +35,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df43a6039fb0d134ebedf11e64de9f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 78fe256fb7543ff45baa11e4f424383e, type: 2}
+  materials:
+  - {fileID: 2100000, guid: 78fe256fb7543ff45baa11e4f424383e, type: 2}
+  - {fileID: 2100000, guid: 78fe256fb7543ff45baa11e4f424383e, type: 2}
   instanceMaterial: 1
   showRaycasts: 1
   meshCenter: {x: 0, y: 0, z: 0}
@@ -108,8 +111,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7668063110271261781, guid: 38c4a7f78685cce4b97d75eb8c5165cc,
         type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7668063110271261781, guid: 38c4a7f78685cce4b97d75eb8c5165cc,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: -7668063110271261781, guid: 38c4a7f78685cce4b97d75eb8c5165cc,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: -7142349276332710552, guid: 38c4a7f78685cce4b97d75eb8c5165cc,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -7142349276332710552, guid: 38c4a7f78685cce4b97d75eb8c5165cc,
         type: 3}
