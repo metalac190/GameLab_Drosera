@@ -48,6 +48,9 @@ public class PlayerBase : EntityBase
     protected float dodgeCooldown = 0.0f;
     [SerializeField]
     protected float dodgeSpeed = 100;
+    [SerializeField]
+    protected float dodgeTime = .2f;
+    protected float dodgeTimer = 0.0f;
 
     [SerializeField]
     protected float abilityCooldownTime = 6.0f;
@@ -113,7 +116,7 @@ public class PlayerBase : EntityBase
                 abilityButton = Input.GetKeyDown(KeyCode.JoystickButton4) || Input.GetKeyDown(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
-                dodgeButtonKey = Input.GetKey(KeyCode.Space);
+                dodgeButtonKey = Input.GetKeyDown(KeyCode.Space);
                 dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
                 shootButtonGamepad = Input.GetAxisRaw("Shoot");
                 adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
@@ -129,7 +132,7 @@ public class PlayerBase : EntityBase
                 abilityButton = Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.E);
                 pauseButton = Input.GetKey(KeyCode.Escape);
-                dodgeButtonKey = Input.GetKey(KeyCode.Space);
+                dodgeButtonKey = Input.GetKeyDown(KeyCode.Space);
                 altFireButton = Input.GetMouseButton(1);
                 swapAbilityButton = Input.GetKeyDown(KeyCode.Q);
             }
@@ -208,7 +211,7 @@ public class PlayerBase : EntityBase
         {
             currentState = PlayerState.Dead;
         }
-
+        dodgeTimer = 0;
     }
 
     protected virtual void Attacking()
@@ -261,9 +264,18 @@ public class PlayerBase : EntityBase
 
     protected void Dodging()
     {
-        controller.Move(xMove * Time.deltaTime * dodgeSpeed);
-        controller.Move(zMove * Time.deltaTime * dodgeSpeed);
-        currentState = PlayerState.Neutral;
+        if (dodgeTimer < dodgeTime)
+        {
+            controller.Move(xMove * Time.deltaTime * dodgeSpeed);
+            controller.Move(zMove * Time.deltaTime * dodgeSpeed);
+            dodgeTimer += Time.deltaTime;
+        }
+        else
+        {
+            dodgeCooldown = dodgeCooldownTime;
+            currentState = PlayerState.Neutral;
+        }
+        
     }
 
     protected void Interacting()
