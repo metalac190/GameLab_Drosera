@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] string mainMenuScene;
+    private LevelGeneration levelGen;
+
     public delegate void OnGameStateChangeHandler();
     public event OnGameStateChangeHandler OnStateChange;
     private static GameManager _instance = null;
@@ -37,5 +40,44 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void LevelComplete()
+    {
+        GameState = DroseraGlobalEnums.GameState.CutScene;
+        Time.timeScale = 0;
+        //Start Cut scene
+    }
+
+    public void CutSceneComplete()
+    {
+        GameState = DroseraGlobalEnums.GameState.MainOne;
+        Time.timeScale = 1;
+
+        if (!levelGen)
+            levelGen = FindObjectOfType<LevelGeneration>();
+        levelGen.GenerateLevelTrigger();
+
+    }
+
+    //Likely set these up later to bring up a UI or go to their own scene.
+    public void GameLost()
+    {
+        GameState = DroseraGlobalEnums.GameState.Menu;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuScene);
+    }
+
+    public void GameWon()
+    {
+        GameState = DroseraGlobalEnums.GameState.Menu;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuScene);
+    }
+
+    //Testing, remove once intergrated with cutscene
+    private void Update()
+    {
+        if(gameState == DroseraGlobalEnums.GameState.CutScene && Input.anyKeyDown)
+        {
+            CutSceneComplete();
+        }
+    }
 
 }

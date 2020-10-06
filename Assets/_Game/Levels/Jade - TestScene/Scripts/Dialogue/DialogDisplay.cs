@@ -5,12 +5,15 @@ using UnityEngine.UI;
 
 public class DialogDisplay : MonoBehaviour
 {
-    [SerializeField] public GameObject nextSceneButton;
-    [SerializeField] public GameObject continueButton;
-
     [SerializeField] public Conversation conversation;
     [SerializeField] public GameObject speakerLeft;
     [SerializeField] public GameObject speakerRight;
+
+    [SerializeField] public GameObject continueButton;
+
+    [SerializeField] public GameObject deactivateButton;
+
+    [SerializeField] public Canvas canvas;
 
     private SpeakerUI speakerUILeft;
     private SpeakerUI speakerUIRight;
@@ -26,6 +29,7 @@ public class DialogDisplay : MonoBehaviour
         speakerUIRight.Speaker = conversation.speakerRight;
 
         AdvanceConversation();
+
         continueButton.SetActive(true);
     }
 
@@ -46,8 +50,9 @@ public class DialogDisplay : MonoBehaviour
             speakerUILeft.Hide();
             speakerUIRight.Hide();
             activateLineIndex = 0;
-            // set scene change 
-            nextSceneButton.SetActive(true);
+            // deactivate dialogue
+            deactivateButton.SetActive(true);
+
             continueButton.SetActive(false);
         }
     }
@@ -85,5 +90,10 @@ public class DialogDisplay : MonoBehaviour
             activeSpeakerUI.Dialog += character;
             yield return null;
         }
+    }
+
+    public void DeactivateCutscene()
+    {
+        canvas.GetComponent<Canvas>().enabled = false;
     }
 }
