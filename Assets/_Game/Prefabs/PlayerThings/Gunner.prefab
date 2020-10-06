@@ -274,6 +274,8 @@ MonoBehaviour:
   _controller: {fileID: 0}
   _animator: {fileID: 0}
   playerY: 1
+  dodgeCooldownTime: 2
+  dodgeSpeed: 100
   abilityCooldownTime: 60
   interactCooldown: 0.2
   _projectile: {fileID: 7444641546036505424, guid: a876a09242627724fa6d402d41703829,
@@ -316,8 +318,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a9d472be595902488b5042b137a32d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 0
+  _cooldown: 60
   _ammoCost: 0
+  OnFire:
+    m_PersistentCalls:
+      m_Calls: []
+  _projectile: {fileID: 5623258210087282609, guid: e004bbdda9141354487311aa5754dc5c,
+    type: 3}
 --- !u!114 &9206503905713905950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,8 +337,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eeba33f1e499b63498baf70613a5aac3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 0
+  _cooldown: 60
   _ammoCost: 0
+  OnFire:
+    m_PersistentCalls:
+      m_Calls: []
+  _projectile: {fileID: 5623258210087282609, guid: ba40cecd78ef273409a69f890d682967,
+    type: 3}
 --- !u!114 &9206503905713905921
 MonoBehaviour:
   m_ObjectHideFlags: 0

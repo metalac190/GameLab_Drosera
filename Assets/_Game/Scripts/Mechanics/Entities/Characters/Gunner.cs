@@ -9,13 +9,37 @@ public class Gunner : PlayerBase
     GunnerGrenade _grenade;
     GunnerDOTGrenade _dotGrenade;
 
-    new void Awake()
+    bool _altAbility = false;
+
+    protected override void Awake()
     {
         base.Awake();
+        instance = this;
+
         _primaryFire = GetComponent<GunnerPrimaryFire>();
         _altFire = GetComponent<GunnerAltFire>();
-        //_grenade = GetComponent<GunnerGrenade>();
-        //_dotGrenade = GetComponent<GunnerDOTGrenade>();
+        _grenade = GetComponent<GunnerGrenade>();
+        _dotGrenade = GetComponent<GunnerDOTGrenade>();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (currentState != PlayerState.Dead)
+        {
+            if (swapAbilityButton)
+            {
+                if (!_altAbility)
+                {
+                    _altAbility = true;
+                }
+                else
+                {
+                    _altAbility = false;
+                }
+            }
+        }
     }
 
     protected override void Attacking()
@@ -33,6 +57,26 @@ public class Gunner : PlayerBase
             currentState = PlayerState.Neutral;
         }
         else //no ammo
+        {
+            currentState = PlayerState.Reloading;
+        }
+    }
+
+    protected override void Ability()
+    {
+        if (ammo > 0)
+        {
+            if (!_altAbility)
+            {
+                _grenade.Fire();
+            }
+            else
+            {
+                _dotGrenade.Fire();
+            }
+            currentState = PlayerState.Neutral;
+        }
+        else
         {
             currentState = PlayerState.Reloading;
         }
