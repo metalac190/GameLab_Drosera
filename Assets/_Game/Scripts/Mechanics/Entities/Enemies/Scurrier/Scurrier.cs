@@ -48,11 +48,9 @@ public class Scurrier : EnemyBase {
 
     protected override void Start() {
         base.Start();
-        swatHitbox.OnHit.AddListener(() => {
-            _scurrierFX.OnSwatHit.Invoke();
-        });
         goreHitbox.OnHit.AddListener(() => {
             _scurrierFX.OnGoreHit.Invoke();
+            SpawnGoreHitVFX();
         });
     }
 
@@ -199,7 +197,6 @@ public class Scurrier : EnemyBase {
         Vector3 forward = Vector3.zero;
         Vector3 initialTargetPos = targetPlayer.transform.position;
         forward.y = 0;
-        _scurrierFX.OnGoreTarget.Invoke();
 
         for(float i = 0; i < 0.5; i += Time.deltaTime) {
             // Check if player left line of sight or left max range - exit
@@ -227,6 +224,7 @@ public class Scurrier : EnemyBase {
         // TODO - begin charge animation
 
         // Charge
+        _scurrierFX.OnGoreTarget.Invoke();
         crashDetector.gameObject.SetActive(true);
         _scurrierFX.goreTrail.SetActive(true);
         _animator.SetTrigger("Gore");
@@ -257,7 +255,7 @@ public class Scurrier : EnemyBase {
     /// Function for if gore finishes successfully, and Scurrier starts skidding
     /// </summary>
     private IEnumerator GoreSkid() {
-        yield return null;
+        goreHitbox.damage /= 2;
 
         // TODO - start skid animation
 
@@ -300,7 +298,7 @@ public class Scurrier : EnemyBase {
         _animator.SetTrigger("Gore Done");
         _agent.isStopped = true;
 
-        VFXSpawner.vfx.SpawnVFX(_scurrierFX.goreImpact, 1, transform.position + Vector3.up + (transform.forward * 0.5f), transform.rotation);
+        SpawnGoreHitVFX();
 
         yield return new WaitForSeconds(1f);
 
@@ -345,6 +343,22 @@ public class Scurrier : EnemyBase {
     public override void ResetEnemy() {
         GoreReset();
         base.ResetEnemy();
+    }
+
+    // -------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Plays swat SFX - called in the animator
+    /// </summary>
+    public void PlaySwatSound() {
+        _scurrierFX.OnSwatHit.Invoke();
+    }
+
+    /// <summary>
+    /// Spawns the gore hit VFX in the correct position
+    /// </summary>
+    private void SpawnGoreHitVFX() {
+        VFXSpawner.vfx.SpawnVFX(_scurrierFX.goreImpact, 1, transform.position + Vector3.up + (transform.forward * 0.5f), transform.rotation);
     }
 
 }
