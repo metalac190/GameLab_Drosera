@@ -5,6 +5,11 @@ using UnityEngine.AI;
 
 public class LevelGeneration : MonoBehaviour
 {
+    /// <summary>
+    /// Things to be added after alpha
+    ///     re-add biome randomization --> uncomment randomize biome and the specification function
+    ///     
+    /// </summary>
     [SerializeField]
     private int levelNumber = 0;
     public int LevelNumber { get => levelNumber; }
@@ -55,16 +60,17 @@ public class LevelGeneration : MonoBehaviour
     void Start() //on scene start, generate level
     {
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        randomizeBiomes();
+        //randomizeBiomes();    //readd after alpha
+        SetToJungleBiomes();    //sets all biomes to jungle for alpha playtesting purposes; delete after alpha
     }
-    /*
+    
     private void Update()
     {
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown(KeyCode.F1))
         {
             GenerateLevelTrigger();
         }
-    }*/
+    }
     
     public void GenerateLevelTrigger()
     {
@@ -129,13 +135,13 @@ public class LevelGeneration : MonoBehaviour
 
                 if (plz.GetComponent<Room>().overlapping == true)
                 {
-                    Debug.Log(plz.name + " is overlapping a previous room");
+                    //Debug.Log(plz.name + " is overlapping a previous room");
                     //return false;
                     roomCheck = false;
                 }
                 else
                 {
-                    Debug.Log("Safe: " + plz.name);
+                    //Debug.Log("Safe: " + plz.name);
                 }
                 //check if room intersect, if so regen level ?                   
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
@@ -246,14 +252,14 @@ public class LevelGeneration : MonoBehaviour
         playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
 
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
-        currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);   //makes list biome specific                                                                                       //scale level difficulty
+        currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);                                                                               //scale level difficulty
         desiredLevelDifficulty = ScaleDifficulty();
         while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)
         {
             genTest = InstantiateValidRoom(currentListOptions);
             if (genTest == false)
             {
-                Debug.Log("FALSE LEVEL RETURNED (room)");
+                //Debug.Log("FALSE LEVEL RETURNED (room)");
                 genTest = false;
                 yield break;
             }
@@ -261,10 +267,6 @@ public class LevelGeneration : MonoBehaviour
         if (genTest == true)
         {
             genTest = InstantiateEndRoom(endRoom);
-        }
-        if (genTest == true)
-        {
-            Debug.Log("TRUUUE LEVEL RETURNED (room)");
         }
         yield return null;
     }
@@ -295,6 +297,13 @@ public class LevelGeneration : MonoBehaviour
             {
                 levelBiomesList.Add(DroseraGlobalEnums.Biome.Desert);
             }
+        }
+    }
+    private void SetToJungleBiomes()        //for playtesting purposes; will be deleted after Alpha.
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            levelBiomesList.Add(DroseraGlobalEnums.Biome.Jungle);
         }
     }
     private List<GameObject> getBiomeSpecificList(List<GameObject> overallList, int currentLevel)
