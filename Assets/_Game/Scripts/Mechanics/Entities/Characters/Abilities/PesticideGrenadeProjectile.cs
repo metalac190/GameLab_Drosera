@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Playables;
 
 public class PesticideGrenadeProjectile : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class PesticideGrenadeProjectile : MonoBehaviour
     [SerializeField] float _explosionDelay = .2f;
     [SerializeField] float _explosionRadius = 5f;
     [SerializeField] GameObject _pesticideHitbox;
+
+    [SerializeField] GameObject _vfx;
 
     Rigidbody _rb;
 
@@ -44,6 +47,20 @@ public class PesticideGrenadeProjectile : MonoBehaviour
         scale.z = _explosionRadius;
         hitbox.transform.localScale = scale;
 
+        GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
+        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        gameObject.GetComponent<SphereCollider>().enabled = false;
+
+        StartCoroutine(ClearVFX(vfx));
+    }
+
+    IEnumerator ClearVFX(GameObject vfx)
+    {
+        PlayableDirector director = vfx.GetComponentInChildren<PlayableDirector>();
+
+        yield return new WaitForSeconds((float)director.duration);
+
+        Destroy(vfx);
         Destroy(gameObject);
     }
 }
