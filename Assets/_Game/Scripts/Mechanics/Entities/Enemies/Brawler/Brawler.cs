@@ -30,16 +30,25 @@ public class Brawler : EnemyBase {
         base.Awake();
 
         GetWaypoints();
+        // If no waypoints are set - set temp ones
+        if(waypoints.Count == 0) {
+            AddWaypoint();
+            AddWaypoint();
+            //Debug.LogError(gameObject.name + " in " + transform.parent.parent.name + " has no waypoints.");
+
+            int i = 1;
+            foreach(GameObject waypoint in waypoints) {
+                waypoint.transform.position = transform.position + new Vector3(i++, 0, 0);
+            }
+        }
+        // Set waypoint positions
         foreach(GameObject waypoint in waypoints)
-           waypointPositions.Add(waypoint.transform.position);
-        currentWaypoint = 0;
+            waypointPositions.Add(waypoint.transform.position);
+        currentWaypoint = 1;
     }
 
     protected override void Start() {
         base.Start();
-        GetComponentInChildren<Hitbox>(true).OnHit.AddListener(() => {
-            _brawlerFX.OnHit.Invoke();
-        });
     }
 
     // -------------------------------------------------------------------------------------------
@@ -189,4 +198,12 @@ public class Brawler : EnemyBase {
         waypoints.Clear();
     }
 
+    // -------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Plays swat SFX - called in the animator
+    /// </summary>
+    public void PlayAttackSound() {
+        _brawlerFX.OnHit.Invoke();
+    }
 }
