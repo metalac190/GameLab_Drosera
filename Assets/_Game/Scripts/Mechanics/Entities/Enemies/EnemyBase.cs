@@ -1,13 +1,14 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
 public abstract class EnemyBase : EntityBase {
 
-    public enum EnemyState { Dead, Passive, Aggressive, Attacking };
+    public enum EnemyState { Dead, Passive, Stunned, Aggressive, Attacking };
 
     [Header("Enemy State")]
     [SerializeField] protected bool aggressive;
@@ -31,31 +32,59 @@ public abstract class EnemyBase : EntityBase {
     protected float hyperseedHealthMultiplier = 0.7f;
     protected float hyperseedDamageMultiplier = 1.2f;
     protected float cooldownTimer; // Timer for attack cooldowns
+    [HideInInspector] public bool attackDone;
 
     // -------------------------------------------------------------------------------------------
 
     protected override void Awake() {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
-        spawnPosition = transform.position;
+        _agent.speed = _moveSpeed;
 
-        currentState = EnemyState.Passive;
+        spawnPosition = transform.position;
     }
 
     protected override void Start() {
         base.Start();
 
-        currentBehavior = StartCoroutine(Idle());
+        // Add turn aggressive listeners
+        TurnAggressive.AddListener(() => {
+            TurnAggressiveWrapper(false);
+        });
+        TurnAggressiveHyperseed.AddListener(() => {
+            TurnAggressiveWrapper(true);
+        });
+        // Aggro scurriers when damage is taken
+        OnTakeDamage.AddListener(() => {
+            GetComponentInParent<EnemyGroup>()?.OnEnemyDamage.Invoke();
+        });
+        // Death Event
+        OnDeath.AddListener(() => {
+            StopCoroutine(currentBehavior);
+            currentBehavior = StartCoroutine(Die());
+        });
+
+        if(currentState == EnemyState.Aggressive) {
+            currentBehavior = StartCoroutine(Idle());
+            TurnAggressive.Invoke();
+        } else
+            currentBehavior = StartCoroutine(Idle());
     }
 
     // -------------------------------------------------------------------------------------------
+    // Aggressive
 
     /// <summary>
     /// Non-IEnumerator wrapper function of TurnAggressive
     /// </summary>
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     public void TurnAggressiveWrapper(bool hyperseed = false) {
-        StartCoroutine(TurnAggressiveFunction(hyperseed));
+        // Don't restart aggressive behavior if already aggressive/attacking, UNLESS hyperseed is grabbed
+        if(currentState < EnemyState.Aggressive || (hyperseed && !this.hyperseed)) {
+            currentState = EnemyState.Aggressive;
+            StopCoroutine(currentBehavior);
+            currentBehavior = StartCoroutine(TurnAggressiveFunction(hyperseed));
+        }
     }
 
     /// <summary>
@@ -63,20 +92,32 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="hyperseed">Whether to run the hyperseed variant of TurnAggressive</param>
     protected virtual IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
-        aggressive = true;
-        isHealing = false;
+        // First time aggressive
+        if(!aggressive) {
+            // TODO - Turn whole group of enemies aggressive
 
-        // Stop in place
-        _agent.SetDestination(transform.position);
+            // Stop in place
+            _agent.SetDestination(transform.position);
 
-        // Hyperseed
-        if(hyperseed) {
+            // TODO - Turn aggressive animation
+        }
+
+        // First time Hyperseed
+        if(hyperseed && !this.hyperseed) {
             this.hyperseed = true;
             _health *= hyperseedHealthMultiplier;
             _maxHealth *= hyperseedHealthMultiplier;
+
+            Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
+            foreach(Hitbox hitbox in hitboxes) {
+                hitbox.baseDamage *= hyperseedDamageMultiplier;
+                hitbox.damage *= hyperseedDamageMultiplier;
+            }
         }
 
-        // TODO - Turn aggressive animation
+        // Set stats
+        aggressive = true;
+        isHealing = false;
 
         // Change behavior
         StopCoroutine(currentBehavior);
@@ -84,11 +125,27 @@ public abstract class EnemyBase : EntityBase {
         yield return null;
     }
 
+    // -------------------------------------------------------------------------------------------
+    // Targetting
+
     /// <summary>
     /// Determines which player the enemy should target
     /// </summary>
     protected virtual void FindTarget() {
+        // TODO - check player room
+        targetPlayer = PlayerBase.instance?.gameObject;
+    }
 
+    /// <summary>
+    /// Returns the vector towards the to targetted player. Returns Vector3.zero if no player is targetted
+    /// </summary>
+    protected Vector3 VectorToPlayer() {
+        if(targetPlayer == null)
+            return Vector3.zero;
+
+        Vector3 vector = targetPlayer.transform.position - transform.position;
+        vector.y = 0;
+        return vector;
     }
 
     // -------------------------------------------------------------------------------------------
@@ -99,6 +156,33 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     /// <param name="regen">Whether the enemy should be regenerating health.</param>
     protected abstract IEnumerator Idle(bool regen = false);
+
+    /// <summary>
+    /// Move function while the enemy is aggressive and has a target player
+    /// </summary>
+    /// <returns></returns>
+    protected abstract IEnumerator AggressiveMove();
+
+    /// <summary>
+    /// Attack function of the enemy
+    /// </summary>
+    protected abstract IEnumerator Attack();
+
+    /// <summary>
+    /// Death function of the enemy
+    /// </summary>
+    protected virtual IEnumerator Die() {
+        Destroy(gameObject);
+        yield return null;
+    }
+
+    // -------------------------------------------------------------------------------------------
+    // Behavior Coroutines - Other
+
+    /// <summary>
+    /// Checks whether the aggressive condition for the enemy is true
+    /// </summary>
+    protected virtual void CheckAggression() { }
 
     /// <summary>
     /// Heals the enemy over time, at a total rate of healRate / 1 sec, healing once every 0.1 seconds
@@ -115,22 +199,6 @@ public abstract class EnemyBase : EntityBase {
         }
     }
 
-    /// <summary>
-    /// Move function while the enemy is aggressive and has a target player
-    /// </summary>
-    /// <returns></returns>
-    protected abstract IEnumerator AggressiveMove();
-
-    /// <summary>
-    /// Attack function of the enemy
-    /// </summary>
-    protected abstract IEnumerator Attack();
-
-    /// <summary>
-    /// Death function of the enemy
-    /// </summary>
-    protected abstract IEnumerator Die();
-
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Control
 
@@ -138,6 +206,9 @@ public abstract class EnemyBase : EntityBase {
     /// Returns the enemy to its proper state (such as after being stunned or after a player re-enters a room)
     /// </summary>
     public virtual void ResetEnemy() {
+        _agent.autoBraking = true;
+        _agent.speed = _moveSpeed;
+
         if(currentState == EnemyState.Passive && !aggressive) // Don't re-start idle behavior if not aggressive
             return;
         StopCoroutine(currentBehavior);

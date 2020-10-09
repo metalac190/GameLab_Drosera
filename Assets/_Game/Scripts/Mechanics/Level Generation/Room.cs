@@ -11,6 +11,13 @@ public class Room : MonoBehaviour
     [SerializeField]
     private Transform exit;
     public Transform Exit { get => exit; set => exit = value; }
+    //[HideInInspector]
+    public bool overlapping = false;
+    //[HideInInspector]
+    public bool activeGenerating = true;
+    [SerializeField]
+    private DroseraGlobalEnums.Biome biome;
+    public DroseraGlobalEnums.Biome Biome { get => biome; set => biome = value; }
 
     [Header("Room Layouts")]
     [SerializeField]
@@ -44,6 +51,7 @@ public class Room : MonoBehaviour
     {
         foreach(Layout layout in layouts)
         {
+            layout.objects.RemoveAll(obj => obj == null);
             foreach(Transform obj in layout.objects)
             {
                 obj.gameObject.SetActive(false);

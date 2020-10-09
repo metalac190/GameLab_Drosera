@@ -10,7 +10,7 @@ public abstract class EntityBase : MonoBehaviour
     public UnityEvent OnHeal;
 
     [SerializeField] protected float _maxHealth;
-    protected float _health;
+    [SerializeField] protected float _health;
     [SerializeField] protected bool _canAct;
     [SerializeField] protected bool _canStun;
     [SerializeField] protected float _knockbackResistance;
@@ -26,7 +26,7 @@ public abstract class EntityBase : MonoBehaviour
     }
 
     protected virtual void Start() {
-
+        _health = _maxHealth;
     }
 
     public virtual IEnumerator Knockback(float force, Vector3 direction)
@@ -49,6 +49,7 @@ public abstract class EntityBase : MonoBehaviour
         if (_health <= 0)
         {
             OnDeath?.Invoke();
+            Destroy(gameObject);
         }
     }
 
