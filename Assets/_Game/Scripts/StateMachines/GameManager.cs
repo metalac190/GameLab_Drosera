@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] string mainMenuScene;
+    [SerializeField] string loseScene;
+    [SerializeField] string winScene;
     [SerializeField] GameObject[] Cutscenes;
     private LevelGeneration levelGen;
     private int currentCutscene;
@@ -63,7 +65,7 @@ public class GameManager : MonoBehaviour
         if(gameWon)
         {
             GameState = DroseraGlobalEnums.GameState.Menu;
-            UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuScene);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(winScene);
         }
 
         GameState = DroseraGlobalEnums.GameState.MainOne;
@@ -78,7 +80,7 @@ public class GameManager : MonoBehaviour
     {
         currentCutscene = 0;
         GameState = DroseraGlobalEnums.GameState.Menu;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuScene);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(loseScene);
     }
 
     public void GameWon()
