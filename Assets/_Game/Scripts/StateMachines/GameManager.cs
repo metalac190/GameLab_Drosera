@@ -5,7 +5,12 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] string mainMenuScene;
+    [SerializeField] string loseScene;
+    [SerializeField] string winScene;
+    [SerializeField] GameObject[] Cutscenes;
     private LevelGeneration levelGen;
+    private int currentCutscene;
+    private bool gameWon = false;
 
     public delegate void OnGameStateChangeHandler();
     public event OnGameStateChangeHandler OnStateChange;
@@ -44,40 +49,45 @@ public class GameManager : MonoBehaviour
     {
         GameState = DroseraGlobalEnums.GameState.CutScene;
         Time.timeScale = 0;
-        //Start Cut scene
+        //May change to play random cutscene
+        Instantiate(Cutscenes[currentCutscene++]);
+
+        if (!gameWon)
+        {
+            if (!levelGen)
+                levelGen = FindObjectOfType<LevelGeneration>();
+            levelGen.GenerateLevelTrigger();
+        }
     }
 
     public void CutSceneComplete()
     {
+        if(gameWon)
+        {
+            GameState = DroseraGlobalEnums.GameState.Menu;
+            UnityEngine.SceneManagement.SceneManager.LoadScene(winScene);
+        }
+
         GameState = DroseraGlobalEnums.GameState.MainOne;
         Time.timeScale = 1;
 
-        if (!levelGen)
-            levelGen = FindObjectOfType<LevelGeneration>();
-        levelGen.GenerateLevelTrigger();
+
 
     }
 
     //Likely set these up later to bring up a UI or go to their own scene.
     public void GameLost()
     {
+        currentCutscene = 0;
         GameState = DroseraGlobalEnums.GameState.Menu;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuScene);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(loseScene);
     }
 
     public void GameWon()
     {
-        GameState = DroseraGlobalEnums.GameState.Menu;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuScene);
-    }
-
-    //Testing, remove once intergrated with cutscene
-    private void Update()
-    {
-        if(gameState == DroseraGlobalEnums.GameState.CutScene && Input.anyKeyDown)
-        {
-            CutSceneComplete();
-        }
+        currentCutscene = 0;
+        gameWon = true;
+        LevelComplete();
     }
 
 }

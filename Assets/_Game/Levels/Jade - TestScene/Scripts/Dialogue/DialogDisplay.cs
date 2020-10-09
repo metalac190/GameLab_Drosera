@@ -95,5 +95,6 @@ public class DialogDisplay : MonoBehaviour
     public void DeactivateCutscene()
     {
         canvas.GetComponent<Canvas>().enabled = false;
+        GameManager.Instance.CutSceneComplete();
     }
 }

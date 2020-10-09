@@ -31,7 +31,7 @@ public class ChargeShot : MonoBehaviour
     private void Start()
     {
         _startScale = transform.localScale;
-        _hitbox.damage = 1f;
+        _hitbox.baseDamage = 1f;
         Destroy(gameObject, _lifespan);
     }
 
@@ -61,12 +61,12 @@ public class ChargeShot : MonoBehaviour
         else
         {
             _charge = _altFire.Charge;
-            transform.position = _altFire.transform.GetChild(0).transform.position;
-            transform.rotation = _altFire.transform.GetChild(0).transform.rotation;
+            transform.position = _altFire.GunEnd.position;
+            transform.rotation = _altFire.GunEnd.rotation;
             transform.localScale = _startScale + Vector3.one * _charge * _scaleMultiplier;
             if (_charge >= 1)
             {
-                _hitbox.damage = _altFire.Charge * _damageMultiplier;
+                _hitbox.baseDamage = _altFire.Charge * _damageMultiplier;
             }
         }
     }
@@ -78,7 +78,8 @@ public class ChargeShot : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (!(other.gameObject.layer == 11 || other.gameObject.layer == 13)) //hit anything but player and other hitboxes
+        int layer = other.gameObject.layer;
+        if (!(layer == 11 || layer == 13 || layer == 15)) //hit anything but player and other hitboxes
         {
             OnHit?.Invoke();
             Destroy(gameObject);
