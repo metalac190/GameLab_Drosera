@@ -20,9 +20,12 @@ public class GunnerGrenadeProjectile : MonoBehaviour
  
     Rigidbody _rb;
 
+    AudioScript _audioScript;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _audioScript = GetComponent<AudioScript>();
         Destroy(gameObject, 5f);
     }
 
@@ -61,6 +64,8 @@ public class GunnerGrenadeProjectile : MonoBehaviour
                 }
             }
         }
+
+        _audioScript.PlaySound(0);
 
         GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
         vfx.GetComponentInChildren<SphereCollider>().enabled = false;

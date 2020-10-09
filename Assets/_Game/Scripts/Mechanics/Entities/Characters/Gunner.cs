@@ -44,11 +44,18 @@ public class Gunner : PlayerBase
 
     protected override void Attacking()
     {
-        if ((shootButtonKey || shootButtonGamepad == 1) && !altFireButton)
+        if (ammo > 0)
         {
-            _primaryFire.Fire();
+            if ((shootButtonKey || shootButtonGamepad == 1) && !altFireButton)
+            {
+                _primaryFire.Fire();
+            }
         }
-        else if (altFireButton)
+        else
+        {
+            currentState = PlayerState.Reloading;
+        }
+        if (altFireButton)
         {
             _altFire.Fire();
         }
@@ -57,21 +64,14 @@ public class Gunner : PlayerBase
 
     protected override void Ability()
     {
-        if (ammo > 0)
+        if (!_altAbility)
         {
-            if (!_altAbility)
-            {
-                _grenade.Fire();
-            }
-            else
-            {
-                _dotGrenade.Fire();
-            }
-            currentState = PlayerState.Neutral;
+            _grenade.Fire();
         }
         else
         {
-            currentState = PlayerState.Reloading;
+            _dotGrenade.Fire();
         }
+        currentState = PlayerState.Neutral;
     }
 }

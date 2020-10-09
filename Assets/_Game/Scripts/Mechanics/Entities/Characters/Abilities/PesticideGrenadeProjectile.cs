@@ -20,9 +20,12 @@ public class PesticideGrenadeProjectile : MonoBehaviour
 
     Rigidbody _rb;
 
+    AudioScript _audioScript;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _audioScript = GetComponent<AudioScript>();
         Destroy(gameObject, 5f);
     }
 
@@ -52,6 +55,8 @@ public class PesticideGrenadeProjectile : MonoBehaviour
         scale.x = _explosionRadius;
         scale.z = _explosionRadius;
         hitbox.transform.localScale = scale;
+
+        _audioScript.PlaySound(0);
 
         GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
         vfx.GetComponentInChildren<SphereCollider>().enabled = false;

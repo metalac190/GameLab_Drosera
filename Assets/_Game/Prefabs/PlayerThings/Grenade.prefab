@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3726433464740617741}
   - component: {fileID: 6163887008326833929}
   - component: {fileID: 783178466072723850}
+  - component: {fileID: -7004556592965618519}
   m_Layer: 16
   m_Name: Grenade
   m_TagString: Untagged
@@ -132,3 +133,39 @@ MonoBehaviour:
   _explosionRadius: 5
   _damage: 30
   _vfx: {fileID: 2590075997011027166, guid: 33006a5b9552af54984ce36e66741f06, type: 3}
+--- !u!114 &-7004556592965618519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5623258210087282609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 1388270348251091532, guid: 90c5ae7f6ccba8d43a64591e5ef86311,
+    type: 3}
+  audioPrefabParent: {fileID: 0}
+  mixerTrack: {fileID: 5805718969178195049, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
+    type: 2}
+  audioClips:
+  - {fileID: 8300000, guid: a69161de658aff24e8e852bc690a4218, type: 3}
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
