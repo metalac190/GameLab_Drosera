@@ -11,6 +11,8 @@ public class GunnerAltFire : Ability
     Transform _gunEnd;
     Gunner _gunner;
 
+    AudioScript[] _audioScripts;
+
     [SerializeField] GameObject _projectile;
 
     bool _startCharging = false;
@@ -25,6 +27,7 @@ public class GunnerAltFire : Ability
     {
         _gunEnd = transform.GetChild(0).transform;
         _gunner = GetComponent<Gunner>();
+        _audioScripts = GetComponents<AudioScript>();
     }
 
     protected override void ActivateAbility()
@@ -34,6 +37,7 @@ public class GunnerAltFire : Ability
 
     IEnumerator ChargeShot()
     {
+        _audioScripts[2].PlaySound(0);
         Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
         while (_gunner.AltFireButton && _charge < _maxCharge)
         {
@@ -42,6 +46,8 @@ public class GunnerAltFire : Ability
         }
         StartCoroutine(CooldownTimer());
         OnFire?.Invoke();
+        _audioScripts[2].StopSound();
+        _audioScripts[1].PlaySound(0);
         _charge = 0;
     }
 }

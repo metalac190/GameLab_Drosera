@@ -40,7 +40,7 @@ public class Projectile : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         int layer = other.gameObject.layer;
-        if(!(layer == 11 || layer == 13 || layer == 15)) //hit anything but player and other hitboxes
+        if(!(layer == 11 || layer == 13 || layer == 15)) //hit anything but player, other hitboxes, and invisible walls
         {
             OnHit?.Invoke();
             Destroy(gameObject);
