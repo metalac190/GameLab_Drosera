@@ -16,6 +16,8 @@ public class PesticideGrenadeProjectile : MonoBehaviour
 
     [SerializeField] GameObject _vfx;
 
+    bool _exploded = false;
+
     Rigidbody _rb;
 
     private void Awake()
@@ -31,7 +33,11 @@ public class PesticideGrenadeProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        StartCoroutine(Explode());
+        if (!_exploded)
+        {
+            StartCoroutine(Explode());
+            _exploded = true;
+        }
     }
 
     IEnumerator Explode()
@@ -48,6 +54,7 @@ public class PesticideGrenadeProjectile : MonoBehaviour
         hitbox.transform.localScale = scale;
 
         GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
+        vfx.GetComponentInChildren<SphereCollider>().enabled = false;
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         gameObject.GetComponent<SphereCollider>().enabled = false;
 

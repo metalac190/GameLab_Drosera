@@ -44,22 +44,15 @@ public class Gunner : PlayerBase
 
     protected override void Attacking()
     {
-        if (ammo > 0) //have ammo
+        if ((shootButtonKey || shootButtonGamepad == 1) && !altFireButton)
         {
-            if ((shootButtonKey || shootButtonGamepad == 1) && !altFireButton)
-            {
-                _primaryFire.Fire();
-            }
-            else if (altFireButton)
-            {
-                _altFire.Fire();
-            }
-            currentState = PlayerState.Neutral;
+            _primaryFire.Fire();
         }
-        else //no ammo
+        else if (altFireButton)
         {
-            currentState = PlayerState.Reloading;
+            _altFire.Fire();
         }
+        currentState = PlayerState.Neutral;
     }
 
     protected override void Ability()

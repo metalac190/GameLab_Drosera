@@ -15,6 +15,8 @@ public class GunnerGrenadeProjectile : MonoBehaviour
     [SerializeField] int _damage = 30;
 
     [SerializeField] GameObject _vfx;
+
+    bool _exploded = false;
  
     Rigidbody _rb;
 
@@ -31,7 +33,11 @@ public class GunnerGrenadeProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        StartCoroutine(Explode());
+        if (!_exploded)
+        {
+            StartCoroutine(Explode());
+            _exploded = true;
+        }  
     }
 
     IEnumerator Explode()
@@ -57,6 +63,7 @@ public class GunnerGrenadeProjectile : MonoBehaviour
         }
 
         GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
+        vfx.GetComponentInChildren<SphereCollider>().enabled = false;
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         gameObject.GetComponent<SphereCollider>().enabled = false;
 
