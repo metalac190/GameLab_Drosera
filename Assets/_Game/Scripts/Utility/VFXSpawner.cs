@@ -14,13 +14,14 @@ public class VFXSpawner : MonoBehaviour {
         }
     }
 
-    public void SpawnVFX(GameObject effect, float lifetime, Vector3 position) {
-        SpawnVFX(effect, lifetime, position, Quaternion.identity);
+    public GameObject SpawnVFX(GameObject effect, float lifetime, Vector3 position) {
+        return SpawnVFX(effect, lifetime, position, Quaternion.identity);
     }
 
-    public void SpawnVFX(GameObject effect, float lifetime, Vector3 position, Quaternion rotation) {
+    public GameObject SpawnVFX(GameObject effect, float lifetime, Vector3 position, Quaternion rotation) {
         GameObject fx = Instantiate(effect, position, rotation);
         StartCoroutine(KillVFX(fx, lifetime));
+        return fx;
     }
 
     private IEnumerator KillVFX(GameObject effect, float lifetime) {
