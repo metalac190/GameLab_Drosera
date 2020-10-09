@@ -9,7 +9,7 @@ public class EnemyGroup : MonoBehaviour {
     public UnityEvent TurnGroupAggressive, TurnGroupPassive;
 
     private void Awake() {
-        EnemyBase[] enemies = GetComponentsInChildren<EnemyBase>();
+        EnemyBase[] enemies = GetComponentsInChildren<EnemyBase>(true);
         foreach(EnemyBase enemy in enemies) {
             // When hyperseed is grabbed - all enemies turn aggressive
             GrabHyperseed.AddListener(() => {
@@ -26,7 +26,7 @@ public class EnemyGroup : MonoBehaviour {
         }
 
         // Scurriers aggro in a group when one is damaged
-        enemies = GetComponentsInChildren<Scurrier>();
+        enemies = GetComponentsInChildren<Scurrier>(true);
         foreach(Scurrier enemy in enemies) {
             OnEnemyDamage.AddListener(() => {
                 enemy.TurnAggressive.Invoke();
@@ -34,7 +34,7 @@ public class EnemyGroup : MonoBehaviour {
         }
 
         // Brawlers all aggro when an attack/ability is used in the room
-        enemies = GetComponentsInChildren<Brawler>();
+        enemies = GetComponentsInChildren<Brawler>(true);
         foreach(Brawler enemy in enemies) {
             OnShotFired.AddListener(() => {
                 enemy.TurnAggressive.Invoke();
