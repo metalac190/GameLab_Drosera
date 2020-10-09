@@ -49,6 +49,7 @@ public class Gunner : PlayerBase
             if ((shootButtonKey || shootButtonGamepad == 1) && !altFireButton)
             {
                 _primaryFire.Fire();
+                currentState = PlayerState.Neutral;
             }
         }
         else
@@ -58,8 +59,8 @@ public class Gunner : PlayerBase
         if (altFireButton)
         {
             _altFire.Fire();
+            currentState = PlayerState.Neutral;
         }
-        currentState = PlayerState.Neutral;
     }
 
     protected override void Ability()
