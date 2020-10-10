@@ -21,8 +21,8 @@ public class GunnerGrenade : Ability
     protected override void ActivateAbility()
     {
         StartCoroutine(CooldownTimer());
-        OnFire?.Invoke();
         Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
         _gunner.Ammo -= _ammoCost;
+        OnFire?.Invoke();
     }
 }

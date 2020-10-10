@@ -16,6 +16,7 @@ public class GunnerAltFire : Ability
     bool _startCharging = false;
     float _charge = 0f;
     [SerializeField] float _chargeRate;
+    public float ChargeRate { get { return _chargeRate; } }
     [SerializeField] float _maxCharge;
 
     public float Charge { get { return _charge; } }

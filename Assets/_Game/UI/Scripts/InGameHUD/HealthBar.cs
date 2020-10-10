@@ -22,9 +22,18 @@ public class HealthBar : MonoBehaviour
     [SerializeField] Color[] healthBarColors;
     [SerializeField] Color[] healthBarBackgroundColors;
 
+    // references
+    PlayerBase player;
+
+    private void Awake()
+    {
+        player = FindObjectOfType<PlayerBase>();    
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        maxHealth = player.MaxHealth;
         currentHealth = maxHealth;
 
         // healthBarAmt = amount of hp before hp bar changes color
@@ -37,44 +46,33 @@ public class HealthBar : MonoBehaviour
         heartImage.color = healthBarBackgroundColors[numberOfHealthBars - 1];
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TakeDamage(3.5f);
-        }
+
     }
 
     // decrements player's radial hp bar in counterclockwise fashion
-    public void TakeDamage(float damage)
+    public void TakeDamage()
     {
-        if (currentHealth > 0)
+        currentHealth = player.Health;
+        maxHealth = player.MaxHealth;
+
+        healthBar.fillAmount = currentHealth / maxHealth;
+
+        if (currentHealth < maxHealthBarAmt * (numberOfHealthBars - 1))
         {
-            currentHealth -= damage;
+            numberOfHealthBars -= 1;
 
-            healthBarAmt -= damage;
-            healthBar.fillAmount = currentHealth / maxHealth;
-
-            // if damage causes healthBarAmt to be <= 0, change the hp bar's color
-            if (healthBarAmt <= 0)
+            if (numberOfHealthBars > 0)
             {
-                float remainder = Mathf.Abs(healthBarAmt);
-                healthBarAmt = maxHealthBarAmt - remainder;
-
-                numberOfHealthBars -= 1;
-
-                if (numberOfHealthBars > 0)
-                {
-                    healthBar.color = healthBarColors[numberOfHealthBars - 1];
-                    healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars - 1];
-                    heartImage.color = heartImage.color = healthBarBackgroundColors[numberOfHealthBars - 1];
-                }
-                else
-                {
-                    healthBar.enabled = false;
-                    this.enabled = false;
-                }
+                healthBar.color = healthBarColors[numberOfHealthBars - 1];
+                healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars - 1];
+                heartImage.color = heartImage.color = healthBarBackgroundColors[numberOfHealthBars - 1];
+            }
+            else
+            {
+                healthBar.enabled = false;
+                this.enabled = false;
             }
         }
     }
