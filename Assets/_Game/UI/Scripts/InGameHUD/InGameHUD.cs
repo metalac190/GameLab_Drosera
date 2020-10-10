@@ -96,7 +96,7 @@ public class InGameHUD : MonoBehaviour
         {
             if (secondaryAttackTimer < secondaryAttackCooldown)
             {
-                secondaryAttackTimer += Time.deltaTime * gunnerSecondaryFireHookup.ChargeRate;
+                secondaryAttackTimer += Time.deltaTime;
 
                 secondaryAttackImage.fillAmount = secondaryAttackTimer / secondaryAttackCooldown;
             }
@@ -173,7 +173,7 @@ public class InGameHUD : MonoBehaviour
         if (!secondaryAttackOnCooldown)
         {
             secondaryAttackTimer = 0;
-            secondaryAttackCooldown = playerHookup.AbilityCooldownTime;
+            secondaryAttackCooldown = gunnerSecondaryFireHookup.Cooldown;
 
             secondaryAttackImage.fillAmount = 0;
 
