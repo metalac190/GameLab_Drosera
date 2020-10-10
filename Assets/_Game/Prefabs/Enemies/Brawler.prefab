@@ -143,6 +143,7 @@ Transform:
   - {fileID: 10814319608189133}
   - {fileID: 5119427974865378941}
   - {fileID: 648680933978597605}
+  - {fileID: 6350247764212620510}
   m_Father: {fileID: 2876863880597785597}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -376,7 +377,18 @@ MonoBehaviour:
           m_CallState: 2
     Death:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 9194135548788530849}
+          m_MethodName: PlaySoundRandomized
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   attackRange: 4
   waypoints: []
   _brawlerFX:
@@ -473,6 +485,73 @@ MonoBehaviour:
   useClipsAsPlaylist: 0
   playlistClipDelay: 0
   randomize: 1
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
+--- !u!1 &4405069087321139642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6350247764212620510}
+  - component: {fileID: 9194135548788530849}
+  m_Layer: 0
+  m_Name: Death
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6350247764212620510
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4405069087321139642}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0.016846122, y: 1, z: -0.18252972}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3335743220793749498}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9194135548788530849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4405069087321139642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 1388270348251091532, guid: 90c5ae7f6ccba8d43a64591e5ef86311,
+    type: 3}
+  audioPrefabParent: {fileID: 2876863880597785587}
+  mixerTrack: {fileID: -8276249591831912807, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
+    type: 2}
+  audioClips:
+  - {fileID: 8300000, guid: 7c7800d0027bf1a4980f0d9deea3bc3f, type: 3}
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
