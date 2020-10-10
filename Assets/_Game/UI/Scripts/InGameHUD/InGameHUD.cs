@@ -134,7 +134,7 @@ public class InGameHUD : MonoBehaviour
     // call when player acquires the Hyperseed
     public void ShowPhaseTwoObjectiveText()
     {
-        objectiveText.text = "ESCAPE To THE DROPSHIP";
+        objectiveText.text = "ESCAPE TO THE DROPSHIP";
     }
 
     // bottom-right stuff
