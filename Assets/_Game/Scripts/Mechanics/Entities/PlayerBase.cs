@@ -34,6 +34,8 @@ public class PlayerBase : EntityBase
     public bool CycleTargetRight { get { return cycleTargetRight; } }
     public bool CycleTargetLeft { get { return cycleTargetLeft; } }
     public bool AltFireButton { get { return altFireButton; } }
+    public bool AdjustCameraRight { get { return adjustCameraRightKey; } }
+    public bool AdjustCameraLeft { get { return adjustCameraLeftKey; } }
 
     private CharacterController controller;
 
@@ -85,7 +87,7 @@ public class PlayerBase : EntityBase
     protected override void Start()
     {
         base.Start();
-        controller = gameObject.AddComponent<CharacterController>();
+        controller = gameObject.GetComponent<CharacterController>();
         currentState = PlayerState.Neutral;
     }
 
@@ -141,7 +143,7 @@ public class PlayerBase : EntityBase
             dodgeButtonKey = Input.GetKey(KeyCode.Space);
             shootButtonKey = Input.GetMouseButton(0);
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
-            adjustCameraRightKey = Input.GetKey(KeyCode.X);
+            adjustCameraRightKey = Input.GetKey(KeyCode.C);
         }
 
 

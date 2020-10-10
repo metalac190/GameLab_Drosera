@@ -13,16 +13,20 @@ public class GunnerPrimaryFire : Ability
     Transform _gunEnd;
     Gunner _gunner;
 
+    AudioScript[] _audioScripts;
+
     void Awake()
     {
         _gunEnd = transform.GetChild(0).transform;
         _gunner = GetComponent<Gunner>();
+        _audioScripts = GetComponents<AudioScript>();
     }
 
     protected override void ActivateAbility()
     {
         StartCoroutine(CooldownTimer());
         OnFire?.Invoke();
+        _audioScripts[0].PlaySound(0);
         Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
         _gunner.Ammo -= _ammoCost;
     }
