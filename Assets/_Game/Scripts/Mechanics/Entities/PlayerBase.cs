@@ -15,11 +15,13 @@ public class PlayerBase : EntityBase
     protected bool cycleTargetRight;
     protected bool cycleTargetLeft;
     protected bool reloadButton;
+    public bool ReloadButton { get { return reloadButton; } }
     protected bool abilityButton;
     protected bool interactButton;
     protected bool pauseButton;
     protected bool shootButtonKey;
     protected bool dodgeButtonKey;
+    public bool DodgeButtonKey { get { return dodgeButtonKey; } }
     protected bool adjustCameraLeftKey;
     protected bool adjustCameraRightKey;
     //triggers and dpad are treated as axis
@@ -29,6 +31,7 @@ public class PlayerBase : EntityBase
     //gunner specific
     protected bool altFireButton;
     protected bool swapAbilityButton;
+    public bool SwapAbilityButton { get { return swapAbilityButton; } }
 
     public bool AimToggle { get { return aimToggle; } }
     public bool CycleTargetRight { get { return cycleTargetRight; } }
@@ -48,15 +51,19 @@ public class PlayerBase : EntityBase
 
     [SerializeField]
     protected float dodgeCooldownTime = 2.0f;
+    public float DodgeCooldownTime { get { return dodgeCooldownTime; } }
     protected float dodgeCooldown = 0.0f;
+    public float DodgeCooldown { get { return dodgeCooldown; } }
     [SerializeField]
     protected float dodgeSpeed = 100;
     [SerializeField]
     protected float dodgeTime = .2f;
+    public float DodgeTime { get { return dodgeTime; } }
     protected float dodgeTimer = 0.0f;
 
     [SerializeField]
     protected float abilityCooldownTime = 6.0f;
+    public float AbilityCooldownTime { get { return abilityCooldownTime; } }
     protected float abilityCooldown = 0.0f;
 
     protected InteractableBase interactTarget;
@@ -77,6 +84,7 @@ public class PlayerBase : EntityBase
     [SerializeField]
     protected int heldAmmo = 20;
     public int Ammo { get { return ammo; } set { ammo = value; } }
+    public int HeldAmmo { get { return heldAmmo; } set { heldAmmo = value; } }
     [SerializeField]
     protected int ammoPerOre = 1;
     public int AmmoPerOre { get { return ammoPerOre; } }
@@ -310,8 +318,8 @@ public class PlayerBase : EntityBase
 
     public override void TakeDamage(float value)
     {
-        OnTakeDamage?.Invoke();
         _health -= value;
+        OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
             currentState = PlayerState.Dead;

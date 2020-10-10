@@ -25,9 +25,10 @@ public class GunnerPrimaryFire : Ability
     protected override void ActivateAbility()
     {
         StartCoroutine(CooldownTimer());
-        OnFire?.Invoke();
         _audioScripts[0].PlaySound(0);
         Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
         _gunner.Ammo -= _ammoCost;
+
+        OnFire?.Invoke();
     }
 }
