@@ -107,8 +107,6 @@ public abstract class EnemyBase : EntityBase {
     protected virtual IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
         // First time aggressive
         if(!aggressive) {
-            // TODO - Turn whole group of enemies aggressive
-
             // Stop in place
             _agent.SetDestination(transform.position);
 

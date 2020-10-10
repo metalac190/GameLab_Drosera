@@ -129,7 +129,8 @@ public class Scurrier : EnemyBase {
 
         GoreReset();
 
-        // TODO - random timer cooldown for gore
+        // Random timer cooldown for gore
+        cooldownTimerGore = Random.Range(0, 2.5f);
 
         // Play aggro SFX
         // TODO - make looping
