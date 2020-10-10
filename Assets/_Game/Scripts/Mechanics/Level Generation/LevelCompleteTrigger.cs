@@ -11,7 +11,9 @@ public class LevelCompleteTrigger : MonoBehaviour
         if(!levelGen)
             levelGen = FindObjectOfType<LevelGeneration>();
 
-        levelGen.GenerateLevelTrigger();
+        //Not technically a level compomplete, but will play first cutscene and gen the first level.
+        GameManager.Instance.LevelComplete();
+        //levelGen.GenerateLevelTrigger();
     }
 
     private void OnTriggerEnter(Collider other)

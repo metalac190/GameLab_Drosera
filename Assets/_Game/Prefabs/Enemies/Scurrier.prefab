@@ -185,6 +185,7 @@ Transform:
   - {fileID: 6946611107612014675}
   - {fileID: 6490448169518287951}
   - {fileID: 3550427727876682930}
+  - {fileID: 4677318616668049863}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
@@ -320,6 +321,23 @@ MonoBehaviour:
   stoppingDistance: 2.5
   healRate: 1
   attackDone: 0
+  _enemyFX:
+    burrow: {fileID: 0}
+    Alerted:
+      m_PersistentCalls:
+        m_Calls: []
+    IdleState:
+      m_PersistentCalls:
+        m_Calls: []
+    AlertState:
+      m_PersistentCalls:
+        m_Calls: []
+    DamageTaken:
+      m_PersistentCalls:
+        m_Calls: []
+    Death:
+      m_PersistentCalls:
+        m_Calls: []
   aggressiveRange: 5
   swatRange: 2.75
   goreRange: {x: 5, y: 15}
@@ -333,48 +351,24 @@ MonoBehaviour:
     goreTrail: {fileID: 8695151462048758644}
     goreImpact: {fileID: 4578276791442023941, guid: cd2866e5e25c68448935b5cb017f5fb7,
       type: 3}
-    OnSwatHit:
+    GoreWindUp:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 9175234210527329709}
-          m_MethodName: PlaySoundRandomized
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-    OnGoreTarget:
+        m_Calls: []
+    GoreAttack:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1777693870520114874}
-          m_MethodName: PlaySoundRandomized
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-    OnGoreHit:
+        m_Calls: []
+    GoreImpact:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5078440386144083869}
-          m_MethodName: PlaySoundRandomized
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+        m_Calls: []
+    GoreSkid:
+      m_PersistentCalls:
+        m_Calls: []
+    SwatAttack:
+      m_PersistentCalls:
+        m_Calls: []
+    NearbyAlerted:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!114 &5078440386144083869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,8 +510,7 @@ GameObject:
   - component: {fileID: 2876863882267249477}
   - component: {fileID: 2876863882267249472}
   - component: {fileID: 2876863882267249475}
-  - component: {fileID: 2876863882267249474}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Forward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -585,19 +578,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &2876863882267249474
-BoxCollider:
+--- !u!1 &3495862974511360551
+GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2876863882267249476}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4677318616668049863}
+  m_Layer: 0
+  m_Name: Sounds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4677318616668049863
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3495862974511360551}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2876863880597785597}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4603431980013641644
 GameObject:
   m_ObjectHideFlags: 0
@@ -612,7 +622,7 @@ GameObject:
   - component: {fileID: 3263770379597267728}
   - component: {fileID: 3168090897385323611}
   - component: {fileID: 5039418546517264992}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: Gore Crash Detector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -750,8 +760,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7091962172200911121}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.305}
-  m_LocalScale: {x: 1.1941842, y: 1.4923875, z: 1.4042}
+  m_LocalPosition: {x: 0, y: 0, z: 1.35}
+  m_LocalScale: {x: 1.1941842, y: 1.4923875, z: 1.5131928}
   m_Children: []
   m_Father: {fileID: 2876863880597785597}
   m_RootOrder: 2
