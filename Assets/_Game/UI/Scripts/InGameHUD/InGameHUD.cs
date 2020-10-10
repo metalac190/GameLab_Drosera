@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public class InGameHUD : MonoBehaviour
 {
@@ -120,6 +121,8 @@ public class InGameHUD : MonoBehaviour
                 dodgeOnCooldown = false;
 
                 dodgeImage.fillAmount = 1;
+
+                dodgeImage.DOFade(0, 1);
             }
         }
     }
@@ -186,6 +189,9 @@ public class InGameHUD : MonoBehaviour
             dodgeCooldown = playerHookup.DodgeCooldownTime + playerHookup.DodgeTime;
 
             dodgeImage.fillAmount = 0;
+
+            dodgeImage.DOComplete();
+            dodgeImage.DOFade(1, 0);
 
             dodgeOnCooldown = true;
         }
