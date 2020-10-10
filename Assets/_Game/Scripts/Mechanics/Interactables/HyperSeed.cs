@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class HyperSeed : InteractableBase
 {
+    [Header("Hyperseed")]
     [SerializeField] GameObject seedModel;
 
     public override bool Interact(PlayerBase player)
@@ -13,7 +14,7 @@ public class HyperSeed : InteractableBase
 
         seedModel.SetActive(false);
         Debug.Log(seedModel + " turned off.");
-
+        VFX();
         // When hyperseed is grabbed - all enemies turn aggressive
         EnemyGroup[] enemies = FindObjectsOfType<EnemyGroup>();
         foreach(EnemyGroup group in enemies)

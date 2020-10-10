@@ -6,6 +6,7 @@ using System;
 public abstract class Ability : MonoBehaviour
 {
     [SerializeField] protected float _cooldown;
+    public float Cooldown { get { return _cooldown; } }
     [SerializeField] public int _ammoCost;
     protected bool _onCooldown = false;
 
@@ -33,7 +34,7 @@ public abstract class Ability : MonoBehaviour
     {
         if (other.GetComponent<Door>() != null)
         {
-            _currentRoom = other.transform.root.gameObject.GetComponent<Room>();
+            _currentRoom = other.GetComponent<Door>().room;
             _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
         }
     }
