@@ -16,7 +16,7 @@ public class Brawler : EnemyBase {
 
     [System.Serializable]
     public class FX {
-        //[Header("VFX")]
+        [Header("VFX")]
 
         [Header("SFX")]
         public UnityEvent PummelWindUp;
