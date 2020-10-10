@@ -85,7 +85,7 @@ public class LevelGeneration : MonoBehaviour
             while (genTest == false)
             {
                 StartCoroutine(CreateLevelCoroutine(levelNumber, roomMasterPrefab.GetComponent<StoreRooms>().AllRooms));
-                yield return new WaitForSeconds(.02f);
+                yield return new WaitForSeconds(.001f);
             }
 
         }
@@ -177,12 +177,12 @@ public class LevelGeneration : MonoBehaviour
         plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
         if (plz.GetComponent<Room>().overlapping == true)
         {
-            Debug.Log(plz.name + " is overlapping a previous room");
+            //Debug.Log(plz.name + " is overlapping a previous room");
             roomCheck = false;
         }
         else
         {
-            Debug.Log("Safe: " + plz.name);
+            //Debug.Log("Safe: " + plz.name);
         }
         NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
         foreach (NavMeshSurface comp in navComponents)

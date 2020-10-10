@@ -8,7 +8,9 @@ using DG.Tweening;
 public class MenuManager : MonoBehaviour
 {
     [Header("Animations")]
+    [SerializeField] float initialFadeTime;
     [SerializeField] float fadeInTime;
+    public bool gameStart = false;
 
     [Header("Panels")]
     [SerializeField] GameObject mainMenuPanel;
@@ -42,9 +44,22 @@ public class MenuManager : MonoBehaviour
     {
         Image[] imagesInMainMenu = mainMenuPanel.GetComponentsInChildren<Image>();
 
-        foreach (Image i in imagesInMainMenu)
+        // TODO- move this to Game Manager (need DontDestroyOnLoad)
+        if (gameStart)
         {
-            i.DOFade(1, fadeInTime);
+            foreach (Image i in imagesInMainMenu)
+            {
+                i.DOFade(1, fadeInTime);
+            }
+        }
+        else
+        {
+            foreach (Image i in imagesInMainMenu)
+            {
+                i.DOFade(1, initialFadeTime);
+            }
+
+            gameStart = true;
         }
     }
 
@@ -79,6 +94,15 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    void ClearButtons()
+    {
+        for (int i = 0; i < buttonImages.Length; i++)
+        {
+            buttonImages[i].sprite = whiteText[i];
+            hoverlineImages[i].enabled = false;
+        }
+    }
+
     public void StartGame(string name)
     {
         SceneManager.LoadScene(name);
@@ -87,6 +111,9 @@ public class MenuManager : MonoBehaviour
     public void DisplayMainMenuPanel()
     {
         CloseAllPanels();
+
+        ClearButtons();
+
         mainMenuPanel.SetActive(true);
     }
 
