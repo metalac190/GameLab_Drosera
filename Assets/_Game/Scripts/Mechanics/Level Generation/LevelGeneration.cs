@@ -256,6 +256,11 @@ public class LevelGeneration : MonoBehaviour
         foreach(NavMeshSurface comp in GameObject.FindObjectsOfType<NavMeshSurface>()) {
             comp.BuildNavMesh();
         }
+        AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
+        foreach(AwesomeToon.AwesomeToonHelper toon in toons)
+        {
+            toon.GetLights();
+        }
     }
 
     private void DestroyInstantiatedRooms()
