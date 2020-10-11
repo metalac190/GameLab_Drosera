@@ -8,17 +8,16 @@ public class ElectricRoundExpandFire : MonoBehaviour
     private Rigidbody m_rigidbody;
     private ParticleSystem electricParticles;
     private TrailRenderer trail;
-    private Vector3 defaultStartScale = new Vector3(1, 1, 1);
-    private Vector3 defaultEndScale = new Vector3(5, 5, 2.5f);
-    [SerializeField] float speed = 10f;
-    [SerializeField] Vector3 fireDirection;
-    [SerializeField] float m_chargeTime = 2f;
-    [SerializeField] Vector3 m_startScale = new Vector3(1, 1, 1);
-    [SerializeField] Vector3 m_endScale = new Vector3(5, 5, 2.5f);
+    [SerializeField] private Vector3 defaultStartScale = new Vector3(1, 1, 1);
+    [SerializeField] private Vector3 defaultEndScale = new Vector3(5, 5, 2.5f);
+    //[SerializeField] float speed = 10f;
+    //[SerializeField] Vector3 fireDirection;
+    //[SerializeField] float m_chargeTime = 2f;
 
     ElectricRoundData startingData;
-    ElectricRoundData endDataDefault = new ElectricRoundData(0.38f, 0.23f, 500, new Vector2(0.3f,0.4f), new Vector3(1.8f,1.8f,2f), 0.55f, 0.6f);
-
+    [SerializeField] ElectricRoundData endDataDefault = new ElectricRoundData(0.38f, 0.23f, 500, new Vector2(0.3f,0.4f), new Vector3(1.8f,1.8f,2f), 0.55f, 0.6f);
+    
+    //used in Charge() to keep track of how far we've gotten in the lerp
     float lerpProgress = 0f;
     private void Awake()
     {
@@ -31,9 +30,10 @@ public class ElectricRoundExpandFire : MonoBehaviour
     {
         //make sure that the electric round isn't using gravity
         m_rigidbody.useGravity = false;
+        //get our starting data from our particle and trail systems
         startingData.radius = electricParticles.shape.radius;
         startingData.radiusThickness = electricParticles.shape.radiusThickness;
-        startingData.scale = electricParticles.shape.scale;
+        startingData.shapeScale = electricParticles.shape.scale;
         startingData.emissionRate = electricParticles.emission.rateOverTimeMultiplier;
         startingData.particleSize = new Vector2(electricParticles.main.startSize.constantMin, electricParticles.main.startSize.constantMax);
         startingData.trailLifetime = trail.time;
@@ -43,22 +43,23 @@ public class ElectricRoundExpandFire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            Charge(m_startScale, m_endScale, m_chargeTime);
-        }
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            if (fireDirection == Vector3.zero)
-            {
-                Fire(speed);
-            }
-            else
-            {
-                Fire(speed, fireDirection);
-            }
-        }
+        //if (Input.GetKey(KeyCode.Space))
+        //{
+        //    Charge(m_chargeTime);
+        //}
+        //if (Input.GetKeyUp(KeyCode.Space))
+        //{
+        //    if (fireDirection == Vector3.zero)
+        //    {
+        //        Fire(speed);
+        //    }
+        //    else
+        //    {
+        //        Fire(speed, fireDirection);
+        //    }
+        //}
     }
+
     #region overloadedChargeMethods
     /// <summary>
     /// a Charge method using default values for every part of the effect except for the charge time
@@ -168,7 +169,7 @@ public class ElectricRoundExpandFire : MonoBehaviour
         transform.localScale = Vector3.Lerp(startScale, endScale, lerpProgress);
         shapeModule.radius = Mathf.Lerp(startingData.radius, endData.radius, lerpProgress);
         shapeModule.radiusThickness = Mathf.Lerp(startingData.radiusThickness, endData.radiusThickness, lerpProgress);
-        shapeModule.scale = Vector3.Lerp(startingData.scale, endData.scale, lerpProgress);
+        shapeModule.scale = Vector3.Lerp(startingData.shapeScale, endData.shapeScale, lerpProgress);
         emissionModule.rateOverTimeMultiplier = Mathf.Lerp(startingData.emissionRate, endData.emissionRate, lerpProgress);
         //create a new MinMaxCurve for particle size and update that based on time
         Vector2 particleSize = Vector2.Lerp(startingData.particleSize, endData.particleSize, lerpProgress);

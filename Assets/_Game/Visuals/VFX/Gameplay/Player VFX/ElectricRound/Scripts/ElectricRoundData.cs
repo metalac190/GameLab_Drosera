@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[System.Serializable]
 public struct ElectricRoundData
 {
     /// <summary>
@@ -19,7 +20,7 @@ public struct ElectricRoundData
         particleSize = particleMinMax;
         this.trailLifetime = trailLifetime;
         this.trailWidth = trailWidth;
-        scale = new Vector3(scaleX, scaleY, scaleZ);
+        shapeScale = new Vector3(scaleX, scaleY, scaleZ);
     }
     /// <summary>
     /// 
@@ -36,13 +37,13 @@ public struct ElectricRoundData
         particleSize = particleMinMax;
         this.trailLifetime = trailLifetime;
         this.trailWidth = trailWidth;
-        this.scale = scale;
+        this.shapeScale = scale;
     }
+    public Vector2 particleSize;
+    public float emissionRate;
     public float radius;
     public float radiusThickness;
-    public float emissionRate;
-    public Vector2 particleSize;
+    public Vector3 shapeScale;
     public float trailLifetime;
     public float trailWidth;
-    public Vector3 scale;
 }
