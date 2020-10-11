@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     public delegate void OnGameStateChangeHandler();
     public event OnGameStateChangeHandler OnStateChange;
+    public UnityEvent LevelStart;
     private static GameManager _instance = null;
 
     private DroseraGlobalEnums.GameState gameState;
@@ -71,7 +73,7 @@ public class GameManager : MonoBehaviour
         GameState = DroseraGlobalEnums.GameState.MainOne;
         Time.timeScale = 1;
 
-
+        LevelStart.Invoke();
 
     }
 
