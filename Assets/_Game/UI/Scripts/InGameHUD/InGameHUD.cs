@@ -8,6 +8,9 @@ using DG.Tweening;
 public class InGameHUD : MonoBehaviour
 {
     [Header("Top Left UI")]
+    [SerializeField] Image objectiveImage;
+    [SerializeField] Sprite hyperSeedSprite;
+    [SerializeField] Sprite dropshipSprite;
     [SerializeField] TextMeshProUGUI objectiveText;
 
     [Header("Bottom Right UI")]
@@ -131,12 +134,18 @@ public class InGameHUD : MonoBehaviour
     // call at Start()
     public void ShowPhaseOneObjectiveText()
     {
+        objectiveImage.sprite = hyperSeedSprite;
+        objectiveImage.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
+
         objectiveText.text = "LOCATE THE HYPERSEED";
     }
 
     // call when player acquires the Hyperseed
     public void ShowPhaseTwoObjectiveText()
     {
+        objectiveImage.sprite = dropshipSprite;
+        objectiveImage.transform.localScale = new Vector3(1, 1, 1);
+
         objectiveText.text = "ESCAPE TO THE DROPSHIP";
     }
 

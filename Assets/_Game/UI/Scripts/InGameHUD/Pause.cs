@@ -10,6 +10,7 @@ public class Pause : MonoBehaviour
     [SerializeField] GameObject playerHUD;
     [SerializeField] GameObject inGameHUD;
     [SerializeField] GameObject pauseHUD;
+    [SerializeField] GameObject pauseBackgroundImage;
     [SerializeField] GameObject[] panels;
     bool isPaused = false;
 
@@ -63,6 +64,16 @@ public class Pause : MonoBehaviour
 
             panels[currentlySelected].SetActive(true);
             panels[previouslySelected].SetActive(false);
+
+            // extras
+            if (currentlySelected == 2)
+            {
+                pauseBackgroundImage.SetActive(false);
+            }
+            else
+            {
+                pauseBackgroundImage.SetActive(true);
+            }
         }
     }
 
