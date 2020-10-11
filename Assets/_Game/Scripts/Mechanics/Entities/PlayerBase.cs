@@ -100,6 +100,10 @@ public class PlayerBase : EntityBase
     GameObject dodgeVFX;
     GameObject tempDVFX;
 
+    [SerializeField]
+    protected float lowHealthSoundDelay = .6f;
+    protected float lowHealthSoundtimer = 0f;
+
     AudioScript[] audioScripts;
 
     protected override void Start()
@@ -195,12 +199,24 @@ public class PlayerBase : EntityBase
 
         if(_health/_maxHealth < lowHealthPercentage) //low health
         {
-            //low health sound
+            if (lowHealthSoundtimer == lowHealthSoundDelay)
+            {
+                audioScripts[9].PlaySound(0);
+                lowHealthSoundtimer = 0;
+            }
+            else
+            {
+                lowHealthSoundtimer += Time.deltaTime;
+            }
+        }
+        else
+        {
+            lowHealthSoundtimer = lowHealthSoundDelay;
         }
 
         if(aimToggle)
         {
-            //aim toggle sound
+            audioScripts[8].PlaySound(0);
         }
 
         //cooldowns
@@ -243,6 +259,7 @@ public class PlayerBase : EntityBase
             tempDVFX = Instantiate(dodgeVFX, transform.position, Quaternion.identity);
             ParticleSystem part = tempDVFX.GetComponent<ParticleSystem>();
             part.Play();
+            audioScripts[6].PlaySound(0);
             currentState = PlayerState.Dodging;
         }
         if (interactButton && Time.fixedTime > lastInteract + interactCooldown)
@@ -320,7 +337,6 @@ public class PlayerBase : EntityBase
         tempDVFX.transform.rotation = transform.rotation;
         if (dodgeTimer < dodgeTime)
         {
-            //dodge sound
             dodgeTimer += Time.deltaTime;
         }
         else
@@ -352,6 +368,7 @@ public class PlayerBase : EntityBase
         OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
+            audioScripts[7].PlaySound(0);
             currentState = PlayerState.Dead;
         }
         else
