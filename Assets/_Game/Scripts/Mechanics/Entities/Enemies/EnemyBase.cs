@@ -34,6 +34,18 @@ public abstract class EnemyBase : EntityBase {
     protected float cooldownTimer; // Timer for attack cooldowns
     [HideInInspector] public bool attackDone;
 
+    [System.Serializable]
+    public class EnemyFX {
+        [Header("VFX")]
+        public GameObject burrow; // TODO
+
+        [Header("SFX")]
+        public UnityEvent Alerted;
+        public UnityEvent IdleState, AlertState;
+        public UnityEvent DamageTaken, Death;
+    }
+    [Header("Enemy SFX & VFX")] [SerializeField] protected EnemyFX _enemyFX;
+
     // -------------------------------------------------------------------------------------------
 
     protected override void Awake() {
@@ -54,8 +66,9 @@ public abstract class EnemyBase : EntityBase {
         TurnAggressiveHyperseed.AddListener(() => {
             TurnAggressiveWrapper(true);
         });
-        // Aggro scurriers when damage is taken
+        // Aggro scurriers when damage is taken & play damaged SFX
         OnTakeDamage.AddListener(() => {
+            _enemyFX.DamageTaken.Invoke();
             GetComponentInParent<EnemyGroup>()?.OnEnemyDamage.Invoke();
         });
         // Death Event
@@ -94,12 +107,12 @@ public abstract class EnemyBase : EntityBase {
     protected virtual IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
         // First time aggressive
         if(!aggressive) {
-            // TODO - Turn whole group of enemies aggressive
-
             // Stop in place
             _agent.SetDestination(transform.position);
 
             // TODO - Turn aggressive animation
+
+            _enemyFX.Alerted.Invoke();
         }
 
         // First time Hyperseed
@@ -172,6 +185,7 @@ public abstract class EnemyBase : EntityBase {
     /// Death function of the enemy
     /// </summary>
     protected virtual IEnumerator Die() {
+        _enemyFX.Death.Invoke();
         Destroy(gameObject);
         yield return null;
     }
