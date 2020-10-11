@@ -748,6 +748,42 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3648316319348134496, guid: a66cb92702927d949bc2766b0d6ed884,
         type: 3}
+    - target: {fileID: 4329472047119372900, guid: 58d09ed9a66d4f24a930b856a14f09a2,
+        type: 3}
+      propertyPath: Cutscenes.Array.data[0]
+      value: 
+      objectReference: {fileID: 3648316319348134496, guid: a66cb92702927d949bc2766b0d6ed884,
+        type: 3}
+    - target: {fileID: 4329472047119372900, guid: 58d09ed9a66d4f24a930b856a14f09a2,
+        type: 3}
+      propertyPath: Cutscenes.Array.data[1]
+      value: 
+      objectReference: {fileID: 1948516812407123053, guid: 273f1204cd65c1a49a808abee7347ba2,
+        type: 3}
+    - target: {fileID: 4329472047119372900, guid: 58d09ed9a66d4f24a930b856a14f09a2,
+        type: 3}
+      propertyPath: Cutscenes.Array.data[2]
+      value: 
+      objectReference: {fileID: 3594988781533980074, guid: a488175f2f9d38a43b375ed5f9cc9301,
+        type: 3}
+    - target: {fileID: 4329472047119372900, guid: 58d09ed9a66d4f24a930b856a14f09a2,
+        type: 3}
+      propertyPath: Cutscenes.Array.data[3]
+      value: 
+      objectReference: {fileID: 6498930594973286332, guid: e7295ba12d4a7b7449ea15ad0c170102,
+        type: 3}
+    - target: {fileID: 4329472047119372900, guid: 58d09ed9a66d4f24a930b856a14f09a2,
+        type: 3}
+      propertyPath: Cutscenes.Array.data[4]
+      value: 
+      objectReference: {fileID: 6359768798104463756, guid: d939e74db992ea348b0cc5fcd81112ac,
+        type: 3}
+    - target: {fileID: 4329472047119372900, guid: 58d09ed9a66d4f24a930b856a14f09a2,
+        type: 3}
+      propertyPath: Cutscenes.Array.data[5]
+      value: 
+      objectReference: {fileID: 6708671996572984066, guid: 09ed7098566befc48bfa1cd514349ccb,
+        type: 3}
     - target: {fileID: 4329472047119372901, guid: 58d09ed9a66d4f24a930b856a14f09a2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1311,6 +1347,7 @@ GameObject:
   - component: {fileID: 1675372206}
   - component: {fileID: 1675372205}
   - component: {fileID: 1675372207}
+  - component: {fileID: 1675372208}
   m_Layer: 0
   m_Name: LevelCompleteTrigger
   m_TagString: Untagged
@@ -1358,6 +1395,57 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelGen: {fileID: 377401396}
+  LevelComplete:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1675372208}
+        m_MethodName: PlaySoundRandomized
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1675372208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1675372204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 1388270348251091532, guid: 2ccdb6555f0aeef46a9893e6864a675e,
+    type: 3}
+  audioPrefabParent: {fileID: 1675372204}
+  mixerTrack: {fileID: 512455774179500660, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
+    type: 2}
+  audioClips:
+  - {fileID: 8300000, guid: 92033200ca1860340a168740fd917bfe, type: 3}
+  - {fileID: 8300000, guid: 6f160b6271a05e74f9e7f3d7d9b78a45, type: 3}
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 1
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1001 &1721124006
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1379,6 +1467,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _cooldown
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691169520415266567, guid: 7057d607b89d4294295fadb3d497613e,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 5887565424136099728, guid: 7057d607b89d4294295fadb3d497613e,
         type: 3}
