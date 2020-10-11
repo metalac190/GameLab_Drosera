@@ -59,10 +59,10 @@ public class EnemyGroup : MonoBehaviour {
 
     private void AddDebugCalls() {
         OnShotFired.AddListener(() => {
-            Debug.Log("Shot fired detected");
+            Debug.Log("Shot fired detected in " + transform.parent.parent.name);
         });
         OnEnemyDamage.AddListener(() => {
-            Debug.Log("Enemy damaged detected");
+            Debug.Log("Enemy damaged detected in " + transform.parent.parent.name);
         });
     }
 
