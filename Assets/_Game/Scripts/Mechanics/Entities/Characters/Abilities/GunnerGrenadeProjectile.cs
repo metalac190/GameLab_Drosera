@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Playables;
 
 public class GunnerGrenadeProjectile : MonoBehaviour
 {
@@ -13,11 +14,18 @@ public class GunnerGrenadeProjectile : MonoBehaviour
     [SerializeField] float _explosionRadius = 5f;
     [SerializeField] int _damage = 30;
 
+    [SerializeField] GameObject _vfx;
+
+    bool _exploded = false;
+ 
     Rigidbody _rb;
+
+    AudioScript _audioScript;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _audioScript = GetComponent<AudioScript>();
         Destroy(gameObject, 5f);
     }
 
@@ -28,7 +36,11 @@ public class GunnerGrenadeProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        StartCoroutine(Explode());
+        if (!_exploded)
+        {
+            StartCoroutine(Explode());
+            _exploded = true;
+        }  
     }
 
     IEnumerator Explode()
@@ -53,6 +65,23 @@ public class GunnerGrenadeProjectile : MonoBehaviour
             }
         }
 
+        _audioScript.PlaySound(0);
+
+        GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
+        vfx.GetComponentInChildren<SphereCollider>().enabled = false;
+        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        gameObject.GetComponent<SphereCollider>().enabled = false;
+
+        StartCoroutine(ClearVFX(vfx));
+    }
+
+    IEnumerator ClearVFX(GameObject vfx)
+    {
+        PlayableDirector director = vfx.GetComponentInChildren<PlayableDirector>();
+
+        yield return new WaitForSeconds((float)director.duration);
+
+        Destroy(vfx);
         Destroy(gameObject);
     }
 }

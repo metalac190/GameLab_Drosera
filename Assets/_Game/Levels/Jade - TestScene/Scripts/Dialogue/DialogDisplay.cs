@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class DialogDisplay : MonoBehaviour
@@ -19,6 +20,8 @@ public class DialogDisplay : MonoBehaviour
     private SpeakerUI speakerUIRight;
 
     private int activateLineIndex = 0;
+
+   public UnityEvent DialogScroll;
 
     private void Start()
     {
@@ -71,6 +74,8 @@ public class DialogDisplay : MonoBehaviour
         {
             SetDialog(speakerUIRight, speakerUILeft, line.text);
         }
+
+        DialogScroll.Invoke();
     }
 
     public void SetDialog(SpeakerUI activeSpeakerUI, SpeakerUI inactiveSpeakerUI, string text)
@@ -84,7 +89,7 @@ public class DialogDisplay : MonoBehaviour
 
     IEnumerator EffectTypewriter(string text, SpeakerUI activeSpeakerUI)
     {
-        activeSpeakerUI.Dialog = "";
+       activeSpeakerUI.Dialog = "";
         foreach (char character in text.ToCharArray())
         {
             activeSpeakerUI.Dialog += character;
@@ -95,5 +100,6 @@ public class DialogDisplay : MonoBehaviour
     public void DeactivateCutscene()
     {
         canvas.GetComponent<Canvas>().enabled = false;
+        GameManager.Instance.CutSceneComplete();
     }
 }

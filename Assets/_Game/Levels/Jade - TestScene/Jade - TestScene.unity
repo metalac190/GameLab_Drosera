@@ -380,6 +380,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 81980850371468126, guid: bd2092342aabb0146b4896d02807f7a2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd2092342aabb0146b4896d02807f7a2, type: 3}
 --- !u!1 &739704159
@@ -1022,6 +1027,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CameraSystem
       objectReference: {fileID: 0}
+    - target: {fileID: 5918101260699688593, guid: f42684834300e434c8e0b495be9d286a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5918101260699688595, guid: f42684834300e434c8e0b495be9d286a,
         type: 3}
       propertyPath: player
@@ -1117,7 +1127,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1730809628}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 5, y: 1, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1296,6 +1306,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1947304170 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3648316319348134496, guid: a66cb92702927d949bc2766b0d6ed884,
+    type: 3}
+  m_PrefabInstance: {fileID: 3648316318927779913}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2023384335
 GameObject:
   m_ObjectHideFlags: 0
@@ -1334,6 +1350,42 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 3648316318927779913}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2099533714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099533712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 1388270348251091532, guid: 2ccdb6555f0aeef46a9893e6864a675e,
+    type: 3}
+  audioPrefabParent: {fileID: 1947304170}
+  mixerTrack: {fileID: 512455774179500660, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
+    type: 2}
+  audioClips:
+  - {fileID: 8300000, guid: 458b656a86129474eb8afc89088d2dcb, type: 3}
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1001 &1948516813972555123
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1508,6 +1560,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Cutscene 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3648316319348134496, guid: a66cb92702927d949bc2766b0d6ed884,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3648316319348134499, guid: a66cb92702927d949bc2766b0d6ed884,
         type: 3}
