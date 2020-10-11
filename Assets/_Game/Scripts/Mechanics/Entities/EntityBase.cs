@@ -17,6 +17,8 @@ public abstract class EntityBase : MonoBehaviour
     [SerializeField] protected float _cooldown;
     [SerializeField] protected float _moveSpeed;
 
+    [SerializeField] protected bool _isInvincible = false;
+
     [SerializeField] protected CharacterController _controller;
     [SerializeField] protected Animator _animator;
 
