@@ -8,7 +8,7 @@ public struct Line
 {
     [SerializeField] public Character character;
 
-    [TextArea(2, 5)]
+    [TextArea(5, 20)]
     [SerializeField] public string text;
 }
 
@@ -17,5 +17,6 @@ public class Conversation : ScriptableObject
 {
     [SerializeField] public Character speakerLeft;
     [SerializeField] public Character speakerRight;
+
     [SerializeField] public Line[] lines;
 }

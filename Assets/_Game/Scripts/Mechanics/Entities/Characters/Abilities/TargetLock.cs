@@ -7,9 +7,14 @@ public class TargetLock : MonoBehaviour
 {
     PlayerBase _player;
 
+    [Header("Targeting properties")]
     [SerializeField] float _maxRange = 20f;
     [SerializeField] float _turnSpeed = 5;
+
+    [Header("Set this to an empty GameObject")]
     [SerializeField] GameObject _aimingReticle;
+
+    [Header("Set this to the UI element for the lock-on")]
     [SerializeField] RectTransform _targetingReticle;
 
     [HideInInspector] public GameObject _currentTarget;
@@ -27,8 +32,9 @@ public class TargetLock : MonoBehaviour
         //get reference to player and set layer mask for enemies
         _player = GetComponent<PlayerBase>();
         _mask = LayerMask.GetMask("Enemy");
-        _currentTarget = _aimingReticle;
+        
         _targetingReticle.gameObject.SetActive(false);
+        _currentTarget = _aimingReticle;
     }
 
     private void Update()
@@ -41,6 +47,14 @@ public class TargetLock : MonoBehaviour
         else if (_player.AimToggle && _currentTarget != _aimingReticle)
         {
             _currentTarget = _aimingReticle;
+        }
+
+        if (_currentTarget == null)
+        {
+            if (!GetNearestEnemy())
+            {
+                _currentTarget = _aimingReticle;
+            }
         }
 
         if (_currentTarget != _aimingReticle && _stickRelease)
@@ -96,7 +110,7 @@ public class TargetLock : MonoBehaviour
     }
 
     //sets target to nearest enemy
-    void GetNearestEnemy()
+    bool GetNearestEnemy()
     {
         float minDistance = 9999f;
 
@@ -111,6 +125,12 @@ public class TargetLock : MonoBehaviour
                 minDistance = distance;
             }
         }
+
+        if (!(_currentTarget == _aimingReticle || _currentTarget == null))
+        {
+            return true;
+        }
+        return false;
     }
 
     void GetNextEnemy(float input)
@@ -264,15 +284,16 @@ public class TargetLock : MonoBehaviour
     void MouseAim(Vector3 mousePosition)
     {
         mousePosition.z = Mathf.Abs(Camera.main.transform.position.y - transform.position.y);
-        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+        //mousePosition = Camera.main.ScreenToWorldPoint(mousePosition); //Use this line for perspective camera
 
         Vector3 direction = mousePosition - Camera.main.transform.position;
         Plane xzPlane = new Plane(Vector3.up, new Vector3(0, 1, 0));
-        Ray ray = new Ray(Camera.main.transform.position, direction);
+        //Ray ray = new Ray(Camera.main.transform.position, direction);  //Use this line for perspective camera
+        Ray ray = Camera.main.ScreenPointToRay(mousePosition);           //Use this line for orthographic camera
         float distance;
 
         xzPlane.Raycast(ray, out distance);
-        Debug.DrawRay(Camera.main.transform.position, direction * 20);
+        //Debug.DrawRay(Camera.main.transform.position, direction * 20);
 
         Vector3 hitPoint = ray.GetPoint(distance);
 

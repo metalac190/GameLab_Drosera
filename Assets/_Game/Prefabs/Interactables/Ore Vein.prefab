@@ -1782,6 +1782,7 @@ GameObject:
   - component: {fileID: 5548126053832389664}
   - component: {fileID: 6940116153468930004}
   - component: {fileID: 6627407133943404589}
+  - component: {fileID: -7771559785701484726}
   m_Layer: 0
   m_Name: Ore Vein
   m_TagString: Untagged
@@ -1833,7 +1834,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.3
+  m_Radius: 2.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &6940116153468930004
 Animator:
@@ -1845,7 +1846,7 @@ Animator:
   m_GameObject: {fileID: 3403269703886353985}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b1ea6126330e4f442b98165d4378effc, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1868,8 +1869,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnInteract:
     m_PersistentCalls:
-      m_Calls: []
-  _maxUses: 1
+      m_Calls:
+      - m_Target: {fileID: -7771559785701484726}
+        m_MethodName: PlaySoundRandomized
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _maxUses: 5
   _orePrefabSizes:
   - {fileID: 4737955561405234265}
   - {fileID: 4765873966828107169}
@@ -1877,6 +1889,46 @@ MonoBehaviour:
   - {fileID: 632864901847418306}
   - {fileID: 945942966720984274}
   - {fileID: 7158079110821495616}
+  effect: {fileID: 1251720405301385970, guid: d8cc00a389c27f8499bd3a3f0aa85bf1, type: 3}
+  effectDuration: 1
+--- !u!114 &-7771559785701484726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3403269703886353985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 1388270348251091532, guid: 90c5ae7f6ccba8d43a64591e5ef86311,
+    type: 3}
+  audioPrefabParent: {fileID: 3403269703886353985}
+  mixerTrack: {fileID: 2737497072109447304, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
+    type: 2}
+  audioClips:
+  - {fileID: 8300000, guid: 07903aafc6238ff41ab5ba73b5937971, type: 3}
+  - {fileID: 8300000, guid: 48d6106a8e3e95d43bc2898c6d33fbb6, type: 3}
+  - {fileID: 8300000, guid: 567d49c1cd53e354596f1bbd4161682d, type: 3}
+  StartVolume: 0.717
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &3403269704299313261
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,68 +5,74 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-    public float currentHealth;
-    public float maxHealth;
+    [Header("Player Stats")]
+    [SerializeField] float currentHealth;
+    [SerializeField] float maxHealth;
 
-    public float currentHealthBarAmt;
-    public float maxHealthBarAmt;
+    [Header("Player HP Settings")]
+    [SerializeField] float healthBarAmt;
+    float maxHealthBarAmt;
     [Range(1, 5)]
-    public int numberOfHealthBars;
+    [SerializeField] int numberOfHealthBars;
 
-    public Image healthBar;
-    public Image healthBarBackground;
-    public Color[] healthBarColors;
-    public Color[] healthBarBackgroundColors;
+    [Header("References")]
+    [SerializeField] Image healthBar;
+    [SerializeField] Image healthBarBackground;
+    [SerializeField] Image heartImage;
+    [SerializeField] Color[] healthBarColors;
+    [SerializeField] Color[] healthBarBackgroundColors;
+
+    // references
+    PlayerBase player;
+
+    private void Awake()
+    {
+        player = FindObjectOfType<PlayerBase>();    
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        maxHealth = player.MaxHealth;
         currentHealth = maxHealth;
 
-        maxHealthBarAmt = maxHealth / numberOfHealthBars;
-        currentHealthBarAmt = maxHealthBarAmt;
+        // healthBarAmt = amount of hp before hp bar changes color
+        healthBarAmt = maxHealth / numberOfHealthBars;
+        maxHealthBarAmt = healthBarAmt;
 
+        // set health bar color to starting color
         healthBar.color = healthBarColors[numberOfHealthBars - 1];
         healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars - 1];
+        heartImage.color = healthBarBackgroundColors[numberOfHealthBars - 1];
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TakeDamageTest(2);
-        }
+
     }
 
     // decrements player's radial hp bar in counterclockwise fashion
-    public void TakeDamageTest(float damage)
+    public void TakeDamage()
     {
-        if (currentHealth > 0)
+        currentHealth = player.Health;
+        maxHealth = player.MaxHealth;
+
+        healthBar.fillAmount = currentHealth / maxHealth;
+
+        if (currentHealth < maxHealthBarAmt * (numberOfHealthBars - 1))
         {
-            currentHealth -= damage;
+            numberOfHealthBars -= 1;
 
-            currentHealthBarAmt -= damage;
-            healthBar.fillAmount = currentHealthBarAmt / maxHealthBarAmt;
-
-            if (currentHealthBarAmt < 0)
+            if (numberOfHealthBars > 0)
             {
-                float remainder = maxHealthBarAmt + currentHealthBarAmt;
-                currentHealthBarAmt = remainder;
-                healthBar.fillAmount = currentHealthBarAmt / maxHealthBarAmt;
-
-                numberOfHealthBars -= 1;
-
-                if (numberOfHealthBars > 0)
-                {
-                    healthBar.color = healthBarColors[numberOfHealthBars - 1];
-                    healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars - 1];
-                }
-                else
-                {
-                    healthBar.enabled = false;
-                    this.enabled = false;
-                }
+                healthBar.color = healthBarColors[numberOfHealthBars - 1];
+                healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars - 1];
+                heartImage.color = heartImage.color = healthBarBackgroundColors[numberOfHealthBars - 1];
+            }
+            else
+            {
+                healthBar.enabled = false;
+                this.enabled = false;
             }
         }
     }
