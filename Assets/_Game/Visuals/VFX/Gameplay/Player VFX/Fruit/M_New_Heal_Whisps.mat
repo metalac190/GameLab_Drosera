@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Heal_Whisps
-  m_Shader: {fileID: -6465566751694194690, guid: ac87216e13075d340b1ecfc6fc12ad26,
+  m_Name: M_New_Heal_Whisps
+  m_Shader: {fileID: -6465566751694194690, guid: 8bc796c61f676d545a1affac933b12cc,
     type: 3}
   m_ShaderKeywords: _BLENDMODE_ALPHA _SURFACE_TYPE_TRANSPARENT
   m_LightmapFlags: 4
@@ -87,6 +87,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_9B3440FE_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 460815a324d78214b93f69642811efa4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecularColorMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -114,6 +118,7 @@ Material:
     m_Floats:
     - Vector1_63B9153F: -6.94
     - Vector1_7B153B5B: -0.1
+    - Vector1_870DABC2: 0.48
     - _AORemapMax: 1
     - _AORemapMin: 0
     - _ATDistance: 1
@@ -212,6 +217,7 @@ Material:
     - _StencilWriteMaskDistortionVec: 4
     - _StencilWriteMaskGBuffer: 14
     - _StencilWriteMaskMV: 40
+    - _Step_Edge: 0.48
     - _SubsurfaceMask: 1
     - _SupportDecals: 1
     - _SurfaceType: 1
