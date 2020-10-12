@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class MenuManager : MonoBehaviour
 {
+    [Header("Animations")]
+    [SerializeField] float initialFadeTime;
+    [SerializeField] float fadeInTime;
+    public bool gameStart = false;
+
     [Header("Panels")]
     [SerializeField] GameObject mainMenuPanel;
     [SerializeField] GameObject instructionsPanel;
@@ -30,7 +36,39 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
+        FadeInMainMenuPanel();
         DisplayMainMenuPanel();
+    }
+
+    void FadeInMainMenuPanel()
+    {
+        Image[] imagesInMainMenu = mainMenuPanel.GetComponentsInChildren<Image>();
+
+        // TODO- move this to Game Manager (need DontDestroyOnLoad)
+        if (gameStart)
+        {
+            foreach (Image i in imagesInMainMenu)
+            {
+                i.DOFade(1, fadeInTime);
+            }
+        }
+        else
+        {
+            foreach (Image i in imagesInMainMenu)
+            {
+                i.DOFade(1, initialFadeTime);
+            }
+
+            gameStart = true;
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            DisplayMainMenuPanel();
+        }
     }
 
     // highlight menu button on hover
@@ -56,6 +94,15 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    void ClearButtons()
+    {
+        for (int i = 0; i < buttonImages.Length; i++)
+        {
+            buttonImages[i].sprite = whiteText[i];
+            hoverlineImages[i].enabled = false;
+        }
+    }
+
     public void StartGame(string name)
     {
         SceneManager.LoadScene(name);
@@ -64,6 +111,9 @@ public class MenuManager : MonoBehaviour
     public void DisplayMainMenuPanel()
     {
         CloseAllPanels();
+
+        ClearButtons();
+
         mainMenuPanel.SetActive(true);
     }
 

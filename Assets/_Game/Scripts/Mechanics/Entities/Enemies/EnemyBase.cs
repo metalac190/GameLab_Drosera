@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -31,6 +32,19 @@ public abstract class EnemyBase : EntityBase {
     protected float hyperseedHealthMultiplier = 0.7f;
     protected float hyperseedDamageMultiplier = 1.2f;
     protected float cooldownTimer; // Timer for attack cooldowns
+    [HideInInspector] public bool attackDone;
+
+    [System.Serializable]
+    public class EnemyFX {
+        [Header("VFX")]
+        public GameObject burrow; // TODO
+
+        [Header("SFX")]
+        public UnityEvent Alerted;
+        public UnityEvent IdleState, AlertState;
+        public UnityEvent DamageTaken, Death;
+    }
+    [Header("Enemy SFX & VFX")] [SerializeField] protected EnemyFX _enemyFX;
 
     // -------------------------------------------------------------------------------------------
 
@@ -52,8 +66,9 @@ public abstract class EnemyBase : EntityBase {
         TurnAggressiveHyperseed.AddListener(() => {
             TurnAggressiveWrapper(true);
         });
-        // Aggro scurriers when damage is taken
+        // Aggro scurriers when damage is taken & play damaged SFX
         OnTakeDamage.AddListener(() => {
+            _enemyFX.DamageTaken.Invoke();
             GetComponentInParent<EnemyGroup>()?.OnEnemyDamage.Invoke();
         });
         // Death Event
@@ -80,7 +95,8 @@ public abstract class EnemyBase : EntityBase {
         // Don't restart aggressive behavior if already aggressive/attacking, UNLESS hyperseed is grabbed
         if(currentState < EnemyState.Aggressive || (hyperseed && !this.hyperseed)) {
             currentState = EnemyState.Aggressive;
-            StopCoroutine(currentBehavior);
+            if(currentBehavior != null)
+                StopCoroutine(currentBehavior);
             currentBehavior = StartCoroutine(TurnAggressiveFunction(hyperseed));
         }
     }
@@ -92,12 +108,12 @@ public abstract class EnemyBase : EntityBase {
     protected virtual IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
         // First time aggressive
         if(!aggressive) {
-            // TODO - Turn whole group of enemies aggressive
-
             // Stop in place
             _agent.SetDestination(transform.position);
 
             // TODO - Turn aggressive animation
+
+            _enemyFX.Alerted.Invoke();
         }
 
         // First time Hyperseed
@@ -105,7 +121,12 @@ public abstract class EnemyBase : EntityBase {
             this.hyperseed = true;
             _health *= hyperseedHealthMultiplier;
             _maxHealth *= hyperseedHealthMultiplier;
-            // TODO - damage multiplier
+
+            Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
+            foreach(Hitbox hitbox in hitboxes) {
+                hitbox.baseDamage *= hyperseedDamageMultiplier;
+                hitbox.damage *= hyperseedDamageMultiplier;
+            }
         }
 
         // Set stats
@@ -113,7 +134,6 @@ public abstract class EnemyBase : EntityBase {
         isHealing = false;
 
         // Change behavior
-        StopCoroutine(currentBehavior);
         currentBehavior = StartCoroutine(AggressiveMove());
         yield return null;
     }
@@ -165,6 +185,7 @@ public abstract class EnemyBase : EntityBase {
     /// Death function of the enemy
     /// </summary>
     protected virtual IEnumerator Die() {
+        _enemyFX.Death.Invoke();
         Destroy(gameObject);
         yield return null;
     }

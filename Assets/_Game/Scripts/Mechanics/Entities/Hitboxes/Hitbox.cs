@@ -13,6 +13,8 @@ public class Hitbox : MonoBehaviour {
 
     protected List<GameObject> hitTargets = new List<GameObject>();
 
+    public UnityEvent OnHit;
+
     private void Awake() {
         damage = baseDamage;
     }
@@ -28,6 +30,7 @@ public class Hitbox : MonoBehaviour {
             (other.gameObject.layer == LayerMask.NameToLayer("BreakableWall") && canDamageWalls)) { // Hit wall
 
             // Deal damage
+            OnHit.Invoke();
             other.GetComponentInParent<EntityBase>()?.TakeDamage(damage);
             hitTargets.Add(other.gameObject);
         }
