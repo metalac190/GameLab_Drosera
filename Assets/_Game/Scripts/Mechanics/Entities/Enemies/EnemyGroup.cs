@@ -9,6 +9,8 @@ public class EnemyGroup : MonoBehaviour {
     public UnityEvent TurnGroupAggressive, TurnGroupPassive;
 
     private void Awake() {
+        AddDebugCalls();
+
         EnemyBase[] enemies = GetComponentsInChildren<EnemyBase>(true);
         foreach(EnemyBase enemy in enemies) {
             // When hyperseed is grabbed - all enemies turn aggressive
@@ -52,6 +54,15 @@ public class EnemyGroup : MonoBehaviour {
         });
         OnShotFired.AddListener(() => {
             OnShotFired.RemoveAllListeners();
+        });
+    }
+
+    private void AddDebugCalls() {
+        OnShotFired.AddListener(() => {
+            Debug.Log("Shot fired detected in " + transform.parent.parent.name);
+        });
+        OnEnemyDamage.AddListener(() => {
+            Debug.Log("Enemy damaged detected in " + transform.parent.parent.name);
         });
     }
 

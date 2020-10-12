@@ -10,7 +10,9 @@ public abstract class EntityBase : MonoBehaviour
     public UnityEvent OnHeal;
 
     [SerializeField] protected float _maxHealth;
+    public float MaxHealth { get => _maxHealth; }
     [SerializeField] protected float _health;
+    public float Health { get => _health; set => _health = value; }
     [SerializeField] protected bool _canAct;
     [SerializeField] protected bool _canStun;
     [SerializeField] protected float _knockbackResistance;
@@ -46,8 +48,8 @@ public abstract class EntityBase : MonoBehaviour
 
     public virtual void TakeDamage(float value)
     {
-        OnTakeDamage?.Invoke();
         _health -= value;
+        OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
             OnDeath?.Invoke();
@@ -57,12 +59,12 @@ public abstract class EntityBase : MonoBehaviour
 
     public virtual float TakeHealing(float value)
     {
-        OnHeal?.Invoke();
         _health += value;
         if (_health > _maxHealth)
         {
             _health = _maxHealth;
         }
+        OnHeal?.Invoke();
         return _health;
     }
 }

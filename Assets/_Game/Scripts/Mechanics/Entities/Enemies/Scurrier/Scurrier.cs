@@ -31,8 +31,10 @@ public class Scurrier : EnemyBase {
         public GameObject goreTrail, goreImpact;
 
         [Header("SFX")]
-        public UnityEvent OnSwatHit;
-        public UnityEvent OnGoreTarget, OnGoreHit;
+        public UnityEvent GoreWindUp;
+        public UnityEvent GoreAttack, GoreImpact, GoreSkid;
+        public UnityEvent SwatAttack;
+        public UnityEvent NearbyAlerted;
     }
     [Header("Scurrier VFX & SFX")] [SerializeField] private FX _scurrierFX;
 
@@ -49,8 +51,11 @@ public class Scurrier : EnemyBase {
     protected override void Start() {
         base.Start();
         goreHitbox.OnHit.AddListener(() => {
-            _scurrierFX.OnGoreHit.Invoke();
+            _scurrierFX.GoreImpact.Invoke();
             SpawnGoreHitVFX();
+        });
+        GetComponentInParent<EnemyGroup>()?.OnEnemyDamage.AddListener(() => {
+            _scurrierFX.NearbyAlerted.Invoke();
         });
     }
 
@@ -94,11 +99,14 @@ public class Scurrier : EnemyBase {
             while(_agent.remainingDistance > 1f)
                 yield return null;
 
-            // Wait at position for 2 sec
-            for(float i = 0; i < 2; i += Time.deltaTime) {
+            // Wait at position for 1 to 2.5 sec
+            for(float i = 0; i < Random.Range(1, 2.5f); i += Time.deltaTime) {
                 yield return null;
                 CheckAggression();
             }
+
+            // Play idle SFX
+            _enemyFX.IdleState.Invoke();
         }
     }
 
@@ -120,6 +128,13 @@ public class Scurrier : EnemyBase {
         attackDone = false;
 
         GoreReset();
+
+        // Random timer cooldown for gore
+        cooldownTimerGore = Random.Range(0, 2.5f);
+
+        // Play aggro SFX
+        // TODO - make looping
+        _enemyFX.AlertState.Invoke();
 
         while(true) {
             yield return null;
@@ -198,6 +213,7 @@ public class Scurrier : EnemyBase {
         Vector3 initialTargetPos = targetPlayer.transform.position;
         forward.y = 0;
 
+        _scurrierFX.GoreWindUp.Invoke();
         for(float i = 0; i < 0.5; i += Time.deltaTime) {
             // Check if player left line of sight or left max range - exit
             if(Physics.Raycast(transform.position, VectorToPlayer(), goreRange.y, LayerMask.GetMask("Terrain")) || // Raycast
@@ -224,7 +240,7 @@ public class Scurrier : EnemyBase {
         // TODO - begin charge animation
 
         // Charge
-        _scurrierFX.OnGoreTarget.Invoke();
+        _scurrierFX.GoreAttack.Invoke();
         crashDetector.gameObject.SetActive(true);
         _scurrierFX.goreTrail.SetActive(true);
         _animator.SetTrigger("Gore");
@@ -258,6 +274,7 @@ public class Scurrier : EnemyBase {
         goreHitbox.damage /= 2;
 
         // TODO - start skid animation
+        _scurrierFX.GoreSkid.Invoke();
 
         // Δx = (v + v_o)t/2 => t = 2(Δx)/(v + v_o) => v = 0, so t = 2(Δx)/v_0
         Vector3 baseVelocity = _agent.velocity;
@@ -351,7 +368,7 @@ public class Scurrier : EnemyBase {
     /// Plays swat SFX - called in the animator
     /// </summary>
     public void PlaySwatSound() {
-        _scurrierFX.OnSwatHit.Invoke();
+        _scurrierFX.SwatAttack.Invoke();
     }
 
     /// <summary>
