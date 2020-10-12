@@ -134,7 +134,6 @@ public abstract class EnemyBase : EntityBase {
         isHealing = false;
 
         // Change behavior
-        StopCoroutine(currentBehavior);
         currentBehavior = StartCoroutine(AggressiveMove());
         yield return null;
     }
