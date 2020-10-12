@@ -52,6 +52,7 @@ public class InGameHUD : MonoBehaviour
 
         gunnerPrimaryFireHookup = gunnerHookup.GetComponent<GunnerPrimaryFire>();
         gunnerSecondaryFireHookup = gunnerHookup.GetComponent<GunnerAltFire>();
+
     }
 
     private void Start()
@@ -62,17 +63,24 @@ public class InGameHUD : MonoBehaviour
         gunnerPrimaryFireHookup.OnFire.AddListener(UpdateAmmoText);
         gunnerSecondaryFireHookup.OnFire.AddListener(DisplaySecondaryAttackCooldown);
 
-        Invoke("WaitForHyperSeedToSpawn", 1);
         ShowPhaseOneObjectiveText();
 
         secondaryAttackCooldown = playerHookup.AbilityCooldownTime;
         dodgeCooldown = playerHookup.DodgeCooldownTime;
+
+        GameManager.Instance.OnStateChange += ChangePhaseText;
     }
 
-    void WaitForHyperSeedToSpawn()
+    void ChangePhaseText()
     {
-        hyperSeedHookup = FindObjectOfType<HyperSeed>();
-        hyperSeedHookup.OnInteract.AddListener(ShowPhaseTwoObjectiveText);
+        if(GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainOne)
+        {
+            ShowPhaseOneObjectiveText();
+        }
+        else if (GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainTwo)
+        {
+            ShowPhaseTwoObjectiveText();
+        }
     }
 
     private void Update()

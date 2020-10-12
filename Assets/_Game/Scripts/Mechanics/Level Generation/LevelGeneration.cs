@@ -147,12 +147,6 @@ public class LevelGeneration : MonoBehaviour
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
                 int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
                 plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-                //activate nav mesh (find compnenets in children and bake)
-                NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
-                foreach (NavMeshSurface comp in navComponents)
-                {
-                    comp.BuildNavMesh();
-                }
                 currentLevelDifficulty += plz.GetComponent<Room>().Layouts[randomLayout].difficulty;
                 break;
             }
@@ -183,11 +177,6 @@ public class LevelGeneration : MonoBehaviour
         else
         {
             //Debug.Log("Safe: " + plz.name);
-        }
-        NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
-        foreach (NavMeshSurface comp in navComponents)
-        {
-            comp.BuildNavMesh();
         }
         return roomCheck;
     }
@@ -244,11 +233,6 @@ public class LevelGeneration : MonoBehaviour
         currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
         int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
         dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-        NavMeshSurface[] navComponents = dropShipRoom.GetComponentsInChildren<NavMeshSurface>();
-        foreach (NavMeshSurface comp in navComponents)
-        {
-            comp.BuildNavMesh();
-        }
         playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
 
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
@@ -269,6 +253,14 @@ public class LevelGeneration : MonoBehaviour
             genTest = InstantiateEndRoom(endRoom);
         }
         yield return null;
+        foreach(NavMeshSurface comp in GameObject.FindObjectsOfType<NavMeshSurface>()) {
+            comp.BuildNavMesh();
+        }
+        AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
+        foreach(AwesomeToon.AwesomeToonHelper toon in toons)
+        {
+            toon.GetLights();
+        }
     }
 
     private void DestroyInstantiatedRooms()

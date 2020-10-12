@@ -27,7 +27,9 @@ public class OreVein : InteractableBase
         if (!base.Interact(player)) return false;
 
         //_animator.SetInteger("stage", _uses);
-        VFX();
+        //VFX();
+        if (effect != null)
+            VFXSpawner.vfx.SpawnVFX(effect, effectDuration, player.transform.position).transform.parent = player.transform;
         ChangeState();
         player.Ammo += player.AmmoPerOre;
         //player.Ammo = Mathf.Clamp(player.Ammo, 0 , player.MaxAmmo); ????

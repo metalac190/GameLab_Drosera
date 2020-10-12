@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2736626757280909143}
   - component: {fileID: 3094649793976146771}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Extras Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -6, y: 50}
-  m_SizeDelta: {x: 1646, y: 759}
+  m_AnchoredPosition: {x: 0.9, y: 1}
+  m_SizeDelta: {x: 1921, y: 1081}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2736626757280909143
 CanvasRenderer:
@@ -64,7 +64,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a29a8c12aa99ae649a378594446d9430, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4dea6fa9ea45556438afeeae4c3a695b, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -160,6 +160,7 @@ GameObject:
   - component: {fileID: 7363952317847329178}
   - component: {fileID: 7363952317847329179}
   - component: {fileID: 7363952317847329176}
+  - component: {fileID: 2023939179}
   m_Layer: 5
   m_Name: Quit Button
   m_TagString: Untagged
@@ -277,6 +278,39 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2023939179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952317847329158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 0}
+  audioPrefabParent: {fileID: 0}
+  mixerTrack: {fileID: 0}
+  audioClips: []
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &7363952317874600462
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,7 +550,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7363952318133416393
 RectTransform:
   m_ObjectHideFlags: 0
@@ -552,7 +586,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7363952318148867845
 RectTransform:
   m_ObjectHideFlags: 0
@@ -798,6 +832,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57737c6042d12da4fbd64b0017d6b518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectiveImage: {fileID: 7363952318830979525}
+  hyperSeedSprite: {fileID: 21300000, guid: 32a9c5c2a0151ae44a10d7eb6b512076, type: 3}
+  dropshipSprite: {fileID: 21300000, guid: 67013ef3fa60fe84a97dcefa95db0238, type: 3}
   objectiveText: {fileID: 7363952319480839971}
   currentAmmoText: {fileID: 7363952318700753363}
   maxAmmoText: {fileID: 7363952318978782806}
@@ -859,6 +896,7 @@ MonoBehaviour:
   playerHUD: {fileID: 0}
   inGameHUD: {fileID: 7363952318417649339}
   pauseHUD: {fileID: 7363952318770051219}
+  pauseBackgroundImage: {fileID: 7363952319414614189}
   panels:
   - {fileID: 7363952318148867842}
   - {fileID: 7363952318152637321}
@@ -941,6 +979,7 @@ GameObject:
   - component: {fileID: 7363952318366519875}
   - component: {fileID: 7363952318366519873}
   - component: {fileID: 7363952318366519872}
+  - component: {fileID: 2023814816}
   m_Layer: 5
   m_Name: Exit Game Text
   m_TagString: Untagged
@@ -1032,6 +1071,39 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &2023814816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952318366519886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 0}
+  audioPrefabParent: {fileID: 0}
+  mixerTrack: {fileID: 0}
+  audioClips: []
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &7363952318417649339
 GameObject:
   m_ObjectHideFlags: 0
@@ -1090,6 +1162,7 @@ GameObject:
   - component: {fileID: 7363952318609965163}
   - component: {fileID: 7363952318609965162}
   - component: {fileID: 7363952318609965160}
+  - component: {fileID: 1249480546}
   m_Layer: 5
   m_Name: Resume Text
   m_TagString: Untagged
@@ -1181,6 +1254,39 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1249480546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952318609965142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 0}
+  audioPrefabParent: {fileID: 0}
+  mixerTrack: {fileID: 0}
+  audioClips: []
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &7363952318700753361
 GameObject:
   m_ObjectHideFlags: 0
@@ -1415,7 +1521,7 @@ RectTransform:
   m_GameObject: {fileID: 7363952318830979523}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6454754, y: 0.6454754, z: 0.6454754}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 0.65}
   m_Children: []
   m_Father: {fileID: 7363952319581136392}
   m_RootOrder: 0
@@ -1704,6 +1810,7 @@ GameObject:
   - component: {fileID: 7363952319140827333}
   - component: {fileID: 7363952319140827332}
   - component: {fileID: 7363952319140827330}
+  - component: {fileID: 1876057211}
   m_Layer: 5
   m_Name: Settings Text
   m_TagString: Untagged
@@ -1795,6 +1902,39 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1876057211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952319140827328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 0}
+  audioPrefabParent: {fileID: 0}
+  mixerTrack: {fileID: 0}
+  audioClips: []
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &7363952319176792289
 GameObject:
   m_ObjectHideFlags: 0
@@ -1885,6 +2025,7 @@ GameObject:
   - component: {fileID: 7363952319250203889}
   - component: {fileID: 7363952319250203902}
   - component: {fileID: 7363952319250203903}
+  - component: {fileID: 279035142}
   m_Layer: 5
   m_Name: Menu Button
   m_TagString: Untagged
@@ -2002,6 +2143,39 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &279035142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952319250203901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 0}
+  audioPrefabParent: {fileID: 0}
+  mixerTrack: {fileID: 0}
+  audioClips: []
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &7363952319339703376
 GameObject:
   m_ObjectHideFlags: 0
@@ -2624,6 +2798,7 @@ GameObject:
   - component: {fileID: 7363952319642269221}
   - component: {fileID: 7363952319642269220}
   - component: {fileID: 7363952319642269218}
+  - component: {fileID: 1052264967}
   m_Layer: 5
   m_Name: Extras Text
   m_TagString: Untagged
@@ -2715,6 +2890,39 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1052264967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952319642269216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 0}
+  audioPrefabParent: {fileID: 0}
+  mixerTrack: {fileID: 0}
+  audioClips: []
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &7363952319723168443
 GameObject:
   m_ObjectHideFlags: 0
@@ -2958,6 +3166,7 @@ GameObject:
   - component: {fileID: 7363952319827011523}
   - component: {fileID: 7363952319827011522}
   - component: {fileID: 7363952319827011520}
+  - component: {fileID: 132396870}
   m_Layer: 5
   m_Name: Instructions Text
   m_TagString: Untagged
@@ -3049,6 +3258,39 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &132396870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952319827011534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 0}
+  audioPrefabParent: {fileID: 0}
+  mixerTrack: {fileID: 0}
+  audioClips: []
+  StartVolume: 1
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &7680742660578023899
 GameObject:
   m_ObjectHideFlags: 0

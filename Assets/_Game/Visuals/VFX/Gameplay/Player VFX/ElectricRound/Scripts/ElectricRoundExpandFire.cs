@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(Rigidbody))]
 public class ElectricRoundExpandFire : MonoBehaviour
 {
     private Rigidbody m_rigidbody;
@@ -21,7 +21,7 @@ public class ElectricRoundExpandFire : MonoBehaviour
     float lerpProgress = 0f;
     private void Awake()
     {
-        m_rigidbody = GetComponent<Rigidbody>();
+        m_rigidbody = GetComponentInParent<Rigidbody>();
         electricParticles = GetComponentInChildren<ParticleSystem>();
         trail = GetComponentInChildren<TrailRenderer>();
     }
