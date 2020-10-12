@@ -53,6 +53,7 @@ public class ChargeShot : MonoBehaviour
     {
         if (!_isCharging)
         {
+            GetComponent<SphereCollider>().enabled = true;
             if (_charge < .2)
             {
                 //_rb.MovePosition(transform.position + transform.forward * 0.2f * Time.deltaTime * _moveSpeed);
