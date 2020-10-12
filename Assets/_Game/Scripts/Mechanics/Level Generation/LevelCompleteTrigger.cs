@@ -43,7 +43,8 @@ public class LevelCompleteTrigger : MonoBehaviour
     {
         if (GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainOne)
         {
-            directLight.SetActive(true);
+            if(directLight != null)
+                directLight.SetActive(true);
         }
     }
 }
