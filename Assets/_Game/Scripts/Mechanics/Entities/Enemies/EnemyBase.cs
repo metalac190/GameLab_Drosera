@@ -95,7 +95,8 @@ public abstract class EnemyBase : EntityBase {
         // Don't restart aggressive behavior if already aggressive/attacking, UNLESS hyperseed is grabbed
         if(currentState < EnemyState.Aggressive || (hyperseed && !this.hyperseed)) {
             currentState = EnemyState.Aggressive;
-            StopCoroutine(currentBehavior);
+            if(currentBehavior != null)
+                StopCoroutine(currentBehavior);
             currentBehavior = StartCoroutine(TurnAggressiveFunction(hyperseed));
         }
     }
