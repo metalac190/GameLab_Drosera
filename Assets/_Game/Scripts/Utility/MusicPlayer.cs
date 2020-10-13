@@ -28,14 +28,13 @@ public class MusicPlayer : MonoBehaviour
         {
             _instance = this;
             DontDestroyOnLoad(this.gameObject);
+            audioSource = GetComponent<AudioSource>();
+            audioSource.clip = menuMusic;
+            audioSource.Play();
+
+            gm = GameManager.Instance;
+            gm.OnStateChange += HandleOnStateChange;
         }
-
-        audioSource = GetComponent<AudioSource>();
-        audioSource.clip = menuMusic;
-        audioSource.Play();
-
-        gm = GameManager.Instance;
-        gm.OnStateChange += HandleOnStateChange;
     }
 
     public void HandleOnStateChange()

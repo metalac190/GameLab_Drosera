@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(BoxCollider))]
 public class Door : MonoBehaviour
@@ -12,6 +13,9 @@ public class Door : MonoBehaviour
     Mesh arrowGizmo;
     [SerializeField]
     type doorType = type.entrance;
+    [SerializeField]
+    Text _text = null;
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -28,5 +32,14 @@ public class Door : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.DrawMesh(arrowGizmo, transform.position, transform.rotation);
+    }
+
+    private void Awake()
+    {
+        if (_text != null)
+        {
+            if (doorType == type.exit)
+                _text.gameObject.SetActive(false);
+        }
     }
 }
