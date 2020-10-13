@@ -252,7 +252,6 @@ public class LevelGeneration : MonoBehaviour
         {
             genTest = InstantiateEndRoom(endRoom);
         }
-        yield return null;
         foreach(NavMeshSurface comp in GameObject.FindObjectsOfType<NavMeshSurface>()) {
             comp.BuildNavMesh();
         }
@@ -261,6 +260,7 @@ public class LevelGeneration : MonoBehaviour
         {
             toon.GetLights();
         }
+        yield return null;
     }
 
     private void DestroyInstantiatedRooms()
