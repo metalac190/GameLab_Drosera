@@ -173,7 +173,7 @@ public class PlayerBase : EntityBase
         //movement
         zMove = Input.GetAxis("Vertical") * Camera.main.transform.forward;
         xMove = Input.GetAxis("Horizontal") * Camera.main.transform.right;
-        movement = zMove + xMove;
+        movement = (zMove + xMove).normalized * Mathf.Max(zMove.magnitude, xMove.magnitude);
 
         if (currentState != PlayerState.Dodging)
         {
