@@ -38,6 +38,7 @@ public abstract class EnemyBase : EntityBase {
     public class EnemyFX {
         [Header("VFX")]
         public GameObject burrow; // TODO
+        public GameObject deathEffect;
 
         [Header("SFX")]
         public UnityEvent Alerted;
@@ -186,6 +187,7 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     protected virtual IEnumerator Die() {
         _enemyFX.Death.Invoke();
+        VFXSpawner.vfx.SpawnVFX(_enemyFX.deathEffect, 1f, transform.position); //Putting this here for now. Bill feel free to set this up how you want to later.
         Destroy(gameObject);
         yield return null;
     }
