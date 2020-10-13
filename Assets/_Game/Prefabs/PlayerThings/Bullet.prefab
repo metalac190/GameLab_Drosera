@@ -74,6 +74,8 @@ MonoBehaviour:
       m_Calls: []
   moveSpeed: 50
   lifespan: 5
+  effect: {fileID: 5972512543509272906, guid: d2f9efeb8ffd52b41aaa5d3b8b98cc0e, type: 3}
+  effectDuration: 0.5
 --- !u!114 &75490375910435921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,7 +94,18 @@ MonoBehaviour:
   hitboxTarget: 1
   OnHit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7444641546036505425}
+        m_MethodName: SpawnHitVFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!54 &2186313018721941652
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5972512543509272904}
   - component: {fileID: 5972512543509272905}
   m_Layer: 0
-  m_Name: PS_ShockwaveBaseV9
+  m_Name: PS_ShockwaveBase
   m_TagString: Untagged
   m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -284,7 +284,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.8
+      scalar: 0.4
       minScalar: 0.01
       maxCurve:
         serializedVersion: 2
@@ -337,7 +337,7 @@ ParticleSystem:
     startSizeY:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 1.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -601,7 +601,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     maxNumParticles: 1000
-    size3D: 0
+    size3D: 1
     rotation3D: 1
     gravityModifier:
       serializedVersion: 2
@@ -3935,7 +3935,7 @@ ParticleSystem:
         m_RotationOrder: 4
     maxLights: 20
   TrailModule:
-    enabled: 0
+    enabled: 1
     mode: 0
     ratio: 1
     lifetime:
@@ -4069,56 +4069,29 @@ ParticleSystem:
     widthOverTrail:
       serializedVersion: 2
       minMaxState: 1
-      scalar: 30
+      scalar: 0.2
       minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0
-          inSlope: 0
-          outSlope: 0.8329833
-          tangentMode: 1
-          weightedMode: 2
-          inWeight: 0.33333334
-          outWeight: 0.37471473
-        - serializedVersion: 3
-          time: 0.34999296
           value: 1
-          inSlope: 7.0076914
-          outSlope: Infinity
-          tangentMode: 97
-          weightedMode: 1
-          inWeight: 0.16274677
-          outWeight: 0.14400093
-        - serializedVersion: 3
-          time: 0.5327868
-          value: 1
-          inSlope: -7.1764655
-          outSlope: -7.1764655
+          inSlope: -2
+          outSlope: -2
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.14837503
-        - serializedVersion: 3
-          time: 0.78861105
-          value: 0
-          inSlope: -1.1820527
-          outSlope: -1.1820527
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.43432054
-          outWeight: 0.33333334
+          inWeight: 0
+          outWeight: 0
         - serializedVersion: 3
           time: 1
           value: 0
-          inSlope: Infinity
-          outSlope: -0.40994632
-          tangentMode: 7
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.3996977
-          outWeight: 0.33333334
+          inWeight: 0
+          outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
@@ -4794,7 +4767,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 02b19884427c3d34c89368324a019915, type: 2}
+  - {fileID: 2100000, guid: 3fb80c3f1794b294ab29ebd6c0a7bca5, type: 2}
   - {fileID: 2100000, guid: 472b5019578bf934f89545770eabb0d3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
