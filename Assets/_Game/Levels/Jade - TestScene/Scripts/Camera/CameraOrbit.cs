@@ -7,14 +7,21 @@ public class CameraOrbit : MonoBehaviour
     [SerializeField] Transform cameraTarget;
     [SerializeField] float rotateSpeed = 30.0f;
 
+    PlayerBase player;
+
+    private void Start()
+    {
+        player = PlayerBase.instance;
+    }
+
     void LateUpdate()
     {
-        if (Input.GetKey(KeyCode.X))
+        if (player.AdjustCameraRight)
         {
             transform.RotateAround(cameraTarget.position, Vector3.up, rotateSpeed * Time.deltaTime);
         }
 
-        if (Input.GetKey(KeyCode.Z))
+        if (player.AdjustCameraLeft)
         {
             transform.RotateAround(cameraTarget.position, -Vector3.up, rotateSpeed * Time.deltaTime);
         }

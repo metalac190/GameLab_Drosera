@@ -5,6 +5,11 @@ using UnityEngine.AI;
 
 public class LevelGeneration : MonoBehaviour
 {
+    /// <summary>
+    /// Things to be added after alpha
+    ///     re-add biome randomization --> uncomment randomize biome and the specification function
+    ///     
+    /// </summary>
     [SerializeField]
     private int levelNumber = 0;
     public int LevelNumber { get => levelNumber; }
@@ -55,16 +60,17 @@ public class LevelGeneration : MonoBehaviour
     void Start() //on scene start, generate level
     {
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        randomizeBiomes();
+        //randomizeBiomes();    //readd after alpha
+        SetToJungleBiomes();    //sets all biomes to jungle for alpha playtesting purposes; delete after alpha
     }
-    /*
+    
     private void Update()
     {
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown(KeyCode.F1))
         {
             GenerateLevelTrigger();
         }
-    }*/
+    }
     
     public void GenerateLevelTrigger()
     {
@@ -79,7 +85,7 @@ public class LevelGeneration : MonoBehaviour
             while (genTest == false)
             {
                 StartCoroutine(CreateLevelCoroutine(levelNumber, roomMasterPrefab.GetComponent<StoreRooms>().AllRooms));
-                yield return new WaitForSeconds(.02f);
+                yield return new WaitForSeconds(.001f);
             }
 
         }
@@ -129,24 +135,18 @@ public class LevelGeneration : MonoBehaviour
 
                 if (plz.GetComponent<Room>().overlapping == true)
                 {
-                    Debug.Log(plz.name + " is overlapping a previous room");
+                    //Debug.Log(plz.name + " is overlapping a previous room");
                     //return false;
                     roomCheck = false;
                 }
                 else
                 {
-                    Debug.Log("Safe: " + plz.name);
+                    //Debug.Log("Safe: " + plz.name);
                 }
                 //check if room intersect, if so regen level ?                   
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
                 int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
                 plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-                //activate nav mesh (find compnenets in children and bake)
-                NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
-                foreach (NavMeshSurface comp in navComponents)
-                {
-                    comp.BuildNavMesh();
-                }
                 currentLevelDifficulty += plz.GetComponent<Room>().Layouts[randomLayout].difficulty;
                 break;
             }
@@ -171,17 +171,12 @@ public class LevelGeneration : MonoBehaviour
         plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
         if (plz.GetComponent<Room>().overlapping == true)
         {
-            Debug.Log(plz.name + " is overlapping a previous room");
+            //Debug.Log(plz.name + " is overlapping a previous room");
             roomCheck = false;
         }
         else
         {
-            Debug.Log("Safe: " + plz.name);
-        }
-        NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
-        foreach (NavMeshSurface comp in navComponents)
-        {
-            comp.BuildNavMesh();
+            //Debug.Log("Safe: " + plz.name);
         }
         return roomCheck;
     }
@@ -238,22 +233,17 @@ public class LevelGeneration : MonoBehaviour
         currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
         int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
         dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-        NavMeshSurface[] navComponents = dropShipRoom.GetComponentsInChildren<NavMeshSurface>();
-        foreach (NavMeshSurface comp in navComponents)
-        {
-            comp.BuildNavMesh();
-        }
         playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
 
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
-        currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);   //makes list biome specific                                                                                       //scale level difficulty
+        currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);                                                                               //scale level difficulty
         desiredLevelDifficulty = ScaleDifficulty();
         while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)
         {
             genTest = InstantiateValidRoom(currentListOptions);
             if (genTest == false)
             {
-                Debug.Log("FALSE LEVEL RETURNED (room)");
+                //Debug.Log("FALSE LEVEL RETURNED (room)");
                 genTest = false;
                 yield break;
             }
@@ -262,9 +252,13 @@ public class LevelGeneration : MonoBehaviour
         {
             genTest = InstantiateEndRoom(endRoom);
         }
-        if (genTest == true)
+        foreach(NavMeshSurface comp in GameObject.FindObjectsOfType<NavMeshSurface>()) {
+            comp.BuildNavMesh();
+        }
+        AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
+        foreach(AwesomeToon.AwesomeToonHelper toon in toons)
         {
-            Debug.Log("TRUUUE LEVEL RETURNED (room)");
+            toon.GetLights();
         }
         yield return null;
     }
@@ -295,6 +289,13 @@ public class LevelGeneration : MonoBehaviour
             {
                 levelBiomesList.Add(DroseraGlobalEnums.Biome.Desert);
             }
+        }
+    }
+    private void SetToJungleBiomes()        //for playtesting purposes; will be deleted after Alpha.
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            levelBiomesList.Add(DroseraGlobalEnums.Biome.Jungle);
         }
     }
     private List<GameObject> getBiomeSpecificList(List<GameObject> overallList, int currentLevel)

@@ -14,6 +14,12 @@ public abstract class InteractableBase : MonoBehaviour
     protected int _maxUses = 1;
     protected int _uses;
 
+    [Header("VFX")]
+    [SerializeField]
+    protected GameObject effect;
+    [SerializeField]
+    protected float effectDuration;
+
     private void Awake()
     {
         _uses = _maxUses;
@@ -23,7 +29,7 @@ public abstract class InteractableBase : MonoBehaviour
     {
         if (_uses <= 0) return false;
 
-        Debug.Log(player.name + "interacted with " + name);
+        Debug.Log(player.name + " interacted with " + name);
         OnInteract?.Invoke();
         _uses--;
 
@@ -43,6 +49,12 @@ public abstract class InteractableBase : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         gameObject.SetActive(false);
+    }
+
+    protected virtual void VFX()
+    {
+        if (effect != null && VFXSpawner.vfx != null)
+            VFXSpawner.vfx.SpawnVFX(effect, effectDuration, transform.position);
     }
 
     private void OnTriggerStay(Collider other)

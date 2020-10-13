@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public class Brawler : EnemyBase {
 
@@ -18,7 +19,8 @@ public class Brawler : EnemyBase {
         [Header("VFX")]
 
         [Header("SFX")]
-        public UnityEvent OnHit;
+        public UnityEvent PummelWindUp;
+        public UnityEvent PummelAttack;
     }
     [Header("Brawler VFX & SFX")] [SerializeField] private FX _brawlerFX;
 
@@ -30,16 +32,25 @@ public class Brawler : EnemyBase {
         base.Awake();
 
         GetWaypoints();
+        // If no waypoints are set - set temp ones
+        if(waypoints.Count == 0) {
+            AddWaypoint();
+            AddWaypoint();
+            //Debug.LogError(gameObject.name + " in " + transform.parent.parent.name + " has no waypoints.");
+
+            int i = 1;
+            foreach(GameObject waypoint in waypoints) {
+                waypoint.transform.position = transform.position + new Vector3(i++, 0, 0);
+            }
+        }
+        // Set waypoint positions
         foreach(GameObject waypoint in waypoints)
-           waypointPositions.Add(waypoint.transform.position);
-        currentWaypoint = 0;
+            waypointPositions.Add(waypoint.transform.position);
+        currentWaypoint = 1;
     }
 
     protected override void Start() {
         base.Start();
-        GetComponentInChildren<Hitbox>(true).OnHit.AddListener(() => {
-            _brawlerFX.OnHit.Invoke();
-        });
     }
 
     // -------------------------------------------------------------------------------------------
@@ -89,11 +100,14 @@ public class Brawler : EnemyBase {
             while(_agent.remainingDistance > 0.2f)
                 yield return null;
 
-            // Wait at position for 1.5 sec
-            for(float i = 0; i < 1.5f; i += Time.deltaTime) {
+            // Wait at position for 1 to 2 sec
+            for(float i = 0; i < Random.Range(1, 2); i += Time.deltaTime) {
                 yield return null;
                 CheckAggression();
             }
+
+            // Play idle SFX
+            _enemyFX.IdleState.Invoke();
         }
     }
 
@@ -103,6 +117,10 @@ public class Brawler : EnemyBase {
         _agent.stoppingDistance = stoppingDistance;
         attackDone = false;
         currentState = EnemyState.Aggressive;
+
+        // Play aggro SFX
+        // TODO - make looping
+        _enemyFX.AlertState.Invoke();
 
         while(true) {
             yield return null;
@@ -142,6 +160,7 @@ public class Brawler : EnemyBase {
     protected override IEnumerator Attack() {
         currentState = EnemyState.Attacking;
         _animator.SetTrigger("Attack");
+        _brawlerFX.PummelWindUp.Invoke();
 
         while(!attackDone) {
             yield return null;
@@ -187,6 +206,15 @@ public class Brawler : EnemyBase {
         foreach(GameObject child in waypoints)
             DestroyImmediate(child);
         waypoints.Clear();
+    }
+
+    // -------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Plays swat SFX - called in the animator
+    /// </summary>
+    public void PlayAttackSound() {
+        _brawlerFX.PummelAttack.Invoke();
     }
 
 }

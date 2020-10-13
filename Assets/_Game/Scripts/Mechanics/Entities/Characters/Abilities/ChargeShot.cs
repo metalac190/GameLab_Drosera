@@ -11,6 +11,9 @@ public class ChargeShot : MonoBehaviour
     Hitbox _hitbox;
     Rigidbody _rb;
 
+    //ParticleSystem _vfx;
+    ElectricRoundExpandFire _vfxController;
+
     bool _isCharging = true;
     float _charge;
     Vector3 _startScale;
@@ -21,18 +24,25 @@ public class ChargeShot : MonoBehaviour
     [SerializeField] float _scaleMultiplier = 1f;
     [SerializeField] float _lifespan = 5f;
 
+    [Header("VFX")]
+    [SerializeField]
+    protected GameObject effect;
+    [SerializeField]
+    protected float effectDuration;
+
     private void Awake()
     {
         _altFire = FindObjectOfType<GunnerAltFire>();
         _hitbox = GetComponent<Hitbox>();
-        _rb = GetComponent<Rigidbody>();
+        _rb = GetComponentInChildren<Rigidbody>();
+        _vfxController = GetComponentInChildren<ElectricRoundExpandFire>();
+        //_vfx = GetComponentInChildren<ParticleSystem>();
     }
 
     private void Start()
     {
         _startScale = transform.localScale;
-        _hitbox.baseDamage = 1f;
-        Destroy(gameObject, _lifespan);
+        _hitbox.baseDamage = 5f;
     }
 
     private void OnEnable()
@@ -49,40 +59,71 @@ public class ChargeShot : MonoBehaviour
     {
         if (!_isCharging)
         {
-            if (_charge < 1)
+            GetComponent<SphereCollider>().enabled = true;
+            if (_charge < .2)
             {
-                _rb.MovePosition(transform.position + transform.forward * Time.deltaTime * _moveSpeed);
+                //_rb.MovePosition(transform.position + transform.forward * 0.2f * Time.deltaTime * _moveSpeed);
+                _vfxController.Fire(_moveSpeed * 0.2f);
             }
             else
             {
-                _rb.MovePosition(transform.position + transform.forward * _charge * Time.deltaTime * _moveSpeed);
+                //_rb.MovePosition(transform.position + transform.forward * _charge * Time.deltaTime * _moveSpeed);
+                _vfxController.Fire(_moveSpeed * _charge);
             }
         }
         else
         {
             _charge = _altFire.Charge;
+
             transform.position = _altFire.GunEnd.position;
             transform.rotation = _altFire.GunEnd.rotation;
-            transform.localScale = _startScale + Vector3.one * _charge * _scaleMultiplier;
-            if (_charge >= 1)
+            //transform.localScale = _startScale + Vector3.one * _charge * _scaleMultiplier;
+            if (_charge >= .2)
             {
-                _hitbox.baseDamage = _altFire.Charge * _damageMultiplier;
+                _hitbox.baseDamage = _charge * _damageMultiplier;
             }
+
+            _vfxController.Charge();
+
+            /*
+            var shape = _vfx.shape;
+            shape.radius = 0.6f + (_charge);
+
+            var emission = _vfx.emission;
+            emission.rateOverTime = 140f + (_charge) * 100f;
+
+            var trail = _vfx.GetComponentInChildren<TrailRenderer>();
+            trail.widthMultiplier = .2f + (_charge);
+            */
         }
     }
 
     public void Fire()
     {
+        Destroy(gameObject, _lifespan);
         _isCharging = false;
+        int num = Random.Range(0, 3);
+        if (num == 0)
+        {
+            _hitbox.baseDamage *= 2;
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
         int layer = other.gameObject.layer;
-        if (!(layer == 11 || layer == 13 || layer == 15)) //hit anything but player and other hitboxes
+        if (!(layer == 11 || layer == 13 || layer == 15)) //hit anything but player, other hitboxes, and invisible walls
         {
             OnHit?.Invoke();
             Destroy(gameObject);
+        }
+    }
+
+    public void SpawnHitVFX()
+    {
+        if (effect != null && VFXSpawner.vfx != null)
+        {
+            GameObject vfx = VFXSpawner.vfx.SpawnVFX(effect, effectDuration, transform.position, transform.rotation);
         }
     }
 }

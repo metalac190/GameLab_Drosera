@@ -58,7 +58,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 19cef8ee9ab97e44e8727f066985817a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -221,7 +221,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.3
+  m_Radius: 2.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7843381176036643244
 MonoBehaviour:
@@ -238,17 +238,6 @@ MonoBehaviour:
   OnInteract:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7843381176036643244}
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 1
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: -7082738326970467367}
         m_MethodName: PlaySoundRandomized
         m_Mode: 1
@@ -261,7 +250,11 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   _maxUses: 1
+  effect: {fileID: 8406461867865417842, guid: b2363c1d5e8fbac47b30b9db5034b67a, type: 3}
+  effectDuration: 4
   _healingAmount: 5
+  disableOnPickup: 0
+  effectHeight: 0.1
 --- !u!114 &-7082738326970467367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,7 +269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioPrefab: {fileID: 1388270348251091532, guid: 90c5ae7f6ccba8d43a64591e5ef86311,
     type: 3}
-  audioPrefabParent: {fileID: 5817434557253299091}
+  audioPrefabParent: {fileID: 0}
   mixerTrack: {fileID: 2737497072109447304, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
     type: 2}
   audioClips:
@@ -284,7 +277,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4a7d3d0eb3d31bb4fb9b1a7ffe7a410c, type: 3}
   - {fileID: 8300000, guid: 138918b415f8f1141a5dbd0ee59ff3dc, type: 3}
   - {fileID: 8300000, guid: b75dc6dc1f6af884ebfc05917765a93b, type: 3}
-  StartVolume: 0.773
+  StartVolume: 0.699
   StereoPan: 0
   loop: 0
   useClipsAsPlaylist: 0

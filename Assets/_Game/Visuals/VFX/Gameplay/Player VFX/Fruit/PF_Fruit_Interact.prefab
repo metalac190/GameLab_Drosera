@@ -1,32 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!320 &8406461868517406124
-PlayableDirector:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2001568837540607588}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: 1b9db153a8bc57c4ab6cea2fcd89dd5b, type: 2}
-  m_InitialState: 1
-  m_WrapMode: 2
-  m_DirectorUpdateMode: 1
-  m_InitialTime: 0
-  m_SceneBindings:
-  - key: {fileID: -1659633990519291492, guid: 1b9db153a8bc57c4ab6cea2fcd89dd5b, type: 2}
-    value: {fileID: 0}
-  - key: {fileID: 0}
-    value: {fileID: 0}
-  - key: {fileID: 3569157365026942818, guid: 1b9db153a8bc57c4ab6cea2fcd89dd5b, type: 2}
-    value: {fileID: 8406461868517406125}
-  - key: {fileID: 5915804982621188748, guid: 1b9db153a8bc57c4ab6cea2fcd89dd5b, type: 2}
-    value: {fileID: 0}
-  m_ExposedReferences:
-    m_References:
-    - 54a4e57aaab4cd14bae2c5da6c1cfade: {fileID: 2001568837540607588}
-    - 1ff6587ca54a1264b8452009f30dfa37: {fileID: 8406461868805344430}
 --- !u!95 &8406461868517406125
 Animator:
   serializedVersion: 3
@@ -126,7 +99,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8406461868805344430}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -234,7 +207,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: 1b9db153a8bc57c4ab6cea2fcd89dd5b, type: 2}
-  m_InitialState: 0
+  m_InitialState: 1
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -295,9 +268,9 @@ ParticleSystem:
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
-  looping: 1
+  looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 0
   useRigidbodyForVelocity: 1
@@ -5254,6 +5227,16 @@ PrefabInstance:
       propertyPath: ColorModule.gradient.maxGradient.m_NumColorKeys
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 901573717487533582, guid: 9b2e4d3246723e24e87de86d675620d8,
+        type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 901573717487533582, guid: 9b2e4d3246723e24e87de86d675620d8,
+        type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1602545090089634433, guid: 9b2e4d3246723e24e87de86d675620d8,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -5388,6 +5371,16 @@ PrefabInstance:
         type: 3}
       propertyPath: ClampVelocityModule.dampen
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6197887517141496438, guid: 9b2e4d3246723e24e87de86d675620d8,
+        type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6197887517141496438, guid: 9b2e4d3246723e24e87de86d675620d8,
+        type: 3}
+      propertyPath: playOnAwake
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7125393845507470336, guid: 9b2e4d3246723e24e87de86d675620d8,
         type: 3}
