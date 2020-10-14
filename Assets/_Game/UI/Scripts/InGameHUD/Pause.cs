@@ -7,7 +7,10 @@ using UnityEngine.SceneManagement;
 public class Pause : MonoBehaviour
 {
     [Header("Pause Panels")]
+    [SerializeField] GameObject playerHUD;
+    [SerializeField] GameObject inGameHUD;
     [SerializeField] GameObject pauseHUD;
+    [SerializeField] GameObject pauseBackgroundImage;
     [SerializeField] GameObject[] panels;
     bool isPaused = false;
 
@@ -35,6 +38,9 @@ public class Pause : MonoBehaviour
 
     public void PauseGame()
     {
+        playerHUD.SetActive(false);
+        inGameHUD.SetActive(false);
+
         isPaused = true;
         Time.timeScale = 0;
 
@@ -58,11 +64,24 @@ public class Pause : MonoBehaviour
 
             panels[currentlySelected].SetActive(true);
             panels[previouslySelected].SetActive(false);
+
+            // extras
+            if (currentlySelected == 2)
+            {
+                pauseBackgroundImage.SetActive(false);
+            }
+            else
+            {
+                pauseBackgroundImage.SetActive(true);
+            }
         }
     }
 
     public void ResumeGame()
     {
+        playerHUD.SetActive(true);
+        inGameHUD.SetActive(true);
+
         isPaused = false;
         Time.timeScale = 1;
 
@@ -72,7 +91,12 @@ public class Pause : MonoBehaviour
     public void BackToMenu()
     {
         Time.timeScale = 1;
-
+        GameManager.Instance.GameState = DroseraGlobalEnums.GameState.Menu;
         SceneManager.LoadScene(0);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

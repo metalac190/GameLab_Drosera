@@ -25,10 +25,14 @@ public class OreVein : InteractableBase
     public override bool Interact(PlayerBase player)
     {
         if (!base.Interact(player)) return false;
-        
+
         //_animator.SetInteger("stage", _uses);
+        //VFX();
+        if (effect != null)
+            VFXSpawner.vfx.SpawnVFX(effect, effectDuration, player.transform.position).transform.parent = player.transform;
         ChangeState();
-        player.Ammo += player.AmmoPerOre;
+        player.HeldAmmo += player.AmmoPerOre;
+        //player.Ammo = Mathf.Clamp(player.Ammo, 0 , player.MaxAmmo); ????
         if (_uses <= 0)
         {
             GetComponent<Collider>().enabled = false;

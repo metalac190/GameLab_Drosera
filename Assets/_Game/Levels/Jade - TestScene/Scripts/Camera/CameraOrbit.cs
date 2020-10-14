@@ -5,16 +5,23 @@ using UnityEngine;
 public class CameraOrbit : MonoBehaviour
 {
     [SerializeField] Transform cameraTarget;
-    private float rotateSpeed = 30.0f;
+    [SerializeField] float rotateSpeed = 30.0f;
+
+    PlayerBase player;
+
+    private void Start()
+    {
+        player = PlayerBase.instance;
+    }
 
     void LateUpdate()
     {
-        if (Input.GetKey(KeyCode.E))
+        if (player.AdjustCameraRight)
         {
             transform.RotateAround(cameraTarget.position, Vector3.up, rotateSpeed * Time.deltaTime);
         }
 
-        if (Input.GetKey(KeyCode.Q))
+        if (player.AdjustCameraLeft)
         {
             transform.RotateAround(cameraTarget.position, -Vector3.up, rotateSpeed * Time.deltaTime);
         }
