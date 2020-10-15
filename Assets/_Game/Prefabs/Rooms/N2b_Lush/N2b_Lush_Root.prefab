@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4063000350690380698}
+  - component: {fileID: 1976642858694261053}
   m_Layer: 0
   m_Name: N2b_Lush_Root
   m_TagString: Untagged
@@ -33,6 +34,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1976642858694261053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7423043143814140875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e43c95b61713cc142b4bf00b74e4dd7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entrance: {fileID: 7213111832184495097}
+  exit: {fileID: 7213111833582086091}
+  overlapping: 0
+  activeGenerating: 1
+  biomes:
+  - {fileID: 3093251359699386758}
+  - {fileID: 4720523171952434359}
+  layouts:
+  - name: Layout
+    dropdownInEditor: 0
+    difficulty: -2
+    hidden: 1
+    objects:
+    - {fileID: 6841374018582012800}
+    - {fileID: 4065288891986502408}
+    - {fileID: 7052871600259992153}
+    - {fileID: 6218384162728078837}
+    - {fileID: 2798687622443623842}
+    - {fileID: 6955537523485340115}
+    - {fileID: 2196024973559264574}
 --- !u!1001 &3776520572107497536
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -260,6 +293,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4508887072009158503, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+        type: 3}
+      propertyPath: room
+      value: 
+      objectReference: {fileID: 1976642858694261053}
     - target: {fileID: 4508887072073054945, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
         type: 3}
       propertyPath: m_Mesh
@@ -355,6 +393,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: N2b_Lush_Collision
       objectReference: {fileID: 0}
+    - target: {fileID: 4508887073362625361, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+        type: 3}
+      propertyPath: room
+      value: 
+      objectReference: {fileID: 1976642858694261053}
     - target: {fileID: 4508887073373805586, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
         type: 3}
       propertyPath: m_Mesh
@@ -390,6 +433,60 @@ PrefabInstance:
 --- !u!4 &7213111832588524006 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4508887073230176589, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6523699466709981355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7213111833582086091 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4508887072009158496, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6523699466709981355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7213111832184495097 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4508887073362625362, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6523699466709981355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2798687622443623842 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8961663570491194633, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6523699466709981355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7052871600259992153 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4280675034753094386, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6523699466709981355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6955537523485340115 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4183807354868410744, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6523699466709981355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6841374018582012800 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 322472973305756459, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6523699466709981355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2196024973559264574 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4967768415768259989, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6523699466709981355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4065288891986502408 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7125284689792023459, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6523699466709981355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6218384162728078837 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 920130062977938782, guid: 7bb657f0b71a8ef4382a0453af63aa8f,
     type: 3}
   m_PrefabInstance: {fileID: 6523699466709981355}
   m_PrefabAsset: {fileID: 0}
