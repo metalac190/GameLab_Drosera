@@ -301,12 +301,12 @@ public class LevelGeneration : MonoBehaviour
     private List<GameObject> getBiomeSpecificList(List<GameObject> overallList, int currentLevel)
     {
         List<GameObject> biomeSpecificList = new List<GameObject>();
-        for (int i = 0; i < overallList.Count; i++)
+        /*for (int i = 0; i < overallList.Count; i++)
         {
             if (overallList[i].GetComponent<Room>().Biome == levelBiomesList[currentLevel - 1] ||
                 overallList[i].GetComponent<Room>().Biome == DroseraGlobalEnums.Biome.None)
                 biomeSpecificList.Add(overallList[i]);
-        }
+        }*/
         return biomeSpecificList;
     }
 }
