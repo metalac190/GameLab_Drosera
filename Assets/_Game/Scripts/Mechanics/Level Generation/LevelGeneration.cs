@@ -60,8 +60,7 @@ public class LevelGeneration : MonoBehaviour
     void Start() //on scene start, generate level
     {
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        //randomizeBiomes();    //readd after alpha
-        SetToJungleBiomes();    //sets all biomes to jungle for alpha playtesting purposes; delete after alpha
+        randomizeBiomes();    
     }
     
     private void Update()
@@ -135,15 +134,10 @@ public class LevelGeneration : MonoBehaviour
 
                 if (plz.GetComponent<Room>().overlapping == true)
                 {
-                    //Debug.Log(plz.name + " is overlapping a previous room");
-                    //return false;
                     roomCheck = false;
                 }
-                else
-                {
-                    //Debug.Log("Safe: " + plz.name);
-                }
-                //check if room intersect, if so regen level ?                   
+                plz.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber]);
+
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
                 int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
                 plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
@@ -169,14 +163,13 @@ public class LevelGeneration : MonoBehaviour
         plz.GetComponent<Room>().Entrance.transform.SetParent(null);
         plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
         plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
+        plz.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber]);
+        int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
+        plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+        Debug.Log("EndRoom: " + plz.GetComponent<Room>().Layouts[randomLayout].name);
         if (plz.GetComponent<Room>().overlapping == true)
         {
-            //Debug.Log(plz.name + " is overlapping a previous room");
             roomCheck = false;
-        }
-        else
-        {
-            //Debug.Log("Safe: " + plz.name);
         }
         return roomCheck;
     }
@@ -231,19 +224,18 @@ public class LevelGeneration : MonoBehaviour
         ShuffleRoomList(currentListOptions);
         Instantiate(dropShipRoom);
         currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
+        dropShipRoom.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber]);
+        playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
         int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
         dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-        playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
-
+        Debug.Log("Dropship: " + dropShipRoom.GetComponent<Room>().Layouts[randomLayout].name);
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
-        currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);                                                                               //scale level difficulty
         desiredLevelDifficulty = ScaleDifficulty();
         while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)
         {
             genTest = InstantiateValidRoom(currentListOptions);
             if (genTest == false)
             {
-                //Debug.Log("FALSE LEVEL RETURNED (room)");
                 genTest = false;
                 yield break;
             }
@@ -268,11 +260,13 @@ public class LevelGeneration : MonoBehaviour
         GameObject[] iEntrances = GameObject.FindGameObjectsWithTag("RoomEntrance");
         for (int i = 0; i < iEntrances.Length; i++)
         {
+            iEntrances[i].SetActive(false);
             Destroy(iEntrances[i]);
         }
         GameObject[] iRooms = GameObject.FindGameObjectsWithTag("InstantiatedRoom");
         for (int i = 0; i < iRooms.Length; i++)
         {
+            iEntrances[i].SetActive(false);
             Destroy(iRooms[i]); 
         }
     }
@@ -290,23 +284,5 @@ public class LevelGeneration : MonoBehaviour
                 levelBiomesList.Add(DroseraGlobalEnums.Biome.Desert);
             }
         }
-    }
-    private void SetToJungleBiomes()        //for playtesting purposes; will be deleted after Alpha.
-    {
-        for (int i = 0; i < 6; i++)
-        {
-            levelBiomesList.Add(DroseraGlobalEnums.Biome.Jungle);
-        }
-    }
-    private List<GameObject> getBiomeSpecificList(List<GameObject> overallList, int currentLevel)
-    {
-        List<GameObject> biomeSpecificList = new List<GameObject>();
-        /*for (int i = 0; i < overallList.Count; i++)
-        {
-            if (overallList[i].GetComponent<Room>().Biome == levelBiomesList[currentLevel - 1] ||
-                overallList[i].GetComponent<Room>().Biome == DroseraGlobalEnums.Biome.None)
-                biomeSpecificList.Add(overallList[i]);
-        }*/
-        return biomeSpecificList;
     }
 }
