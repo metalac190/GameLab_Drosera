@@ -13,6 +13,7 @@ public class RoomWindow : EditorWindow
     int heightBuffer = 5;
     bool biomeDropdown = false;
     bool doorDropdown = false;
+    int prevDifficulty = -1000;
     
     string[] biomes = { "Jungle" , "Desert"};
     Color sectionColor = new Color(.7f, .7f, .7f);
@@ -94,6 +95,7 @@ public class RoomWindow : EditorWindow
                 {
                     currentRoom.Entrance = Selection.transforms[0];
                     currentRoom.Entrance.GetComponent<Door>().room = currentRoom;
+                    EditorUtility.SetDirty(currentRoom.gameObject);
                 }
 
             }
@@ -103,6 +105,7 @@ public class RoomWindow : EditorWindow
                 {
                     currentRoom.Exit = Selection.transforms[0];
                     currentRoom.Exit.GetComponent<Door>().room = currentRoom;
+                    EditorUtility.SetDirty(currentRoom.gameObject);
                 }
 
             }
@@ -123,6 +126,7 @@ public class RoomWindow : EditorWindow
                     if (selected == 1)
                     {
                         currentRoom.Biomes[(int)biome] = Selection.transforms[0];
+                        EditorUtility.SetDirty(currentRoom.gameObject);
                     }
                 }
             }
@@ -149,6 +153,7 @@ public class RoomWindow : EditorWindow
         if (GUILayout.Button("Add New Layout"))
         {
             currentRoom.Layouts.Add(new Room.Layout());
+            EditorUtility.SetDirty(currentRoom.gameObject);
         }
         EditorGUILayout.EndHorizontal();
 
@@ -177,11 +182,18 @@ public class RoomWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         layout.dropdownInEditor = EditorGUILayout.BeginFoldoutHeaderGroup(layout.dropdownInEditor, ""+layout.objects.Count);
+
+        EditorGUI.BeginChangeCheck();
         layout.name = EditorGUILayout.TextField(layout.name);
+        if (EditorGUI.EndChangeCheck())
+        {
+            EditorUtility.SetDirty(currentRoom.gameObject);
+        }
 
         if (GUILayout.Button("Add Selected Objects to Layout"))
         {
             currentRoom.AddObjectsToLayout(currentRoom.Layouts.IndexOf(layout), Selection.transforms);
+            EditorUtility.SetDirty(currentRoom.gameObject);
         }
 
         if (GUILayout.Button(layout.hidden ? "Shown" : "Hidden"))
@@ -190,6 +202,7 @@ public class RoomWindow : EditorWindow
             foreach (Transform obj in layout.objects)
             {
                 obj.gameObject.SetActive(layout.hidden);
+                EditorUtility.SetDirty(currentRoom.gameObject);
             }
         }
 
@@ -206,6 +219,7 @@ public class RoomWindow : EditorWindow
         if (GUILayout.Button("Delete Layout"))
         {
             currentRoom.Layouts.Remove(layout);
+            EditorUtility.SetDirty(currentRoom.gameObject);
             return true;
         }
 
@@ -213,7 +227,12 @@ public class RoomWindow : EditorWindow
 
         if (layout.dropdownInEditor)
         {
+            EditorGUI.BeginChangeCheck();
             layout.difficulty = EditorGUILayout.IntSlider("Difficulty", layout.difficulty, -3, 15);
+            if(EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(currentRoom.gameObject);
+            }
 
             List<Transform> toRemove = new List<Transform>();
             foreach (Transform obj in layout.objects)
@@ -234,6 +253,7 @@ public class RoomWindow : EditorWindow
                 if (GUILayout.Button("Remove"))
                 {
                     toRemove.Add(obj);
+                    EditorUtility.SetDirty(currentRoom.gameObject);
                 }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.Space(2);
