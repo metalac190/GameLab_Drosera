@@ -77,16 +77,16 @@ public class LevelGeneration : MonoBehaviour
     }
     IEnumerator GenerateLevelCoroutine()
     {
+        Debug.Log("Level Number: " + LevelNumber);
         genTest = false;
         if (levelNumber < 6)
         {
-            levelNumber += 1;
             while (genTest == false)
             {
                 StartCoroutine(CreateLevelCoroutine(levelNumber, roomMasterPrefab.GetComponent<StoreRooms>().AllRooms));
                 yield return new WaitForSeconds(.001f);
             }
-
+            levelNumber += 1;
         }
         else
         {
@@ -120,28 +120,28 @@ public class LevelGeneration : MonoBehaviour
             if (blank == 0)
             {        //will be room rotation check
                 toRemove = roomList[i];
-                GameObject plz = Instantiate(roomList[i], currentExitLocation + FixTransformDeficit(roomList[i]), priorRoomRotation);
-                plz.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, roomList[i]));
+                GameObject testRoom = Instantiate(roomList[i], currentExitLocation + FixTransformDeficit(roomList[i]), priorRoomRotation);
+                testRoom.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, roomList[i]));
                 //priorRoomRotation = plz.transform.rotation;
-                priorRoomRotation = plz.GetComponent<Room>().Exit.transform.rotation;
-                plz.GetComponent<Room>().Entrance.transform.SetParent(null);
-                plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
-                plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
-                currentExitLocation = plz.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
+                priorRoomRotation = testRoom.GetComponent<Room>().Exit.transform.rotation;
+                testRoom.GetComponent<Room>().Entrance.transform.SetParent(null);
+                testRoom.transform.SetParent(testRoom.GetComponent<Room>().Entrance, true);
+                testRoom.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
+                currentExitLocation = testRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
                 Physics.autoSimulation = false;
                 Physics.Simulate(0.001f);
                 Physics.autoSimulation = true;
 
-                if (plz.GetComponent<Room>().overlapping == true)
+                if (testRoom.GetComponent<Room>().overlapping == true)
                 {
                     roomCheck = false;
                 }
-                plz.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber]);
+                testRoom.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber]);
 
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
-                int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
-                plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-                currentLevelDifficulty += plz.GetComponent<Room>().Layouts[randomLayout].difficulty;
+                int randomLayout = Random.Range(0, testRoom.GetComponent<Room>().Layouts.Count);
+                testRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+                currentLevelDifficulty += testRoom.GetComponent<Room>().Layouts[randomLayout].difficulty;
                 break;
             }
         }
@@ -156,18 +156,19 @@ public class LevelGeneration : MonoBehaviour
 
     private bool InstantiateEndRoom(GameObject lastRoom)
     {
+        Debug.Log("Level Biome: " + LevelBiomesList[LevelNumber]);
         bool roomCheck = true;
-        GameObject plz = Instantiate(lastRoom, currentExitLocation + FixTransformDeficit(lastRoom), priorRoomRotation);
-        plz.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, lastRoom));
-        priorRoomRotation = plz.GetComponent<Room>().Exit.transform.rotation;
-        plz.GetComponent<Room>().Entrance.transform.SetParent(null);
-        plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
-        plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
-        plz.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber]);
-        int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
-        plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-        Debug.Log("EndRoom: " + plz.GetComponent<Room>().Layouts[randomLayout].name);
-        if (plz.GetComponent<Room>().overlapping == true)
+        GameObject hyperseedRoom = Instantiate(lastRoom, currentExitLocation + FixTransformDeficit(lastRoom), priorRoomRotation);
+        hyperseedRoom.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, lastRoom));
+        priorRoomRotation = hyperseedRoom.GetComponent<Room>().Exit.transform.rotation;
+        hyperseedRoom.GetComponent<Room>().Entrance.transform.SetParent(null);
+        hyperseedRoom.transform.SetParent(hyperseedRoom.GetComponent<Room>().Entrance, true);
+        hyperseedRoom.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
+        hyperseedRoom.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber]);
+        int randomLayout = Random.Range(0, hyperseedRoom.GetComponent<Room>().Layouts.Count);
+        hyperseedRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+        Debug.Log("EndRoom: " + hyperseedRoom.GetComponent<Room>().Layouts[randomLayout].name);
+        if (hyperseedRoom.GetComponent<Room>().overlapping == true)
         {
             roomCheck = false;
         }
@@ -266,7 +267,7 @@ public class LevelGeneration : MonoBehaviour
         GameObject[] iRooms = GameObject.FindGameObjectsWithTag("InstantiatedRoom");
         for (int i = 0; i < iRooms.Length; i++)
         {
-            iEntrances[i].SetActive(false);
+            iRooms[i].SetActive(false);
             Destroy(iRooms[i]); 
         }
     }
