@@ -47,23 +47,6 @@ public class Room : MonoBehaviour
                 layouts[layout].objects.Add(t);
     }
 
-    private void Awake()
-    {
-        foreach (Transform biome in biomes)
-        {
-            if (biome == null) continue;
-            biome.gameObject.SetActive(false);
-        }
-        foreach(Layout layout in layouts)
-        {
-            layout.objects.RemoveAll(obj => obj == null);
-            foreach(Transform obj in layout.objects)
-            {
-                obj.gameObject.SetActive(false);
-            }
-        }
-    }
-
     /// <summary>
     /// Change if a layout is active using its name (Case insensitive. Warning: will affect all layouts with the same name)
     /// </summary>
@@ -92,15 +75,28 @@ public class Room : MonoBehaviour
     public void SetLayoutActive(int index, bool active)
     {
         layouts[index].hidden = active;
+        foreach (Layout layout in layouts)
+        {
+            layout.objects.RemoveAll(obj => obj == null);
+            foreach (Transform obj in layout.objects)
+            {
+                obj.gameObject.SetActive(false);
+            }
+        }
         foreach (Transform obj in layouts[index].objects)
         {
             obj.gameObject.SetActive(active);
         }
     }
 
-    public void SetBiomeActive(DroseraGlobalEnums.Biome biome)
+    public void SetBiomeActive(DroseraGlobalEnums.Biome biome, bool active)
     {
         if (biomes[(int)biome] == null) return;
-        biomes[(int)biome].gameObject.SetActive(true);
+        foreach (Transform b in biomes)
+        {
+            if (b == null) continue;
+            b.gameObject.SetActive(false);
+        }
+        biomes[(int)biome].gameObject.SetActive(active);
     }
 }
