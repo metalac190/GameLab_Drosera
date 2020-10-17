@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -172,6 +172,9 @@ public class LevelGeneration : MonoBehaviour
         {
             roomCheck = false;
         }
+        foreach(NavMeshSurface comp in hyperseedRoom.GetComponentsInChildren<NavMeshSurface>()) {
+            comp.BuildNavMesh();
+        }
         return roomCheck;
     }
 
@@ -208,7 +211,7 @@ public class LevelGeneration : MonoBehaviour
     IEnumerator CreateLevelCoroutine(int currentLevel, List<GameObject> masterList)
     {
         DestroyInstantiatedRooms(); //destroys previous level
-        yield return new WaitForEndOfFrame();
+        yield return null;
         Physics.autoSimulation = false;
         Physics.Simulate(0.01f);
         Physics.autoSimulation = true;
@@ -244,9 +247,6 @@ public class LevelGeneration : MonoBehaviour
         if (genTest == true)
         {
             genTest = InstantiateEndRoom(endRoom);
-        }
-        foreach(NavMeshSurface comp in GameObject.FindObjectsOfType<NavMeshSurface>()) {
-            comp.BuildNavMesh();
         }
         AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
         foreach(AwesomeToon.AwesomeToonHelper toon in toons)
