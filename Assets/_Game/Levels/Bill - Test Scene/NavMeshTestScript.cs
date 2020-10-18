@@ -12,15 +12,22 @@ public class NavMeshTestScript : MonoBehaviour {
         /*foreach(NavMeshSurface comp in GameObject.FindObjectsOfType<NavMeshSurface>()) {
             comp.BuildNavMesh();
         }*/
-        surfaces.Add(GetComponent<NavMeshSurface>());
-    }
+        foreach(NavMeshSurface surface in GetComponents<NavMeshSurface>())
+            surfaces.Add(surface);
 
-    private void Start() {
         if(!built) {
             foreach(NavMeshSurface surfaces in surfaces)
                 surfaces.BuildNavMesh();
             built = true;
         }
+    }
+
+    private void Start() {
+        /*if(!built) {
+            foreach(NavMeshSurface surfaces in surfaces)
+                surfaces.BuildNavMesh();
+            built = true;
+        }*/
     }
 
 }
