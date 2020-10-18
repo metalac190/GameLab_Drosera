@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
         if(gameWon)
         {
             GameState = DroseraGlobalEnums.GameState.Menu;
+            gameWon = false;
             UnityEngine.SceneManagement.SceneManager.LoadScene(winScene);
         }
 

@@ -142,8 +142,11 @@ public class InGameHUD : MonoBehaviour
     // call at Start()
     public void ShowPhaseOneObjectiveText()
     {
-        objectiveImage.sprite = hyperSeedSprite;
-        objectiveImage.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
+        if (objectiveImage != null)
+        {
+            objectiveImage.sprite = hyperSeedSprite;
+            objectiveImage.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
+        }
 
         objectiveText.text = "LOCATE THE HYPERSEED";
     }
@@ -151,8 +154,11 @@ public class InGameHUD : MonoBehaviour
     // call when player acquires the Hyperseed
     public void ShowPhaseTwoObjectiveText()
     {
-        objectiveImage.sprite = dropshipSprite;
-        objectiveImage.transform.localScale = new Vector3(1, 1, 1);
+        if (objectiveImage != null)
+        {
+            objectiveImage.sprite = dropshipSprite;
+            objectiveImage.transform.localScale = new Vector3(1, 1, 1);
+        }
 
         objectiveText.text = "ESCAPE TO THE DROPSHIP";
     }

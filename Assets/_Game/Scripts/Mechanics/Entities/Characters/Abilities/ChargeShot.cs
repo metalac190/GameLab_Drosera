@@ -24,6 +24,12 @@ public class ChargeShot : MonoBehaviour
     [SerializeField] float _scaleMultiplier = 1f;
     [SerializeField] float _lifespan = 5f;
 
+    [Header("VFX")]
+    [SerializeField]
+    protected GameObject effect;
+    [SerializeField]
+    protected float effectDuration;
+
     private void Awake()
     {
         _altFire = FindObjectOfType<GunnerAltFire>();
@@ -53,6 +59,7 @@ public class ChargeShot : MonoBehaviour
     {
         if (!_isCharging)
         {
+            GetComponent<SphereCollider>().enabled = true;
             if (_charge < .2)
             {
                 //_rb.MovePosition(transform.position + transform.forward * 0.2f * Time.deltaTime * _moveSpeed);
@@ -109,6 +116,14 @@ public class ChargeShot : MonoBehaviour
         {
             OnHit?.Invoke();
             Destroy(gameObject);
+        }
+    }
+
+    public void SpawnHitVFX()
+    {
+        if (effect != null && VFXSpawner.vfx != null)
+        {
+            GameObject vfx = VFXSpawner.vfx.SpawnVFX(effect, effectDuration, transform.position, transform.rotation);
         }
     }
 }
