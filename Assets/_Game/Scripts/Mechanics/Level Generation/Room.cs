@@ -16,8 +16,8 @@ public class Room : MonoBehaviour
     //[HideInInspector]
     public bool activeGenerating = true;
     [SerializeField]
-    private DroseraGlobalEnums.Biome biome;
-    public DroseraGlobalEnums.Biome Biome { get => biome; set => biome = value; }
+    private Transform[] biomes = new Transform[System.Enum.GetValues(typeof(DroseraGlobalEnums.Biome)).Length];
+    public Transform[] Biomes { get => biomes; set => biomes = value; }
 
     [Header("Room Layouts")]
     [SerializeField]
@@ -45,19 +45,6 @@ public class Room : MonoBehaviour
         foreach(Transform t in objs)
             if(!layouts[layout].objects.Contains(t))
                 layouts[layout].objects.Add(t);
-    }
-
-    private void Awake()
-    {
-        foreach (Door door in GetComponentsInChildren<Door>()) door.room = this;
-        foreach(Layout layout in layouts)
-        {
-            layout.objects.RemoveAll(obj => obj == null);
-            foreach(Transform obj in layout.objects)
-            {
-                obj.gameObject.SetActive(false);
-            }
-        }
     }
 
     /// <summary>
@@ -88,9 +75,28 @@ public class Room : MonoBehaviour
     public void SetLayoutActive(int index, bool active)
     {
         layouts[index].hidden = active;
+        foreach (Layout layout in layouts)
+        {
+            layout.objects.RemoveAll(obj => obj == null);
+            foreach (Transform obj in layout.objects)
+            {
+                obj.gameObject.SetActive(false);
+            }
+        }
         foreach (Transform obj in layouts[index].objects)
         {
             obj.gameObject.SetActive(active);
         }
+    }
+
+    public void SetBiomeActive(DroseraGlobalEnums.Biome biome, bool active)
+    {
+        if (biomes[(int)biome] == null) return;
+        foreach (Transform b in biomes)
+        {
+            if (b == null) continue;
+            b.gameObject.SetActive(false);
+        }
+        biomes[(int)biome].gameObject.SetActive(active);
     }
 }
