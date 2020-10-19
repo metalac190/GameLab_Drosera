@@ -11,7 +11,8 @@ public class ChargeShot : MonoBehaviour
     Hitbox _hitbox;
     Rigidbody _rb;
 
-    ParticleSystem _vfx;
+    //ParticleSystem _vfx;
+    ElectricRoundExpandFire _vfxController;
 
     bool _isCharging = true;
     float _charge;
@@ -23,12 +24,19 @@ public class ChargeShot : MonoBehaviour
     [SerializeField] float _scaleMultiplier = 1f;
     [SerializeField] float _lifespan = 5f;
 
+    [Header("VFX")]
+    [SerializeField]
+    protected GameObject effect;
+    [SerializeField]
+    protected float effectDuration;
+
     private void Awake()
     {
         _altFire = FindObjectOfType<GunnerAltFire>();
         _hitbox = GetComponent<Hitbox>();
-        _rb = GetComponent<Rigidbody>();
-        _vfx = GetComponentInChildren<ParticleSystem>();
+        _rb = GetComponentInChildren<Rigidbody>();
+        _vfxController = GetComponentInChildren<ElectricRoundExpandFire>();
+        //_vfx = GetComponentInChildren<ParticleSystem>();
     }
 
     private void Start()
@@ -51,13 +59,16 @@ public class ChargeShot : MonoBehaviour
     {
         if (!_isCharging)
         {
+            GetComponent<SphereCollider>().enabled = true;
             if (_charge < .2)
             {
-                _rb.MovePosition(transform.position + transform.forward * 0.2f * Time.deltaTime * _moveSpeed);
+                //_rb.MovePosition(transform.position + transform.forward * 0.2f * Time.deltaTime * _moveSpeed);
+                _vfxController.Fire(_moveSpeed * 0.2f);
             }
             else
             {
-                _rb.MovePosition(transform.position + transform.forward * _charge * Time.deltaTime * _moveSpeed);
+                //_rb.MovePosition(transform.position + transform.forward * _charge * Time.deltaTime * _moveSpeed);
+                _vfxController.Fire(_moveSpeed * _charge);
             }
         }
         else
@@ -66,12 +77,15 @@ public class ChargeShot : MonoBehaviour
 
             transform.position = _altFire.GunEnd.position;
             transform.rotation = _altFire.GunEnd.rotation;
-            transform.localScale = _startScale + Vector3.one * _charge * _scaleMultiplier;
+            //transform.localScale = _startScale + Vector3.one * _charge * _scaleMultiplier;
             if (_charge >= .2)
             {
                 _hitbox.baseDamage = _charge * _damageMultiplier;
             }
 
+            _vfxController.Charge();
+
+            /*
             var shape = _vfx.shape;
             shape.radius = 0.6f + (_charge);
 
@@ -80,6 +94,7 @@ public class ChargeShot : MonoBehaviour
 
             var trail = _vfx.GetComponentInChildren<TrailRenderer>();
             trail.widthMultiplier = .2f + (_charge);
+            */
         }
     }
 
@@ -101,6 +116,14 @@ public class ChargeShot : MonoBehaviour
         {
             OnHit?.Invoke();
             Destroy(gameObject);
+        }
+    }
+
+    public void SpawnHitVFX()
+    {
+        if (effect != null && VFXSpawner.vfx != null)
+        {
+            GameObject vfx = VFXSpawner.vfx.SpawnVFX(effect, effectDuration, transform.position, transform.rotation);
         }
     }
 }

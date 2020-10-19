@@ -52,6 +52,7 @@ public class InGameHUD : MonoBehaviour
 
         gunnerPrimaryFireHookup = gunnerHookup.GetComponent<GunnerPrimaryFire>();
         gunnerSecondaryFireHookup = gunnerHookup.GetComponent<GunnerAltFire>();
+
     }
 
     private void Start()
@@ -62,17 +63,24 @@ public class InGameHUD : MonoBehaviour
         gunnerPrimaryFireHookup.OnFire.AddListener(UpdateAmmoText);
         gunnerSecondaryFireHookup.OnFire.AddListener(DisplaySecondaryAttackCooldown);
 
-        Invoke("WaitForHyperSeedToSpawn", 1);
         ShowPhaseOneObjectiveText();
 
         secondaryAttackCooldown = playerHookup.AbilityCooldownTime;
         dodgeCooldown = playerHookup.DodgeCooldownTime;
+
+        GameManager.Instance.OnStateChange += ChangePhaseText;
     }
 
-    void WaitForHyperSeedToSpawn()
+    void ChangePhaseText()
     {
-        hyperSeedHookup = FindObjectOfType<HyperSeed>();
-        hyperSeedHookup.OnInteract.AddListener(ShowPhaseTwoObjectiveText);
+        if(GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainOne)
+        {
+            ShowPhaseOneObjectiveText();
+        }
+        else if (GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainTwo)
+        {
+            ShowPhaseTwoObjectiveText();
+        }
     }
 
     private void Update()
@@ -134,8 +142,11 @@ public class InGameHUD : MonoBehaviour
     // call at Start()
     public void ShowPhaseOneObjectiveText()
     {
-        objectiveImage.sprite = hyperSeedSprite;
-        objectiveImage.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
+        if (objectiveImage != null)
+        {
+            objectiveImage.sprite = hyperSeedSprite;
+            objectiveImage.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
+        }
 
         objectiveText.text = "LOCATE THE HYPERSEED";
     }
@@ -143,8 +154,11 @@ public class InGameHUD : MonoBehaviour
     // call when player acquires the Hyperseed
     public void ShowPhaseTwoObjectiveText()
     {
-        objectiveImage.sprite = dropshipSprite;
-        objectiveImage.transform.localScale = new Vector3(1, 1, 1);
+        if (objectiveImage != null)
+        {
+            objectiveImage.sprite = dropshipSprite;
+            objectiveImage.transform.localScale = new Vector3(1, 1, 1);
+        }
 
         objectiveText.text = "ESCAPE TO THE DROPSHIP";
     }

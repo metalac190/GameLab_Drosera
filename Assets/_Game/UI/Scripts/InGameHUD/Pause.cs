@@ -91,7 +91,7 @@ public class Pause : MonoBehaviour
     public void BackToMenu()
     {
         Time.timeScale = 1;
-
+        GameManager.Instance.GameState = DroseraGlobalEnums.GameState.Menu;
         SceneManager.LoadScene(0);
     }
 

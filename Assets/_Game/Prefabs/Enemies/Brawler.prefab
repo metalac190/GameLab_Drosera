@@ -265,8 +265,8 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 3.2
-  m_Radius: 1.2
+  m_Height: 3.5
+  m_Radius: 1.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -291,7 +291,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 1
+  m_BaseOffset: 0.8
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &6388667625416121741
@@ -352,7 +352,10 @@ MonoBehaviour:
   healRate: 1
   attackDone: 0
   _enemyFX:
-    burrow: {fileID: 0}
+    burrow: {fileID: 8740312367966588867, guid: 86495891de95c3f4fbfdb3e9f37f0fb3,
+      type: 3}
+    deathEffect: {fileID: 8740312367966588867, guid: 86495891de95c3f4fbfdb3e9f37f0fb3,
+      type: 3}
     Alerted:
       m_PersistentCalls:
         m_Calls: []

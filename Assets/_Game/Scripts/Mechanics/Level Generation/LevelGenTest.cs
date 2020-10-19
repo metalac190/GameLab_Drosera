@@ -128,7 +128,7 @@ public class LevelGenTest : MonoBehaviour
         GameObject toRemove = null;
         for (int i = 0; i < roomList.Count; i++) //goes through list until a break (will break on chosen room/continues on failed room check)
         {           //check for room biome
-            if (roomList[i].GetComponent<Room>().Biome == levelBiomesList[currentLevel - 1] || roomList[i].GetComponent<Room>().Biome == DroseraGlobalEnums.Biome.None)
+            /*if (roomList[i].GetComponent<Room>().Biome == levelBiomesList[currentLevel - 1] || roomList[i].GetComponent<Room>().Biome == DroseraGlobalEnums.Biome.None)
             {        //will be room rotation check
                 
                 toRemove = roomList[i];
@@ -151,7 +151,7 @@ public class LevelGenTest : MonoBehaviour
             else if (i == (roomList.Count - 1))
             {
                 break;  //breaks loop if last room is incompatible
-            }
+            }*/
         }
         if (toRemove)
         {

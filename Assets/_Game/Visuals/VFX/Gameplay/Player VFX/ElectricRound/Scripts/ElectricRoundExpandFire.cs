@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(Rigidbody))]
 public class ElectricRoundExpandFire : MonoBehaviour
 {
     private Rigidbody m_rigidbody;
@@ -21,7 +21,7 @@ public class ElectricRoundExpandFire : MonoBehaviour
     float lerpProgress = 0f;
     private void Awake()
     {
-        m_rigidbody = GetComponent<Rigidbody>();
+        m_rigidbody = GetComponentInParent<Rigidbody>();
         electricParticles = GetComponentInChildren<ParticleSystem>();
         trail = GetComponentInChildren<TrailRenderer>();
     }
@@ -45,18 +45,11 @@ public class ElectricRoundExpandFire : MonoBehaviour
     {
         //if (Input.GetKey(KeyCode.Space))
         //{
-        //    Charge(m_chargeTime);
+        //    Charge(1.0f);
         //}
         //if (Input.GetKeyUp(KeyCode.Space))
         //{
-        //    if (fireDirection == Vector3.zero)
-        //    {
-        //        Fire(speed);
-        //    }
-        //    else
-        //    {
-        //        Fire(speed, fireDirection);
-        //    }
+        //    Fire(10f);
         //}
     }
 

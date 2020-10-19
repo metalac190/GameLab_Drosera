@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     private LevelGeneration levelGen;
     private int currentCutscene;
     private bool gameWon = false;
+    private GameObject cutsceneInstance;
 
     public delegate void OnGameStateChangeHandler();
     public event OnGameStateChangeHandler OnStateChange;
@@ -52,7 +53,7 @@ public class GameManager : MonoBehaviour
         GameState = DroseraGlobalEnums.GameState.CutScene;
         Time.timeScale = 0;
         //May change to play random cutscene
-        Instantiate(Cutscenes[currentCutscene++]);
+        cutsceneInstance = Instantiate(Cutscenes[currentCutscene++]);
 
         if (!gameWon)
         {
@@ -67,11 +68,14 @@ public class GameManager : MonoBehaviour
         if(gameWon)
         {
             GameState = DroseraGlobalEnums.GameState.Menu;
+            gameWon = false;
             UnityEngine.SceneManagement.SceneManager.LoadScene(winScene);
         }
 
         GameState = DroseraGlobalEnums.GameState.MainOne;
         Time.timeScale = 1;
+
+        Destroy(cutsceneInstance);
 
         LevelStart.Invoke();
 

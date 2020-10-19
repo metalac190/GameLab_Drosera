@@ -130,7 +130,7 @@ public class PlayerBase : EntityBase
     {
         //note: for dodge and shoot on controller need to use != 0
 
-        if (currentState != PlayerState.Dead)
+        if (currentState != PlayerState.Dead && GameManager.Instance.GameState != DroseraGlobalEnums.GameState.CutScene)
         {
             if (Input.GetJoystickNames().Length != 0) //controller or keyboard
             {
@@ -173,7 +173,7 @@ public class PlayerBase : EntityBase
         //movement
         zMove = Input.GetAxis("Vertical") * Camera.main.transform.forward;
         xMove = Input.GetAxis("Horizontal") * Camera.main.transform.right;
-        movement = zMove + xMove;
+        movement = (zMove + xMove).normalized * Mathf.Max(zMove.magnitude, xMove.magnitude);
 
         if (currentState != PlayerState.Dodging)
         {
@@ -241,7 +241,6 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
-
         if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
@@ -250,11 +249,11 @@ public class PlayerBase : EntityBase
         {
             currentState = PlayerState.Reloading;
         }
-        if (abilityButton && abilityCooldown < 0.01)
+        if (abilityButton)
         {
             currentState = PlayerState.Ability;
         }
-        if (dodgeButtonGamepad == 1 || dodgeButtonKey && dodgeCooldown < 0.01)
+        if ((dodgeButtonGamepad == 1 || dodgeButtonKey) && dodgeCooldown < 0.01)
         {
             tempDVFX = Instantiate(dodgeVFX, transform.position, Quaternion.identity);
             ParticleSystem part = tempDVFX.GetComponent<ParticleSystem>();
@@ -266,7 +265,7 @@ public class PlayerBase : EntityBase
         {
             currentState = PlayerState.Interacting;
         }
-        interactTarget = null;
+        
         if (_health <= 0)
         {
             currentState = PlayerState.Dead;
@@ -351,6 +350,7 @@ public class PlayerBase : EntityBase
     protected void Interacting()
     {
         interactTarget?.Interact(this);
+        interactTarget = null;
         lastInteract = Time.fixedTime;
         currentState = PlayerState.Neutral;
     }
