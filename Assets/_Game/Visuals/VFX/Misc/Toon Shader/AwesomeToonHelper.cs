@@ -46,6 +46,9 @@ namespace AwesomeToon {
         SkinnedMeshRenderer skinRenderer;
         MeshRenderer meshRenderer;
 
+        // Toggle
+        public static bool toggleRaycasts = false;
+
         void Start() {
             Init();
             GetLights();
@@ -248,13 +251,13 @@ namespace AwesomeToon {
             if (!raycast) return 1.1f;
             RaycastHit hit;
             if (Physics.Raycast(posAbs, dir, out hit, dist, raycastMask)) {
-                if(showRaycasts)
+                if(showRaycasts && toggleRaycasts)
                 {
                     Debug.DrawRay(posAbs, dir.normalized * hit.distance, Color.red);
                 }
                 return -0.1f;
             } else {
-                if(showRaycasts)
+                if(showRaycasts && toggleRaycasts)
                 {
                     Debug.DrawRay(posAbs, dir.normalized * dist, Color.green);
                 }
