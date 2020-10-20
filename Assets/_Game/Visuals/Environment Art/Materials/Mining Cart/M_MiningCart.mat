@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8300939860837932532
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 2
 --- !u!21 &2100000
 Material:
   serializedVersion: 6
@@ -20,10 +7,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_ScaffoldBrown
+  m_Name: M_MiningCart
   m_Shader: {fileID: -6465566751694194690, guid: 0ebabf87fd5c438469e549be88415be7,
     type: 3}
-  m_ShaderKeywords: _NORMALMAP_TANGENT_SPACE
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -130,14 +117,15 @@ Material:
     m_Floats:
     - Boolean_4598239B: 0
     - Boolean_53FA7B3C: 1
-    - Boolean_70DC8568: 0
+    - Boolean_70DC8568: 1
+    - Boolean_7B3DC251: 1
     - Boolean_92686935: 1
     - Boolean_E5EF1A2F: 0
     - Boolean_F4268FBD: 0
-    - Vector1_2FACF48F: 0.32
+    - Vector1_2FACF48F: 0.48
     - Vector1_4B4B1643: 2
-    - Vector1_65A1CCBA: 0.02
-    - Vector1_CEC9BF59: 0.7
+    - Vector1_65A1CCBA: 0.15
+    - Vector1_CEC9BF59: 0.64
     - _AORemapMax: 1
     - _AORemapMin: 0
     - _ATDistance: 1
@@ -213,7 +201,7 @@ Material:
     - _PPDMinSamples: 5
     - _PPDPrimitiveLength: 1
     - _PPDPrimitiveWidth: 1
-    - _ReceivesSSR: 1
+    - _ReceivesSSR: 0
     - _RefractionModel: 0
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
@@ -226,10 +214,10 @@ Material:
     - _SpecularOcclusionMode: 1
     - _SrcBlend: 1
     - _StencilRef: 0
-    - _StencilRefDepth: 8
+    - _StencilRefDepth: 0
     - _StencilRefDistortionVec: 4
-    - _StencilRefGBuffer: 10
-    - _StencilRefMV: 40
+    - _StencilRefGBuffer: 2
+    - _StencilRefMV: 32
     - _StencilWriteMask: 6
     - _StencilWriteMaskDepth: 8
     - _StencilWriteMaskDistortionVec: 4
@@ -260,9 +248,9 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
-    - Color_25431453: {r: 0.7264151, g: 0.16867681, b: 0.12677999, a: 1}
-    - Color_5BBB7D65: {r: 0.41509432, g: 0, b: 0, a: 1}
-    - Color_84686C61: {r: 0.7830189, g: 0.42135268, b: 0.09972411, a: 1}
+    - Color_25431453: {r: 0, g: 0.4039216, b: 1, a: 1}
+    - Color_5BBB7D65: {r: 1, g: 1, b: 1, a: 1}
+    - Color_84686C61: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
@@ -273,21 +261,34 @@ Material:
     - _EmissiveColorLDR: {r: 0, g: 0, b: 0, a: 1}
     - _InvPrimScale: {r: 1, g: 1, b: 0, a: 0}
     - _IridescenceThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
-    - _L1_color: {r: 0.16461611, g: 0.16461611, b: 0.16461611, a: 0.09869396}
-    - _L1_dir: {r: -0.0407937, g: 0.74208367, b: -0.6690647, a: 0}
-    - _L2_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L2_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L3_color: {r: 0, g: 0, b: 0, a: 1}
+    - _L1_color: {r: 0.20090559, g: 0.20090559, b: 0.20090559, a: 0.33407947}
+    - _L1_dir: {r: 0.8712019, g: 0.3541471, b: -0.33998105, a: 0}
+    - _L2_color: {r: 0.2015563, g: 0.2015563, b: 0.2015563, a: 0.2127784}
+    - _L2_dir: {r: -0.88901967, g: 0.25994727, b: 0.37692362, a: 0}
+    - _L3_color: {r: 0.2015563, g: 0.2015563, b: 0.2015563, a: 1}
     - _L3_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L4_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L4_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L5_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L5_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L6_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L6_dir: {r: 0, g: 1, b: 0, a: 0}
+    - _L4_color: {r: 0.2015563, g: 0.2015563, b: 0.2015563, a: 0.07567116}
+    - _L4_dir: {r: -0.0014306123, g: 0.0014306109, b: -0.999998, a: 0}
+    - _L5_color: {r: 0.2015563, g: 0.2015563, b: 0.2015563, a: 0.0664423}
+    - _L5_dir: {r: 0.77365935, g: 0.0013338942, b: -0.63360035, a: 0}
+    - _L6_color: {r: 0, g: 0, b: 0.32007784, a: 0.06703694}
+    - _L6_dir: {r: -0.78942364, g: 0.0013402767, b: -0.61384726, a: 0}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
+--- !u!114 &7616446654206892600
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 2
