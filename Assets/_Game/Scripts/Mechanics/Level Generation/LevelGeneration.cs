@@ -168,13 +168,16 @@ public class LevelGeneration : MonoBehaviour
         int randomLayout = Random.Range(0, hyperseedRoom.GetComponent<Room>().Layouts.Count);
         hyperseedRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
         Debug.Log("EndRoom: " + hyperseedRoom.GetComponent<Room>().Layouts[randomLayout].name);
+        
+        Physics.autoSimulation = false;
+        Physics.Simulate(0.001f);
+        Physics.autoSimulation = true;
+        
         if (hyperseedRoom.GetComponent<Room>().overlapping == true)
         {
             roomCheck = false;
         }
-        foreach(NavMeshSurface comp in hyperseedRoom.GetComponentsInChildren<NavMeshSurface>()) {
-            comp.BuildNavMesh();
-        }
+        hyperseedRoom.GetComponentInChildren<NavMeshGenerator>().BuildNavMesh();
         return roomCheck;
     }
 
@@ -247,6 +250,11 @@ public class LevelGeneration : MonoBehaviour
         if (genTest == true)
         {
             genTest = InstantiateEndRoom(endRoom);
+        }
+        if (genTest == false)   //last check to see if hyperseed overlaps
+        {
+            genTest = false;
+            yield break;
         }
         AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
         foreach(AwesomeToon.AwesomeToonHelper toon in toons)

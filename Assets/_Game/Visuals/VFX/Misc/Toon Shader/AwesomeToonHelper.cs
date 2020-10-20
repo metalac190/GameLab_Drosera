@@ -95,9 +95,6 @@ namespace AwesomeToon {
             meshRenderer = GetComponent<MeshRenderer>();
             if (skinRenderer) skinRenderer.sharedMaterials = materialInstancesArr;
             if (meshRenderer) meshRenderer.sharedMaterials = materialInstancesArr;
-
-            //Check if show gizmo
-            showRaycasts = GameManager.Instance.GetShowLightLines();
         }
 
         // NOTE: If your game loads lights dynamically, this should be called to init new lights

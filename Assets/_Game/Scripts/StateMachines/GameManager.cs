@@ -19,8 +19,6 @@ public class GameManager : MonoBehaviour
     public UnityEvent LevelStart;
     private static GameManager _instance = null;
 
-    [SerializeField] bool showLightLines = true;
-
     private DroseraGlobalEnums.GameState gameState;
     public DroseraGlobalEnums.GameState GameState { get => gameState; set {
             gameState = value;
@@ -97,10 +95,4 @@ public class GameManager : MonoBehaviour
         gameWon = true;
         LevelComplete();
     }
-
-    public bool GetShowLightLines()
-    {
-        return showLightLines;
-    }
-
 }
