@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Events;
+using UnityEngine.Playables;
 
 public class PlayerBase : EntityBase
 {
@@ -92,11 +93,25 @@ public class PlayerBase : EntityBase
     protected float reloadCoolDownTime = 1.0f;
     protected float reloadCoolDown = 0f;
 
+    [SerializeField]
+    protected float lowHealthPercentage = .3f;
+
+    [SerializeField]
+    GameObject dodgeVFX;
+    GameObject tempDVFX;
+
+    [SerializeField]
+    protected float lowHealthSoundDelay = .6f;
+    protected float lowHealthSoundtimer = 0f;
+
+    AudioScript[] audioScripts;
+
     protected override void Start()
     {
         base.Start();
         controller = gameObject.GetComponent<CharacterController>();
         currentState = PlayerState.Neutral;
+        audioScripts = GetComponents<AudioScript>();
     }
 
     public static PlayerBase instance;
@@ -115,7 +130,7 @@ public class PlayerBase : EntityBase
     {
         //note: for dodge and shoot on controller need to use != 0
 
-        if (currentState != PlayerState.Dead)
+        if (currentState != PlayerState.Dead && GameManager.Instance.GameState != DroseraGlobalEnums.GameState.CutScene)
         {
             if (Input.GetJoystickNames().Length != 0) //controller or keyboard
             {
@@ -158,7 +173,7 @@ public class PlayerBase : EntityBase
         //movement
         zMove = Input.GetAxis("Vertical") * Camera.main.transform.forward;
         xMove = Input.GetAxis("Horizontal") * Camera.main.transform.right;
-        movement = zMove + xMove;
+        movement = (zMove + xMove).normalized * Mathf.Max(zMove.magnitude, xMove.magnitude);
 
         if (currentState != PlayerState.Dodging)
         {
@@ -180,6 +195,28 @@ public class PlayerBase : EntityBase
         else if (currentState == PlayerState.Neutral) //idle
         {
 
+        }
+
+        if(_health/_maxHealth < lowHealthPercentage) //low health
+        {
+            if (lowHealthSoundtimer == lowHealthSoundDelay)
+            {
+                audioScripts[9].PlaySound(0);
+                lowHealthSoundtimer = 0;
+            }
+            else
+            {
+                lowHealthSoundtimer += Time.deltaTime;
+            }
+        }
+        else
+        {
+            lowHealthSoundtimer = lowHealthSoundDelay;
+        }
+
+        if(aimToggle)
+        {
+            audioScripts[8].PlaySound(0);
         }
 
         //cooldowns
@@ -204,28 +241,31 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
-
         if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
         }
-        if (reloadButton)
+        if (reloadButton && heldAmmo != 0)
         {
             currentState = PlayerState.Reloading;
         }
-        if (abilityButton && abilityCooldown < 0.01)
+        if (abilityButton)
         {
             currentState = PlayerState.Ability;
         }
-        if (dodgeButtonGamepad == 1 || dodgeButtonKey && dodgeCooldown < 0.01)
+        if ((dodgeButtonGamepad == 1 || dodgeButtonKey) && dodgeCooldown < 0.01)
         {
+            tempDVFX = Instantiate(dodgeVFX, transform.position, Quaternion.identity);
+            ParticleSystem part = tempDVFX.GetComponent<ParticleSystem>();
+            part.Play();
+            audioScripts[6].PlaySound(0);
             currentState = PlayerState.Dodging;
         }
         if (interactButton && Time.fixedTime > lastInteract + interactCooldown)
         {
             currentState = PlayerState.Interacting;
         }
-        interactTarget = null;
+        
         if (_health <= 0)
         {
             currentState = PlayerState.Dead;
@@ -253,10 +293,11 @@ public class PlayerBase : EntityBase
     protected void Reloading()
     {
 
-        if (heldAmmo != 0 && reloadCoolDown < 0.01) //have ammo to reload and reload time is up
-        {
+        if (reloadCoolDown < 0.01 && heldAmmo > 0) //have ammo to reload and reload time is up
+        {     
             if (ammo != maxAmmo) //full
             {
+                audioScripts[5].PlaySound(0);
                 int tempAmmo = heldAmmo + ammo;
                 if (tempAmmo > maxAmmo) //can't hold all the ammo
                 {
@@ -291,12 +332,15 @@ public class PlayerBase : EntityBase
 
     protected void Dodging()
     {
+        tempDVFX.transform.position = transform.position;
+        tempDVFX.transform.rotation = transform.rotation;
         if (dodgeTimer < dodgeTime)
         {
             dodgeTimer += Time.deltaTime;
         }
         else
         {
+            Destroy(tempDVFX);
             dodgeCooldown = dodgeCooldownTime;
             currentState = PlayerState.Neutral;
         }
@@ -306,12 +350,14 @@ public class PlayerBase : EntityBase
     protected void Interacting()
     {
         interactTarget?.Interact(this);
+        interactTarget = null;
         lastInteract = Time.fixedTime;
         currentState = PlayerState.Neutral;
     }
 
     protected void Dead()
     {
+        //dead sound
         GameManager.Instance.GameLost();
         Debug.Log("You are dead.");
     }
@@ -322,7 +368,12 @@ public class PlayerBase : EntityBase
         OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
+            audioScripts[7].PlaySound(0);
             currentState = PlayerState.Dead;
+        }
+        else
+        {
+            audioScripts[4].PlaySound(Random.Range(0, 9));
         }
     }
 }

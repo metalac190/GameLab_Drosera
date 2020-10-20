@@ -10,6 +10,7 @@ public class SpeakerUI : MonoBehaviour
     [SerializeField] public Image portrait;
 
     private Character speaker;
+
     public Character Speaker
     {
         get { return speaker; }

@@ -48,14 +48,15 @@ public class Gunner : PlayerBase
         {
             if ((shootButtonKey || shootButtonGamepad == 1) && !altFireButton)
             {
-                _primaryFire.Fire();
-                currentState = PlayerState.Neutral;
+                _primaryFire.Fire(); 
             }
+            currentState = PlayerState.Neutral;
         }
         else
         {
             currentState = PlayerState.Reloading;
         }
+
         if (altFireButton)
         {
             _altFire.Fire();

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -60,8 +60,7 @@ public class LevelGeneration : MonoBehaviour
     void Start() //on scene start, generate level
     {
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        //randomizeBiomes();    //readd after alpha
-        SetToJungleBiomes();    //sets all biomes to jungle for alpha playtesting purposes; delete after alpha
+        randomizeBiomes();    
     }
     
     private void Update()
@@ -78,16 +77,16 @@ public class LevelGeneration : MonoBehaviour
     }
     IEnumerator GenerateLevelCoroutine()
     {
+        Debug.Log("Level Number: " + LevelNumber);
         genTest = false;
         if (levelNumber < 6)
         {
-            levelNumber += 1;
             while (genTest == false)
             {
                 StartCoroutine(CreateLevelCoroutine(levelNumber, roomMasterPrefab.GetComponent<StoreRooms>().AllRooms));
                 yield return new WaitForSeconds(.001f);
             }
-
+            levelNumber += 1;
         }
         else
         {
@@ -121,39 +120,28 @@ public class LevelGeneration : MonoBehaviour
             if (blank == 0)
             {        //will be room rotation check
                 toRemove = roomList[i];
-                GameObject plz = Instantiate(roomList[i], currentExitLocation + FixTransformDeficit(roomList[i]), priorRoomRotation);
-                plz.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, roomList[i]));
+                GameObject testRoom = Instantiate(roomList[i], currentExitLocation + FixTransformDeficit(roomList[i]), priorRoomRotation);
+                testRoom.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, roomList[i]));
                 //priorRoomRotation = plz.transform.rotation;
-                priorRoomRotation = plz.GetComponent<Room>().Exit.transform.rotation;
-                plz.GetComponent<Room>().Entrance.transform.SetParent(null);
-                plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
-                plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
-                currentExitLocation = plz.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
+                priorRoomRotation = testRoom.GetComponent<Room>().Exit.transform.rotation;
+                testRoom.GetComponent<Room>().Entrance.transform.SetParent(null);
+                testRoom.transform.SetParent(testRoom.GetComponent<Room>().Entrance, true);
+                testRoom.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
+                currentExitLocation = testRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
                 Physics.autoSimulation = false;
                 Physics.Simulate(0.001f);
                 Physics.autoSimulation = true;
 
-                if (plz.GetComponent<Room>().overlapping == true)
+                if (testRoom.GetComponent<Room>().overlapping == true)
                 {
-                    //Debug.Log(plz.name + " is overlapping a previous room");
-                    //return false;
                     roomCheck = false;
                 }
-                else
-                {
-                    //Debug.Log("Safe: " + plz.name);
-                }
-                //check if room intersect, if so regen level ?                   
+                testRoom.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber], true);
+
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
-                int randomLayout = Random.Range(0, plz.GetComponent<Room>().Layouts.Count);
-                plz.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-                //activate nav mesh (find compnenets in children and bake)
-                NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
-                foreach (NavMeshSurface comp in navComponents)
-                {
-                    comp.BuildNavMesh();
-                }
-                currentLevelDifficulty += plz.GetComponent<Room>().Layouts[randomLayout].difficulty;
+                int randomLayout = Random.Range(0, testRoom.GetComponent<Room>().Layouts.Count);
+                testRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+                currentLevelDifficulty += testRoom.GetComponent<Room>().Layouts[randomLayout].difficulty;
                 break;
             }
         }
@@ -168,27 +156,23 @@ public class LevelGeneration : MonoBehaviour
 
     private bool InstantiateEndRoom(GameObject lastRoom)
     {
+        Debug.Log("Level Biome: " + LevelBiomesList[LevelNumber]);
         bool roomCheck = true;
-        GameObject plz = Instantiate(lastRoom, currentExitLocation + FixTransformDeficit(lastRoom), priorRoomRotation);
-        plz.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, lastRoom));
-        priorRoomRotation = plz.GetComponent<Room>().Exit.transform.rotation;
-        plz.GetComponent<Room>().Entrance.transform.SetParent(null);
-        plz.transform.SetParent(plz.GetComponent<Room>().Entrance, true);
-        plz.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
-        if (plz.GetComponent<Room>().overlapping == true)
+        GameObject hyperseedRoom = Instantiate(lastRoom, currentExitLocation + FixTransformDeficit(lastRoom), priorRoomRotation);
+        hyperseedRoom.transform.RotateAround(currentExitLocation, Vector3.up, RotateRoom(priorRoomRotation, lastRoom));
+        priorRoomRotation = hyperseedRoom.GetComponent<Room>().Exit.transform.rotation;
+        hyperseedRoom.GetComponent<Room>().Entrance.transform.SetParent(null);
+        hyperseedRoom.transform.SetParent(hyperseedRoom.GetComponent<Room>().Entrance, true);
+        hyperseedRoom.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
+        hyperseedRoom.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber], true);
+        int randomLayout = Random.Range(0, hyperseedRoom.GetComponent<Room>().Layouts.Count);
+        hyperseedRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+        Debug.Log("EndRoom: " + hyperseedRoom.GetComponent<Room>().Layouts[randomLayout].name);
+        if (hyperseedRoom.GetComponent<Room>().overlapping == true)
         {
-            //Debug.Log(plz.name + " is overlapping a previous room");
             roomCheck = false;
         }
-        else
-        {
-            //Debug.Log("Safe: " + plz.name);
-        }
-        NavMeshSurface[] navComponents = plz.GetComponentsInChildren<NavMeshSurface>();
-        foreach (NavMeshSurface comp in navComponents)
-        {
-            comp.BuildNavMesh();
-        }
+        hyperseedRoom.GetComponentInChildren<NavMeshGenerator>().BuildNavMesh();
         return roomCheck;
     }
 
@@ -225,7 +209,7 @@ public class LevelGeneration : MonoBehaviour
     IEnumerator CreateLevelCoroutine(int currentLevel, List<GameObject> masterList)
     {
         DestroyInstantiatedRooms(); //destroys previous level
-        yield return new WaitForEndOfFrame();
+        yield return null;
         Physics.autoSimulation = false;
         Physics.Simulate(0.01f);
         Physics.autoSimulation = true;
@@ -242,24 +226,18 @@ public class LevelGeneration : MonoBehaviour
         ShuffleRoomList(currentListOptions);
         Instantiate(dropShipRoom);
         currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
+        dropShipRoom.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber], true);
+        playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
         int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
         dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-        NavMeshSurface[] navComponents = dropShipRoom.GetComponentsInChildren<NavMeshSurface>();
-        foreach (NavMeshSurface comp in navComponents)
-        {
-            comp.BuildNavMesh();
-        }
-        playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
-
+        Debug.Log("Dropship: " + dropShipRoom.GetComponent<Room>().Layouts[randomLayout].name);
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
-        currentListOptions = getBiomeSpecificList(currentListOptions, currentLevel);                                                                               //scale level difficulty
         desiredLevelDifficulty = ScaleDifficulty();
         while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)
         {
             genTest = InstantiateValidRoom(currentListOptions);
             if (genTest == false)
             {
-                //Debug.Log("FALSE LEVEL RETURNED (room)");
                 genTest = false;
                 yield break;
             }
@@ -267,6 +245,11 @@ public class LevelGeneration : MonoBehaviour
         if (genTest == true)
         {
             genTest = InstantiateEndRoom(endRoom);
+        }
+        AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
+        foreach(AwesomeToon.AwesomeToonHelper toon in toons)
+        {
+            toon.GetLights();
         }
         yield return null;
     }
@@ -276,11 +259,13 @@ public class LevelGeneration : MonoBehaviour
         GameObject[] iEntrances = GameObject.FindGameObjectsWithTag("RoomEntrance");
         for (int i = 0; i < iEntrances.Length; i++)
         {
+            //iEntrances[i].SetActive(false);
             Destroy(iEntrances[i]);
         }
         GameObject[] iRooms = GameObject.FindGameObjectsWithTag("InstantiatedRoom");
         for (int i = 0; i < iRooms.Length; i++)
         {
+            //iRooms[i].SetActive(false);
             Destroy(iRooms[i]); 
         }
     }
@@ -298,23 +283,5 @@ public class LevelGeneration : MonoBehaviour
                 levelBiomesList.Add(DroseraGlobalEnums.Biome.Desert);
             }
         }
-    }
-    private void SetToJungleBiomes()        //for playtesting purposes; will be deleted after Alpha.
-    {
-        for (int i = 0; i < 6; i++)
-        {
-            levelBiomesList.Add(DroseraGlobalEnums.Biome.Jungle);
-        }
-    }
-    private List<GameObject> getBiomeSpecificList(List<GameObject> overallList, int currentLevel)
-    {
-        List<GameObject> biomeSpecificList = new List<GameObject>();
-        for (int i = 0; i < overallList.Count; i++)
-        {
-            if (overallList[i].GetComponent<Room>().Biome == levelBiomesList[currentLevel - 1] ||
-                overallList[i].GetComponent<Room>().Biome == DroseraGlobalEnums.Biome.None)
-                biomeSpecificList.Add(overallList[i]);
-        }
-        return biomeSpecificList;
     }
 }

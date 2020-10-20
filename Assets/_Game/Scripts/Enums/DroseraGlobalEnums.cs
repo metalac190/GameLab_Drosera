@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DroseraGlobalEnums : MonoBehaviour
 {
-    [System.Flags]
-    public enum Biome { None, Jungle, Desert };
+    public enum Biome { Jungle, Desert };
     public enum GameState {Menu, CutScene, MainOne, MainTwo };
 }
