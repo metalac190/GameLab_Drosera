@@ -45,18 +45,11 @@ public class ElectricRoundExpandFire : MonoBehaviour
     {
         //if (Input.GetKey(KeyCode.Space))
         //{
-        //    Charge(m_chargeTime);
+        //    Charge(1.0f);
         //}
         //if (Input.GetKeyUp(KeyCode.Space))
         //{
-        //    if (fireDirection == Vector3.zero)
-        //    {
-        //        Fire(speed);
-        //    }
-        //    else
-        //    {
-        //        Fire(speed, fireDirection);
-        //    }
+        //    Fire(10f);
         //}
     }
 

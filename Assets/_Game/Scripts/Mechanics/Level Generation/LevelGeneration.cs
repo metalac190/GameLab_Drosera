@@ -172,9 +172,7 @@ public class LevelGeneration : MonoBehaviour
         {
             roomCheck = false;
         }
-        foreach(NavMeshSurface comp in hyperseedRoom.GetComponentsInChildren<NavMeshSurface>()) {
-            comp.BuildNavMesh();
-        }
+        hyperseedRoom.GetComponentInChildren<NavMeshGenerator>().BuildNavMesh();
         return roomCheck;
     }
 
