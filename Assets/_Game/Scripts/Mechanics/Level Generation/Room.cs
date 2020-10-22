@@ -45,6 +45,7 @@ public class Room : MonoBehaviour
     /// <param name="objs"></param>
     public void AddObjectsToLayout(int layout, Transform[] objs)
     {
+        if (data == null) return;
         foreach(Transform t in objs)
             if(!data.Layouts[layout].objects.Contains(t))
                 data.Layouts[layout].objects.Add(t);
@@ -57,17 +58,35 @@ public class Room : MonoBehaviour
     /// <param name="active"></param>
     public void SetLayoutActive(string name, bool active)
     {
-        foreach (Layout layout in data.Layouts)
+        if(data != null)
         {
-            if(layout.name.ToLower() == name.ToLower())
+            foreach (Layout layout in data.Layouts)
             {
-                layout.hidden = active;
-                foreach (Transform obj in layout.objects)
+                if (layout.name.ToLower() == name.ToLower())
                 {
-                    obj.gameObject.SetActive(active);
+                    layout.hidden = active;
+                    foreach (Transform obj in layout.objects)
+                    {
+                        obj.gameObject.SetActive(active);
+                    }
                 }
             }
         }
+        else
+        {
+            foreach (Layout layout in Layouts)
+            {
+                if (layout.name.ToLower() == name.ToLower())
+                {
+                    layout.hidden = active;
+                    foreach (Transform obj in layout.objects)
+                    {
+                        obj.gameObject.SetActive(active);
+                    }
+                }
+            }
+        }
+        
     }
 
     /// <summary>
@@ -77,18 +96,37 @@ public class Room : MonoBehaviour
     /// <param name="active"></param>
     public void SetLayoutActive(int index, bool active)
     {
-        data.Layouts[index].hidden = active;
-        foreach (Layout layout in data.Layouts)
+        if(data != null)
         {
-            layout.objects.RemoveAll(obj => obj == null);
-            foreach (Transform obj in layout.objects)
+            data.Layouts[index].hidden = active;
+            foreach (Layout layout in data.Layouts)
             {
-                obj.gameObject.SetActive(false);
+                layout.objects.RemoveAll(obj => obj == null);
+                foreach (Transform obj in layout.objects)
+                {
+                    obj.gameObject.SetActive(false);
+                }
+            }
+            foreach (Transform obj in data.Layouts[index].objects)
+            {
+                obj.gameObject.SetActive(active);
             }
         }
-        foreach (Transform obj in data.Layouts[index].objects)
+        else
         {
-            obj.gameObject.SetActive(active);
+            Layouts[index].hidden = active;
+            foreach (Layout layout in Layouts)
+            {
+                layout.objects.RemoveAll(obj => obj == null);
+                foreach (Transform obj in layout.objects)
+                {
+                    obj.gameObject.SetActive(false);
+                }
+            }
+            foreach (Transform obj in Layouts[index].objects)
+            {
+                obj.gameObject.SetActive(active);
+            }
         }
     }
 
