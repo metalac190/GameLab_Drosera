@@ -19,10 +19,13 @@ public class Room : MonoBehaviour
     private Transform[] biomes = new Transform[System.Enum.GetValues(typeof(DroseraGlobalEnums.Biome)).Length];
     public Transform[] Biomes { get => biomes; set => biomes = value; }
 
+    public RoomDataContainer data;
     [Header("Room Layouts")]
+    [HideInInspector]
     [SerializeField]
-    private List<Layout> layouts = new List<Layout>();
-    public List<Layout> Layouts { get => layouts; }
+    private List<Room.Layout> layouts = new List<Room.Layout>();
+    [HideInInspector]
+    public List<Room.Layout> Layouts { get => layouts; }
 
     [System.Serializable]
     public class Layout
@@ -43,8 +46,8 @@ public class Room : MonoBehaviour
     public void AddObjectsToLayout(int layout, Transform[] objs)
     {
         foreach(Transform t in objs)
-            if(!layouts[layout].objects.Contains(t))
-                layouts[layout].objects.Add(t);
+            if(!data.Layouts[layout].objects.Contains(t))
+                data.Layouts[layout].objects.Add(t);
     }
 
     /// <summary>
@@ -54,7 +57,7 @@ public class Room : MonoBehaviour
     /// <param name="active"></param>
     public void SetLayoutActive(string name, bool active)
     {
-        foreach (Layout layout in layouts)
+        foreach (Layout layout in data.Layouts)
         {
             if(layout.name.ToLower() == name.ToLower())
             {
@@ -74,8 +77,8 @@ public class Room : MonoBehaviour
     /// <param name="active"></param>
     public void SetLayoutActive(int index, bool active)
     {
-        layouts[index].hidden = active;
-        foreach (Layout layout in layouts)
+        data.Layouts[index].hidden = active;
+        foreach (Layout layout in data.Layouts)
         {
             layout.objects.RemoveAll(obj => obj == null);
             foreach (Transform obj in layout.objects)
@@ -83,7 +86,7 @@ public class Room : MonoBehaviour
                 obj.gameObject.SetActive(false);
             }
         }
-        foreach (Transform obj in layouts[index].objects)
+        foreach (Transform obj in data.Layouts[index].objects)
         {
             obj.gameObject.SetActive(active);
         }
