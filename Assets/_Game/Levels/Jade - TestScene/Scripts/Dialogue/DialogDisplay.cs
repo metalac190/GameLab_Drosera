@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class DialogDisplay : MonoBehaviour
 {
     [SerializeField] public Conversation conversation;
-
     [SerializeField] public GameObject speakerLeft;
     [SerializeField] public GameObject speakerRight;
 
@@ -22,27 +21,19 @@ public class DialogDisplay : MonoBehaviour
 
     private int activateLineIndex = 0;
 
-    public UnityEvent DialogScroll;
+   public UnityEvent DialogScroll;
 
-    void Start()
+    private void Start()
     {
         speakerUILeft = speakerLeft.GetComponent<SpeakerUI>();
         speakerUIRight = speakerRight.GetComponent<SpeakerUI>();
-        
+
         speakerUILeft.Speaker = conversation.speakerLeft;
         speakerUIRight.Speaker = conversation.speakerRight;
 
         AdvanceConversation();
 
         continueButton.SetActive(true);
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            AdvanceConversation();
-        }
     }
 
     public void NextSentences()
@@ -52,7 +43,7 @@ public class DialogDisplay : MonoBehaviour
 
     public void AdvanceConversation()
     {
-        if (activateLineIndex < conversation.lines.Length)
+        if(activateLineIndex < conversation.lines.Length)
         {
             DisplayLine();
             activateLineIndex += 1;
@@ -61,7 +52,6 @@ public class DialogDisplay : MonoBehaviour
         {
             speakerUILeft.Hide();
             speakerUIRight.Hide();
-
             activateLineIndex = 0;
             // deactivate dialogue
             deactivateButton.SetActive(true);
@@ -76,7 +66,7 @@ public class DialogDisplay : MonoBehaviour
 
         Character character = line.character;
 
-        if (speakerUILeft.SpeakerIs(character))
+        if(speakerUILeft.SpeakerIs(character))
         {
             SetDialog(speakerUILeft, speakerUIRight, line.text);
         }
@@ -99,7 +89,7 @@ public class DialogDisplay : MonoBehaviour
 
     IEnumerator EffectTypewriter(string text, SpeakerUI activeSpeakerUI)
     {
-        activeSpeakerUI.Dialog = "";
+       activeSpeakerUI.Dialog = "";
         foreach (char character in text.ToCharArray())
         {
             activeSpeakerUI.Dialog += character;

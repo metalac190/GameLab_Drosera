@@ -166,7 +166,7 @@ public class PlayerBase : EntityBase
             dodgeButtonKey = Input.GetKey(KeyCode.Space);
             shootButtonKey = Input.GetMouseButton(0);
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
-            adjustCameraRightKey = Input.GetKey(KeyCode.X);
+            adjustCameraRightKey = Input.GetKey(KeyCode.C);
         }
 
 

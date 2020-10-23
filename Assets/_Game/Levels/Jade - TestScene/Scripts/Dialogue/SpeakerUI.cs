@@ -8,6 +8,7 @@ public class SpeakerUI : MonoBehaviour
     [SerializeField] public Text fullName;
     [SerializeField] public Text dialog;
     [SerializeField] public Image portrait;
+
     private Character speaker;
 
     public Character Speaker
