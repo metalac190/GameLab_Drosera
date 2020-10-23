@@ -86,6 +86,7 @@ public class PlayerBase : EntityBase
     protected int heldAmmo = 20;
     public int Ammo { get { return ammo; } set { ammo = value; } }
     public int HeldAmmo { get { return heldAmmo; } set { heldAmmo = value; } }
+    public int MaxAmmo { get { return maxAmmo; } set { maxAmmo = value; } }
     [SerializeField]
     protected int ammoPerOre = 1;
     public int AmmoPerOre { get { return ammoPerOre; } }
