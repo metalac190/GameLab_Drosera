@@ -23,11 +23,11 @@ Material:
   m_Name: M_Trail_Basic_Transparent
   m_Shader: {fileID: -6465566751694194690, guid: ddf0c0e603eae9b429928da8cc3b814f,
     type: 3}
-  m_ShaderKeywords: _BLENDMODE_ALPHA _SURFACE_TYPE_TRANSPARENT
+  m_ShaderKeywords: _BLENDMODE_ALPHA _ENABLE_FOG_ON_TRANSPARENT _SURFACE_TYPE_TRANSPARENT
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2999
   stringTagMap:
     MotionVector: User
     RenderType: Transparent
@@ -135,7 +135,7 @@ Material:
     - _EmissiveExposureWeight: 1
     - _EmissiveIntensity: 200
     - _EmissiveIntensityUnit: 0
-    - _EnableFogOnTransparent: 0
+    - _EnableFogOnTransparent: 1
     - _FlipbookMode: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -168,7 +168,7 @@ Material:
     - _SurfaceType: 1
     - _TransparentBackfaceEnable: 0
     - _TransparentCullMode: 2
-    - _TransparentSortPriority: 0
+    - _TransparentSortPriority: -1
     - _TransparentZWrite: 0
     - _UVSec: 0
     - _UseEmissiveIntensity: 0

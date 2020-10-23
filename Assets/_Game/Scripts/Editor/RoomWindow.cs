@@ -63,6 +63,16 @@ public class RoomWindow : EditorWindow
     {
         if (currentRoom != null)
         {
+            if(currentRoom.data == null)
+            {
+                currentRoom.data = currentRoom.GetComponentInChildren<RoomDataContainer>();
+                if(currentRoom.data != null)
+                {
+                    currentRoom.data.Layouts.AddRange(currentRoom.Layouts);
+                    EditorUtility.SetDirty(currentRoom.data.gameObject);
+                }
+            }
+
             currentHeight = 60;
             if (biomeDropdown) currentHeight += System.Enum.GetValues(typeof(DroseraGlobalEnums.Biome)).Length * 20;
             if (doorDropdown) currentHeight += 40;
@@ -152,17 +162,19 @@ public class RoomWindow : EditorWindow
         GUILayout.Box("Layouts", EditorStyles.boldLabel);
         if (GUILayout.Button("Add New Layout"))
         {
-            currentRoom.Layouts.Add(new Room.Layout());
+            currentRoom.data?.Layouts.Add(new Room.Layout());
             EditorUtility.SetDirty(currentRoom.gameObject);
         }
         EditorGUILayout.EndHorizontal();
 
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Width(position.width - widthBuffer*2), GUILayout.Height(position.height - currentHeight - heightBuffer*7));
-        foreach (Room.Layout layout in currentRoom.Layouts)
-        {
-            if (DrawLayout(layout)) break;
-            EditorGUILayout.Space(4);
-        }
+        if (currentRoom.data != null)
+            foreach (Room.Layout layout in currentRoom.data.Layouts)
+            {
+                if (DrawLayout(layout)) break;
+                EditorGUILayout.Space(4);
+            }
+        else EditorGUILayout.HelpBox("Please add a RoomDataContainer script to the collision prefab, then hover over this window again!", MessageType.Error);
         EditorGUILayout.EndScrollView();
 
         GUILayout.EndArea();
@@ -187,13 +199,13 @@ public class RoomWindow : EditorWindow
         layout.name = EditorGUILayout.TextField(layout.name);
         if (EditorGUI.EndChangeCheck())
         {
-            EditorUtility.SetDirty(currentRoom.gameObject);
+            EditorUtility.SetDirty(currentRoom.data.gameObject);
         }
 
         if (GUILayout.Button("Add Selected Objects to Layout"))
         {
-            currentRoom.AddObjectsToLayout(currentRoom.Layouts.IndexOf(layout), Selection.transforms);
-            EditorUtility.SetDirty(currentRoom.gameObject);
+            currentRoom.AddObjectsToLayout(currentRoom.data.Layouts.IndexOf(layout), Selection.transforms);
+            EditorUtility.SetDirty(currentRoom.data.gameObject);
         }
 
         if (GUILayout.Button(layout.hidden ? "Shown" : "Hidden"))
@@ -202,7 +214,7 @@ public class RoomWindow : EditorWindow
             foreach (Transform obj in layout.objects)
             {
                 obj.gameObject.SetActive(layout.hidden);
-                EditorUtility.SetDirty(currentRoom.gameObject);
+                EditorUtility.SetDirty(currentRoom.data.gameObject);
             }
         }
 
@@ -218,8 +230,8 @@ public class RoomWindow : EditorWindow
 
         if (GUILayout.Button("Delete Layout"))
         {
-            currentRoom.Layouts.Remove(layout);
-            EditorUtility.SetDirty(currentRoom.gameObject);
+            currentRoom.data.Layouts.Remove(layout);
+            EditorUtility.SetDirty(currentRoom.data.gameObject);
             return true;
         }
 
@@ -231,7 +243,7 @@ public class RoomWindow : EditorWindow
             layout.difficulty = EditorGUILayout.IntSlider("Difficulty", layout.difficulty, -3, 15);
             if(EditorGUI.EndChangeCheck())
             {
-                EditorUtility.SetDirty(currentRoom.gameObject);
+                EditorUtility.SetDirty(currentRoom.data.gameObject);
             }
 
             List<Transform> toRemove = new List<Transform>();
@@ -253,7 +265,7 @@ public class RoomWindow : EditorWindow
                 if (GUILayout.Button("Remove"))
                 {
                     toRemove.Add(obj);
-                    EditorUtility.SetDirty(currentRoom.gameObject);
+                    EditorUtility.SetDirty(currentRoom.data.gameObject);
                 }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.Space(2);
