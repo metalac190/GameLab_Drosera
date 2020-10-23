@@ -6,9 +6,12 @@ using UnityEngine.UI;
 [System.Serializable]
 public struct Line
 {
+    [SerializeField] string name;
+
     [SerializeField] public Character character;
 
-    [TextArea(5, 20)]
+    [TextArea(5, 10)]
+
     [SerializeField] public string text;
 }
 
