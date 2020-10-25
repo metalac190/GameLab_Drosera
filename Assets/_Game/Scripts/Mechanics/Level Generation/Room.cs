@@ -16,13 +16,16 @@ public class Room : MonoBehaviour
     //[HideInInspector]
     public bool activeGenerating = true;
     [SerializeField]
-    private DroseraGlobalEnums.Biome biome;
-    public DroseraGlobalEnums.Biome Biome { get => biome; set => biome = value; }
+    private Transform[] biomes = new Transform[System.Enum.GetValues(typeof(DroseraGlobalEnums.Biome)).Length];
+    public Transform[] Biomes { get => biomes; set => biomes = value; }
 
+    public RoomDataContainer data;
     [Header("Room Layouts")]
+    [HideInInspector]
     [SerializeField]
-    private List<Layout> layouts = new List<Layout>();
-    public List<Layout> Layouts { get => layouts; }
+    private List<Room.Layout> layouts = new List<Room.Layout>();
+    [HideInInspector]
+    public List<Room.Layout> Layouts { get => layouts; }
 
     [System.Serializable]
     public class Layout
@@ -42,22 +45,10 @@ public class Room : MonoBehaviour
     /// <param name="objs"></param>
     public void AddObjectsToLayout(int layout, Transform[] objs)
     {
+        if (data == null) return;
         foreach(Transform t in objs)
-            if(!layouts[layout].objects.Contains(t))
-                layouts[layout].objects.Add(t);
-    }
-
-    private void Awake()
-    {
-        foreach (Door door in GetComponentsInChildren<Door>()) door.room = this;
-        foreach(Layout layout in layouts)
-        {
-            layout.objects.RemoveAll(obj => obj == null);
-            foreach(Transform obj in layout.objects)
-            {
-                obj.gameObject.SetActive(false);
-            }
-        }
+            if(!data.Layouts[layout].objects.Contains(t))
+                data.Layouts[layout].objects.Add(t);
     }
 
     /// <summary>
@@ -67,17 +58,35 @@ public class Room : MonoBehaviour
     /// <param name="active"></param>
     public void SetLayoutActive(string name, bool active)
     {
-        foreach (Layout layout in layouts)
+        if(data != null)
         {
-            if(layout.name.ToLower() == name.ToLower())
+            foreach (Layout layout in data.Layouts)
             {
-                layout.hidden = active;
-                foreach (Transform obj in layout.objects)
+                if (layout.name.ToLower() == name.ToLower())
                 {
-                    obj.gameObject.SetActive(active);
+                    layout.hidden = active;
+                    foreach (Transform obj in layout.objects)
+                    {
+                        obj.gameObject.SetActive(active);
+                    }
                 }
             }
         }
+        else
+        {
+            foreach (Layout layout in Layouts)
+            {
+                if (layout.name.ToLower() == name.ToLower())
+                {
+                    layout.hidden = active;
+                    foreach (Transform obj in layout.objects)
+                    {
+                        obj.gameObject.SetActive(active);
+                    }
+                }
+            }
+        }
+        
     }
 
     /// <summary>
@@ -87,10 +96,48 @@ public class Room : MonoBehaviour
     /// <param name="active"></param>
     public void SetLayoutActive(int index, bool active)
     {
-        layouts[index].hidden = active;
-        foreach (Transform obj in layouts[index].objects)
+        if(data != null)
         {
-            obj.gameObject.SetActive(active);
+            data.Layouts[index].hidden = active;
+            foreach (Layout layout in data.Layouts)
+            {
+                layout.objects.RemoveAll(obj => obj == null);
+                foreach (Transform obj in layout.objects)
+                {
+                    obj.gameObject.SetActive(false);
+                }
+            }
+            foreach (Transform obj in data.Layouts[index].objects)
+            {
+                obj.gameObject.SetActive(active);
+            }
         }
+        else
+        {
+            Layouts[index].hidden = active;
+            foreach (Layout layout in Layouts)
+            {
+                layout.objects.RemoveAll(obj => obj == null);
+                foreach (Transform obj in layout.objects)
+                {
+                    obj.gameObject.SetActive(false);
+                }
+            }
+            foreach (Transform obj in Layouts[index].objects)
+            {
+                obj.gameObject.SetActive(active);
+            }
+        }
+    }
+
+    public void SetBiomeActive(DroseraGlobalEnums.Biome biome, bool active)
+    {
+        if (biomes[(int)biome] == null) return;
+        foreach (Transform b in biomes)
+        {
+            if (b == null) continue;
+            b.gameObject.SetActive(false);
+        }
+        biomes[(int)biome].gameObject.SetActive(active);
     }
 }
