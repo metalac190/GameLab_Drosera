@@ -86,6 +86,7 @@ MonoBehaviour:
   biomes:
   - {fileID: 2681078401062160118}
   - {fileID: 8154592213581261171}
+  data: {fileID: 8023375168251683452}
   layouts:
   - name: Layout
     dropdownInEditor: 0
@@ -128,6 +129,27 @@ Transform:
   m_Father: {fileID: 6820986238100744736}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8023375168251683452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8683954944863012185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c32c4c6172ced44b9bd231db7213461, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layouts:
+  - name: Layout
+    dropdownInEditor: 1
+    difficulty: 2
+    hidden: 1
+    objects:
+    - {fileID: 959475274367660834}
+    - {fileID: 555469917573906245}
+    - {fileID: 379928101969457611}
 --- !u!1001 &2764267909232550633
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -815,8 +837,15 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6754108220329308718, guid: c514fc43bca2123459592ea232b804e5, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c514fc43bca2123459592ea232b804e5, type: 3}
+--- !u!1 &8683954944863012185 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1094418352230653938, guid: c514fc43bca2123459592ea232b804e5,
+    type: 3}
+  m_PrefabInstance: {fileID: 8625445184679631531}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9180263170753039222 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 636524894229156317, guid: c514fc43bca2123459592ea232b804e5,

@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1495270126563479375
 Transform:
   m_ObjectHideFlags: 0
@@ -48,7 +48,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &560217354034852905
 Transform:
   m_ObjectHideFlags: 0
@@ -119,6 +119,7 @@ MonoBehaviour:
   biomes:
   - {fileID: 560217354034852905}
   - {fileID: 1495270126563479375}
+  data: {fileID: 0}
   layouts:
   - name: Dropship_index0
     dropdownInEditor: 0
@@ -774,6 +775,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5669372744039366796, guid: f4cd60334e52d664ea799ce355ac995d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5727150986054438722, guid: f4cd60334e52d664ea799ce355ac995d,
         type: 3}
