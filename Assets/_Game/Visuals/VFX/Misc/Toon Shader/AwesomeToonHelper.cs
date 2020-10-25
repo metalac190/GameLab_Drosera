@@ -30,7 +30,7 @@ namespace AwesomeToon {
         [SerializeField] bool instanceMaterial = true;
         [SerializeField] bool showRaycasts = true;
         [SerializeField] Vector3 meshCenter = Vector3.zero;
-        [SerializeField] int maxLights = 6;
+        [SerializeField] int maxLights = 4;
 
         [Header("Recieve Shadow Check")]
         [SerializeField] bool raycast = true;
@@ -45,6 +45,9 @@ namespace AwesomeToon {
         List<Material> materialInstances = new List<Material>();
         SkinnedMeshRenderer skinRenderer;
         MeshRenderer meshRenderer;
+
+        // Toggle
+        public static bool toggleRaycasts = false;
 
         void Start() {
             Init();
@@ -245,13 +248,13 @@ namespace AwesomeToon {
             if (!raycast) return 1.1f;
             RaycastHit hit;
             if (Physics.Raycast(posAbs, dir, out hit, dist, raycastMask)) {
-                if(showRaycasts)
+                if(showRaycasts && toggleRaycasts)
                 {
                     Debug.DrawRay(posAbs, dir.normalized * hit.distance, Color.red);
                 }
                 return -0.1f;
             } else {
-                if(showRaycasts)
+                if(showRaycasts && toggleRaycasts)
                 {
                     Debug.DrawRay(posAbs, dir.normalized * dist, Color.green);
                 }
