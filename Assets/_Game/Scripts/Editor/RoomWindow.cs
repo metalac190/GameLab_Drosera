@@ -8,9 +8,12 @@ public class RoomWindow : EditorWindow
     Room currentRoom = null;
     int selected = 0;
     Vector2 scrollPosition;
-    int settingsHeight = 60;
+    int currentHeight;
     int widthBuffer = 5;
     int heightBuffer = 5;
+    bool biomeDropdown = false;
+    bool doorDropdown = false;
+    int prevDifficulty = -1000;
     
     string[] biomes = { "Jungle" , "Desert"};
     Color sectionColor = new Color(.7f, .7f, .7f);
@@ -60,6 +63,19 @@ public class RoomWindow : EditorWindow
     {
         if (currentRoom != null)
         {
+            if(currentRoom.data == null)
+            {
+                currentRoom.data = currentRoom.GetComponentInChildren<RoomDataContainer>();
+                if(currentRoom.data != null)
+                {
+                    currentRoom.data.Layouts.AddRange(currentRoom.Layouts);
+                    EditorUtility.SetDirty(currentRoom.data.gameObject);
+                }
+            }
+
+            currentHeight = 60;
+            if (biomeDropdown) currentHeight += System.Enum.GetValues(typeof(DroseraGlobalEnums.Biome)).Length * 20;
+            if (doorDropdown) currentHeight += 40;
             DrawRoomSettings();
             DrawLayoutSettings();
         }
@@ -70,37 +86,64 @@ public class RoomWindow : EditorWindow
     /// </summary>
     private void DrawRoomSettings()
     {
-        GUILayout.BeginArea(new Rect(widthBuffer, heightBuffer, position.width - widthBuffer * 2, settingsHeight + heightBuffer));
+        GUILayout.BeginArea(new Rect(widthBuffer, heightBuffer, position.width - widthBuffer * 2, currentHeight + heightBuffer));
         Texture2D texture = new Texture2D(1, 1);
         texture.SetPixel(0, 0, sectionColor);
         texture.Apply();
-        GUI.DrawTexture(new Rect(0, 0, position.width, settingsHeight), texture);
+        GUI.DrawTexture(new Rect(0, 0, position.width, currentHeight), texture);
+        
+        GUILayout.Box(currentRoom.name + " Room Settings", EditorStyles.boldLabel);
 
-        GUILayout.Box("Room Settings", EditorStyles.boldLabel);
-        currentRoom.name = EditorGUILayout.TextField(currentRoom.name);
+        EditorGUILayout.BeginVertical();
+        doorDropdown = EditorGUILayout.BeginFoldoutHeaderGroup(doorDropdown, "Door Transforms");
 
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Entrance: " + (currentRoom.Entrance == null ? "Not Set" : currentRoom.Entrance.name)))
+        if (doorDropdown)
         {
-            if (selected == 1 && Selection.transforms[0].GetComponent<Door>())
+            if (GUILayout.Button("Entrance: " + (currentRoom.Entrance == null ? "Not Set" : currentRoom.Entrance.name)))
             {
-                currentRoom.Entrance = Selection.transforms[0];
-                currentRoom.Entrance.GetComponent<Door>().room = currentRoom;
+                if (selected == 1 && Selection.transforms[0].GetComponent<Door>())
+                {
+                    currentRoom.Entrance = Selection.transforms[0];
+                    currentRoom.Entrance.GetComponent<Door>().room = currentRoom;
+                    EditorUtility.SetDirty(currentRoom.gameObject);
+                }
+
             }
-                
+            if (GUILayout.Button("Exit: " + (currentRoom.Exit == null ? "Not Set" : currentRoom.Exit.name)))
+            {
+                if (selected == 1 && Selection.transforms[0].GetComponent<Door>())
+                {
+                    currentRoom.Exit = Selection.transforms[0];
+                    currentRoom.Exit.GetComponent<Door>().room = currentRoom;
+                    EditorUtility.SetDirty(currentRoom.gameObject);
+                }
+
+            }
         }
-        if (GUILayout.Button("Exit: " + (currentRoom.Exit == null ? "Not Set" : currentRoom.Exit.name)))
+
+        EditorGUILayout.EndFoldoutHeaderGroup();
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.BeginVertical();
+        biomeDropdown = EditorGUILayout.BeginFoldoutHeaderGroup(biomeDropdown, "Biome Containers");
+
+        if (biomeDropdown)
         {
-            if (selected == 1 && Selection.transforms[0].GetComponent<Door>())
+            foreach (DroseraGlobalEnums.Biome biome in System.Enum.GetValues(typeof(DroseraGlobalEnums.Biome)))
             {
-                currentRoom.Exit = Selection.transforms[0];
-                currentRoom.Exit.GetComponent<Door>().room = currentRoom;
+                if (GUILayout.Button(biome + ": " + (currentRoom.Biomes[(int)biome] != null ? currentRoom.Biomes[(int)biome].name : "Not Set")))
+                {
+                    if (selected == 1)
+                    {
+                        currentRoom.Biomes[(int)biome] = Selection.transforms[0];
+                        EditorUtility.SetDirty(currentRoom.gameObject);
+                    }
+                }
             }
-                
         }
-        GUILayout.Label("Biome:");
-        currentRoom.Biome = (DroseraGlobalEnums.Biome)EditorGUILayout.EnumFlagsField(currentRoom.Biome);
-        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.EndFoldoutHeaderGroup();
+        EditorGUILayout.EndVertical();
         GUILayout.EndArea();
     }
 
@@ -109,26 +152,29 @@ public class RoomWindow : EditorWindow
     /// </summary>
     private void DrawLayoutSettings()
     {
-        GUILayout.BeginArea(new Rect(widthBuffer, settingsHeight + heightBuffer * 2, position.width - widthBuffer * 2, position.height + heightBuffer * 2));
+        GUILayout.BeginArea(new Rect(widthBuffer, currentHeight + heightBuffer * 2, position.width - widthBuffer * 2, position.height + heightBuffer * 2));
         Texture2D texture = new Texture2D(1, 1);
         texture.SetPixel(0, 0, sectionColor);
         texture.Apply();
-        GUI.DrawTexture(new Rect(0, 0, position.width, position.height - settingsHeight - heightBuffer*3), texture);
+        GUI.DrawTexture(new Rect(0, 0, position.width, position.height - currentHeight - heightBuffer*3), texture);
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Box("Layouts", EditorStyles.boldLabel);
         if (GUILayout.Button("Add New Layout"))
         {
-            currentRoom.Layouts.Add(new Room.Layout());
+            currentRoom.data?.Layouts.Add(new Room.Layout());
+            EditorUtility.SetDirty(currentRoom.gameObject);
         }
         EditorGUILayout.EndHorizontal();
 
-        scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Width(position.width - widthBuffer*2), GUILayout.Height(position.height - settingsHeight - heightBuffer*7));
-        foreach (Room.Layout layout in currentRoom.Layouts)
-        {
-            if (DrawLayout(layout)) break;
-            EditorGUILayout.Space(4);
-        }
+        scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Width(position.width - widthBuffer*2), GUILayout.Height(position.height - currentHeight - heightBuffer*7));
+        if (currentRoom.data != null)
+            foreach (Room.Layout layout in currentRoom.data.Layouts)
+            {
+                if (DrawLayout(layout)) break;
+                EditorGUILayout.Space(4);
+            }
+        else EditorGUILayout.HelpBox("Please add a RoomDataContainer script to the collision prefab, then hover over this window again!", MessageType.Error);
         EditorGUILayout.EndScrollView();
 
         GUILayout.EndArea();
@@ -148,11 +194,18 @@ public class RoomWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         layout.dropdownInEditor = EditorGUILayout.BeginFoldoutHeaderGroup(layout.dropdownInEditor, ""+layout.objects.Count);
+
+        EditorGUI.BeginChangeCheck();
         layout.name = EditorGUILayout.TextField(layout.name);
+        if (EditorGUI.EndChangeCheck())
+        {
+            EditorUtility.SetDirty(currentRoom.data.gameObject);
+        }
 
         if (GUILayout.Button("Add Selected Objects to Layout"))
         {
-            currentRoom.AddObjectsToLayout(currentRoom.Layouts.IndexOf(layout), Selection.transforms);
+            currentRoom.AddObjectsToLayout(currentRoom.data.Layouts.IndexOf(layout), Selection.transforms);
+            EditorUtility.SetDirty(currentRoom.data.gameObject);
         }
 
         if (GUILayout.Button(layout.hidden ? "Shown" : "Hidden"))
@@ -161,6 +214,7 @@ public class RoomWindow : EditorWindow
             foreach (Transform obj in layout.objects)
             {
                 obj.gameObject.SetActive(layout.hidden);
+                EditorUtility.SetDirty(currentRoom.data.gameObject);
             }
         }
 
@@ -176,7 +230,8 @@ public class RoomWindow : EditorWindow
 
         if (GUILayout.Button("Delete Layout"))
         {
-            currentRoom.Layouts.Remove(layout);
+            currentRoom.data.Layouts.Remove(layout);
+            EditorUtility.SetDirty(currentRoom.data.gameObject);
             return true;
         }
 
@@ -184,7 +239,12 @@ public class RoomWindow : EditorWindow
 
         if (layout.dropdownInEditor)
         {
+            EditorGUI.BeginChangeCheck();
             layout.difficulty = EditorGUILayout.IntSlider("Difficulty", layout.difficulty, -3, 15);
+            if(EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(currentRoom.data.gameObject);
+            }
 
             List<Transform> toRemove = new List<Transform>();
             foreach (Transform obj in layout.objects)
@@ -205,6 +265,7 @@ public class RoomWindow : EditorWindow
                 if (GUILayout.Button("Remove"))
                 {
                     toRemove.Add(obj);
+                    EditorUtility.SetDirty(currentRoom.data.gameObject);
                 }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.Space(2);

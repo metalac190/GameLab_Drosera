@@ -27,7 +27,8 @@ public class RoomCollision : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!room.activeGenerating) return;
+        if (!room.activeGenerating || other.GetComponent<RoomCollision>() == null) return;
+        Debug.Log("Overlap: " + other.transform.parent.name);
         room.overlapping = true;
     }
 }

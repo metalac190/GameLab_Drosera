@@ -86,6 +86,7 @@ public class PlayerBase : EntityBase
     protected int heldAmmo = 20;
     public int Ammo { get { return ammo; } set { ammo = value; } }
     public int HeldAmmo { get { return heldAmmo; } set { heldAmmo = value; } }
+    public int MaxAmmo { get { return maxAmmo; } set { maxAmmo = value; } }
     [SerializeField]
     protected int ammoPerOre = 1;
     public int AmmoPerOre { get { return ammoPerOre; } }
@@ -169,19 +170,61 @@ public class PlayerBase : EntityBase
             adjustCameraRightKey = Input.GetKey(KeyCode.C);
         }
 
+        Vector3 cameraForward = Camera.main.transform.forward;
+        cameraForward = new Vector3(cameraForward.x, 0, cameraForward.z).normalized;
+        Vector3 cameraRight = Camera.main.transform.right;
+        cameraRight = new Vector3(cameraRight.x, 0, cameraRight.z).normalized;
 
         //movement
-        zMove = Input.GetAxis("Vertical") * Camera.main.transform.forward;
-        xMove = Input.GetAxis("Horizontal") * Camera.main.transform.right;
-        movement = (zMove + xMove).normalized * Mathf.Max(zMove.magnitude, xMove.magnitude);
+        zMove = Input.GetAxis("Vertical") * cameraForward;
+        xMove = Input.GetAxis("Horizontal") * cameraRight;
 
         if (currentState != PlayerState.Dodging)
         {
+            movement = (zMove + xMove).normalized * Mathf.Max(zMove.magnitude, xMove.magnitude);
             controller.Move(movement * Time.deltaTime * _moveSpeed);
         }
         else
         {
-            controller.Move(movement * Time.deltaTime * dodgeSpeed);
+            RaycastHit hit;
+            if (movement != Vector3.zero)
+            {
+                Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), movement.normalized * Time.deltaTime * dodgeSpeed, Color.cyan);
+                if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), movement, out hit, (movement.normalized * Time.deltaTime * dodgeSpeed).magnitude))
+                {
+                    if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                    {
+                        controller.Move(movement.normalized * hit.distance);
+                    }
+                    else
+                    {
+                        controller.Move(movement.normalized * Time.deltaTime * dodgeSpeed);
+                    }
+                }
+                else
+                {
+                    controller.Move(movement.normalized * Time.deltaTime * dodgeSpeed);
+                }
+            }
+            else
+            {
+                Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), transform.forward * Time.deltaTime * dodgeSpeed, Color.cyan);
+                if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), transform.forward, out hit, (transform.forward * Time.deltaTime * dodgeSpeed).magnitude))
+                {
+                    if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                    {
+                        controller.Move(transform.forward * hit.distance);
+                    }
+                    else
+                    {
+                        controller.Move(transform.forward * Time.deltaTime * dodgeSpeed);
+                    }
+                }
+                else
+                {
+                    controller.Move(transform.forward * Time.deltaTime * dodgeSpeed);
+                }
+            }
         }
         
         if (transform.position.y != playerY)

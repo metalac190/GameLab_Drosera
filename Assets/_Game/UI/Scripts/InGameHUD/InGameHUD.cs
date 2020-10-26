@@ -36,8 +36,10 @@ public class InGameHUD : MonoBehaviour
 
     // UnityEvent hookups
     HyperSeed hyperSeedHookup;
+    OreVein[] oreVeinHookups;
 
     HealthBar healthBarUI;
+
     Gunner gunnerHookup;
     GunnerPrimaryFire gunnerPrimaryFireHookup;
     GunnerAltFire gunnerSecondaryFireHookup;
@@ -64,6 +66,7 @@ public class InGameHUD : MonoBehaviour
         gunnerSecondaryFireHookup.OnFire.AddListener(DisplaySecondaryAttackCooldown);
 
         ShowPhaseOneObjectiveText();
+        UpdateAmmoText();
 
         secondaryAttackCooldown = playerHookup.AbilityCooldownTime;
         dodgeCooldown = playerHookup.DodgeCooldownTime;
@@ -76,6 +79,13 @@ public class InGameHUD : MonoBehaviour
         if(GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainOne)
         {
             ShowPhaseOneObjectiveText();
+
+            // wait for ores to spawn before adding ore vein hookup
+            oreVeinHookups = FindObjectsOfType<OreVein>();
+            foreach (OreVein ore in oreVeinHookups)
+            {
+                ore.OnInteract.AddListener(UpdateAmmoText);
+            }
         }
         else if (GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainTwo)
         {
