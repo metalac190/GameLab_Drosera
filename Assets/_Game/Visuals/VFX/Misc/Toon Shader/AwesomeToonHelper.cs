@@ -173,7 +173,7 @@ namespace AwesomeToon {
             }
 
             // Turn off the remaining light slots
-            while (i <= 6) {
+            while (i <= 4) {
                 for (int j = 0; j < materialInstances.Count; j++) {
                     if (materialInstances[j] != null) {
                         materialInstances[j].SetVector($"_L{i}_dir", Vector3.up);
