@@ -30,6 +30,7 @@ namespace AwesomeToon {
         [SerializeField] bool instanceMaterial = true;
         [SerializeField] bool showRaycasts = true;
         [SerializeField] Vector3 meshCenter = Vector3.zero;
+        [Range(0,4)]
         [SerializeField] int maxLights = 4;
 
         [Header("Recieve Shadow Check")]
@@ -52,11 +53,12 @@ namespace AwesomeToon {
         void Start() {
             Init();
             GetLights();
+            UpdateMaterial();
         }
 
         void OnValidate() {
             Init();
-            Update();
+            UpdateMaterial();
         }
 
         void Init() {
@@ -132,11 +134,20 @@ namespace AwesomeToon {
                 GetLights();
             }
 
-            UpdateMaterial();
+            if(!gameObject.isStatic)
+                UpdateMaterial();
+        }
+
+        public static void UpdateAllLighting()
+        {
+            foreach(AwesomeToonHelper s in FindObjectsOfType<AwesomeToonHelper>())
+            {
+                s.UpdateMaterial();
+            }
         }
 
         void UpdateMaterial() {
-            if(materialInstances == null) return;
+            if(materialInstances == null || !gameObject.activeSelf) return;
 
             // Refresh light data
             List<LightSet> sortedLights = new List<LightSet>();
@@ -187,8 +198,6 @@ namespace AwesomeToon {
             foreach (LightSet lightSet in sortedLights) {
                 lightSets[lightSet.id] = lightSet;
             }
-
-            
         }
 
         LightSet CalcLight(LightSet lightSet) {
