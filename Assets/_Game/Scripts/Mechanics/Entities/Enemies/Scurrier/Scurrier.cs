@@ -113,20 +113,22 @@ public class Scurrier : EnemyBase {
         }
     }
 
+    /// <summary>
+    /// Determines the Scurrier's idle destination - stops it from attempting to go around walls or staying in the same spot
+    /// </summary>
+    /// <returns>Scurrier's next idle destination</returns>
     private Vector3 GetIdleDestination() {
         Vector3 destination, forward;
         RaycastHit hit;
-        float currentRange = idleWanderRange;
         int i = 0;
 
         do {
-            //destination = spawnPosition + (new Vector3(Random.Range(-currentRange, currentRange), 0, Random.Range(-currentRange, currentRange)));
             destination = spawnPosition + (new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized * idleWanderRange);
             forward = destination - transform.position;
             forward.y = 0;
+            //Debug.DrawRay(transform.position, forward, Color.red, 5f);
 
             // Check wall between destination
-            Debug.DrawRay(transform.position, forward, Color.red, 5f);
             if(Physics.Raycast(transform.position, forward, out hit, forward.magnitude, LayerMask.GetMask("Terrain"))) {
                 //Debug.Log(hit.point);
                 destination = hit.point;
@@ -145,11 +147,6 @@ public class Scurrier : EnemyBase {
     }
 
     protected override void CheckAggression() {
-        // TODO - if doing multiplayer, get spherecast working for checking players
-        /*if(Physics.SphereCast(transform.position - new Vector3(0, -2, 0), aggressiveRange, Vector3.up, out RaycastHit hit, aggressiveRange, LayerMask.GetMask("Player"))) {
-            targetPlayer = hit.collider.GetComponentInParent<EntityBase>().gameObject;
-            TurnAggressive.Invoke();
-        }*/
         if(Vector3.Distance((PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero), transform.position) < aggressiveRange) {
             TurnAggressive.Invoke();
         }

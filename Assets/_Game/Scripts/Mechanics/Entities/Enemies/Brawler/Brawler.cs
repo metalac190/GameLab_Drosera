@@ -28,8 +28,12 @@ public class Brawler : EnemyBase {
 
     // -------------------------------------------------------------------------------------------
 
-    protected override void Awake() {
+    /*protected override void Awake() {
         base.Awake();
+    }*/
+
+    protected override void Start() {
+        base.Start();
 
         GetWaypoints();
         // If no waypoints are set - set temp ones
@@ -47,10 +51,6 @@ public class Brawler : EnemyBase {
         foreach(GameObject waypoint in waypoints)
             waypointPositions.Add(waypoint.transform.position);
         currentWaypoint = 1;
-    }
-
-    protected override void Start() {
-        base.Start();
     }
 
     // -------------------------------------------------------------------------------------------
