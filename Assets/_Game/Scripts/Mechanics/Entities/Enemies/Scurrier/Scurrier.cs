@@ -77,7 +77,7 @@ public class Scurrier : EnemyBase {
         Vector3 forward;
         while(true) {
             // Get target position
-            targetPosition = spawnPosition + (new Vector3(Random.Range(-idleWanderRange, idleWanderRange), 0, Random.Range(-idleWanderRange, idleWanderRange)));
+            targetPosition = GetIdleDestination();
             forward = targetPosition - transform.position;
             forward.y = 0;
 
@@ -96,11 +96,14 @@ public class Scurrier : EnemyBase {
 
             // Move towards position
             _agent.SetDestination(targetPosition);
-            while(_agent.remainingDistance > 1f)
-                yield return null;
 
-            // Wait at position for 1 to 2.5 sec
-            for(float i = 0; i < Random.Range(1, 2.5f); i += Time.deltaTime) {
+            while(_agent.remainingDistance > 0.2f) {
+                yield return null;
+                CheckAggression();
+            }
+
+            // Wait at position for 2 to 3.5 sec
+            for(float i = 0; i < Random.Range(2, 3.5f); i += Time.deltaTime) {
                 yield return null;
                 CheckAggression();
             }
@@ -110,12 +113,40 @@ public class Scurrier : EnemyBase {
         }
     }
 
+    /// <summary>
+    /// Determines the Scurrier's idle destination - stops it from attempting to go around walls or staying in the same spot
+    /// </summary>
+    /// <returns>Scurrier's next idle destination</returns>
+    private Vector3 GetIdleDestination() {
+        Vector3 destination, forward;
+        RaycastHit hit;
+        int i = 0;
+
+        do {
+            destination = spawnPosition + (new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized * idleWanderRange);
+            forward = destination - transform.position;
+            forward.y = 0;
+            //Debug.DrawRay(transform.position, forward, Color.red, 5f);
+
+            // Check wall between destination
+            if(Physics.Raycast(transform.position, forward, out hit, forward.magnitude, LayerMask.GetMask("Terrain"))) {
+                //Debug.Log(hit.point);
+                destination = hit.point;
+            }
+
+            // If path is long enough, return (if path too short, try again)
+            if((destination - transform.position).magnitude > 1f)
+                break;
+
+            // Tried too many times - return to spawn
+            if(++i == 5)
+                return spawnPosition;
+        } while(true);
+
+        return destination;
+    }
+
     protected override void CheckAggression() {
-        // TODO - if doing multiplayer, get spherecast working for checking players
-        /*if(Physics.SphereCast(transform.position - new Vector3(0, -2, 0), aggressiveRange, Vector3.up, out RaycastHit hit, aggressiveRange, LayerMask.GetMask("Player"))) {
-            targetPlayer = hit.collider.GetComponentInParent<EntityBase>().gameObject;
-            TurnAggressive.Invoke();
-        }*/
         if(Vector3.Distance((PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero), transform.position) < aggressiveRange) {
             TurnAggressive.Invoke();
         }
