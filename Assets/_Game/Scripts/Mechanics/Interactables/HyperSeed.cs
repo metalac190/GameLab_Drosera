@@ -14,6 +14,7 @@ public class HyperSeed : InteractableBase
 
         seedModel.SetActive(false);
         Debug.Log(seedModel + " turned off.");
+        FindObjectOfType<CameraShake>().Shake(1, 1);
         VFX();
         // When hyperseed is grabbed - all enemies turn aggressive
         EnemyGroup[] enemies = FindObjectsOfType<EnemyGroup>();

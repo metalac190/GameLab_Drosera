@@ -6,6 +6,7 @@ public class CameraShake : MonoBehaviour
 {
     public IEnumerator Shake(float duration, float magnitude)
     {
+        Debug.Log("Shake called");
         Vector3 originalPos = transform.localPosition;
         float elasped = 0.0f;
         while (elasped < duration)
@@ -19,5 +20,20 @@ public class CameraShake : MonoBehaviour
             yield return null;
         }
         transform.localPosition = originalPos;
+    }
+
+    public void TriggerShakeLight(float duration)
+    {
+        Shake(duration, .1f);
+    }
+
+    public void TriggerShakeMedium(float duration)
+    {
+        Shake(duration, .5f);
+    }
+
+    public void TriggerShakeHeavy(float duration)
+    {
+        Shake(duration, 1f);
     }
 }
