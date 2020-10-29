@@ -48,12 +48,15 @@ public abstract class EntityBase : MonoBehaviour
 
     public virtual void TakeDamage(float value)
     {
-        _health -= value;
-        OnTakeDamage?.Invoke();
-        if (_health <= 0)
+        if (!_isInvincible)
         {
-            OnDeath?.Invoke();
-            Destroy(gameObject);
+            _health -= value;
+            OnTakeDamage?.Invoke();
+            if (_health <= 0)
+            {
+                OnDeath?.Invoke();
+                Destroy(gameObject);
+            }
         }
     }
 
