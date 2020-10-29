@@ -26,7 +26,7 @@ public abstract class EntityBase : MonoBehaviour
 
     protected virtual void Awake() {
         _controller = GetComponent<CharacterController>();
-        _animator = GetComponent<Animator>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     protected virtual void Start() {
