@@ -12,11 +12,14 @@ public class InGameHUD : MonoBehaviour
     [SerializeField] Sprite hyperSeedSprite;
     [SerializeField] Sprite dropshipSprite;
     [SerializeField] TextMeshProUGUI objectiveText;
+    [SerializeField] TextMeshProUGUI biomeText;
 
     [Header("Bottom Right UI")]
+    [Header("Ammo")]
     [SerializeField] TextMeshProUGUI currentAmmoText;
     [SerializeField] TextMeshProUGUI maxAmmoText;
 
+    [Header("Ability")]
     [SerializeField] Image selectedAbilityImage;
     [SerializeField] Image fillUpAbilityCDImage1;
     [SerializeField] Image otherAbilityImage;
@@ -30,11 +33,13 @@ public class InGameHUD : MonoBehaviour
     bool ability1OnCD;
     bool ability2OnCD;
 
+    [Header("Alt Fire")]
     [SerializeField] Image secondaryAttackImage;
     public bool secondaryAttackOnCooldown = false;
     public float secondaryAttackCooldown = 6;
     public float secondaryAttackTimer = 0;
 
+    [Header("Dodge")]
     [SerializeField] Image dodgeImage;
     public bool dodgeOnCooldown = false;
     public float dodgeCooldown = 2;
@@ -92,7 +97,7 @@ public class InGameHUD : MonoBehaviour
     {
         if(GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainOne)
         {
-            ShowPhaseOneObjectiveText();
+            StartCoroutine(ShowPhaseOneObjectiveText());
 
             // wait for ores to spawn before adding ore vein hookup
             oreVeinHookups = FindObjectsOfType<OreVein>();
@@ -176,7 +181,7 @@ public class InGameHUD : MonoBehaviour
 
     // top-left stuff
     // call at Start()
-    public void ShowPhaseOneObjectiveText()
+    IEnumerator ShowPhaseOneObjectiveText()
     {
         if (objectiveImage != null)
         {
@@ -185,6 +190,16 @@ public class InGameHUD : MonoBehaviour
         }
 
         objectiveText.text = "LOCATE THE HYPERSEED";
+
+        objectiveImage.DOFade(1, 1);
+        objectiveText.DOFade(1, 1);
+        biomeText.DOFade(1, 1);
+
+        yield return new WaitForSeconds(10);
+
+        objectiveImage.DOFade(0, 2);
+        objectiveText.DOFade(0, 2);
+        biomeText.DOFade(0, 2);
     }
 
     // call when player acquires the Hyperseed
@@ -224,6 +239,11 @@ public class InGameHUD : MonoBehaviour
             ability1CooldownText.text = ability1Timer.ToString();
             ability1OnCD = true;
 
+            Image image = selectedAbilityImage.GetComponent<Image>();
+            var tmpColor = image.color;
+            tmpColor.a = 0.25f;
+            image.color = tmpColor;
+
             for (int i = 0; i < selectedAbilityImage.transform.childCount; i++)
             {
                 selectedAbilityImage.transform.GetChild(i).gameObject.SetActive(true);
@@ -238,6 +258,11 @@ public class InGameHUD : MonoBehaviour
             ability2Timer = gunnerDOTGrenadeHookup.Cooldown;
             ability2CooldownText.text = ability2Timer.ToString();
             ability2OnCD = true;
+
+            Image image = otherAbilityImage.GetComponent<Image>();
+            var tmpColor = image.color;
+            tmpColor.a = 0.25f;
+            image.color = tmpColor;
 
             for (int i = 0; i < otherAbilityImage.transform.childCount; i++)
             {
@@ -259,6 +284,11 @@ public class InGameHUD : MonoBehaviour
             ability1Timer = 0;
             ability1OnCD = false;
 
+            Image image = selectedAbilityImage.GetComponent<Image>();
+            var tmpColor = image.color;
+            tmpColor.a = 1f;
+            image.color = tmpColor;
+
             for (int i = 0; i < selectedAbilityImage.transform.childCount; i++)
             {
                 selectedAbilityImage.transform.GetChild(i).gameObject.SetActive(false);
@@ -275,6 +305,11 @@ public class InGameHUD : MonoBehaviour
         {
             ability2Timer = 0;
             ability2OnCD = false;
+
+            Image image = otherAbilityImage.GetComponent<Image>();
+            var tmpColor = image.color;
+            tmpColor.a = 1f;
+            image.color = tmpColor;
 
             for (int i = 0; i < otherAbilityImage.transform.childCount; i++)
             {
