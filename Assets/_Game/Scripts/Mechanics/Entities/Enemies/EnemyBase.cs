@@ -86,6 +86,14 @@ public abstract class EnemyBase : EntityBase {
             currentBehavior = StartCoroutine(Idle());
     }
 
+    protected virtual void LateUpdate() {
+        // Control animations
+        if(_agent.velocity.magnitude > 0.5f)
+            _animator.SetBool("Moving", true);
+        else
+            _animator.SetBool("Moving", false);
+    }
+
     // -------------------------------------------------------------------------------------------
     // Aggressive
 
