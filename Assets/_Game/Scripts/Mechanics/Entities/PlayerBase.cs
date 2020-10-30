@@ -18,6 +18,7 @@ public class PlayerBase : EntityBase
     protected bool reloadButton;
     public bool ReloadButton { get { return reloadButton; } }
     protected bool abilityButton;
+    public bool AbilityButton { get { return abilityButton; } }
     protected bool interactButton;
     protected bool pauseButton;
     protected bool shootButtonKey;
@@ -63,9 +64,9 @@ public class PlayerBase : EntityBase
     protected float dodgeTimer = 0.0f;
 
     [SerializeField]
-    protected float abilityCooldownTime = 6.0f;
-    public float AbilityCooldownTime { get { return abilityCooldownTime; } }
-    protected float abilityCooldown = 0.0f;
+    protected float altFireCooldownTime = 6.0f;
+    public float AltFireCooldownTime { get { return altFireCooldownTime; } }
+    protected float altFireCooldown = 0.0f;
 
     protected InteractableBase interactTarget;
     public InteractableBase InteractTarget { get { return interactTarget; } set { interactTarget = value; } }
@@ -309,7 +310,7 @@ public class PlayerBase : EntityBase
         }
 
         //cooldowns
-        abilityCooldown -= Time.deltaTime;
+        altFireCooldown -= Time.deltaTime;
         dodgeCooldown -= Time.deltaTime;
 
         //states
@@ -415,7 +416,6 @@ public class PlayerBase : EntityBase
     {
         //ability stuff
 
-        abilityCooldown = abilityCooldownTime;
         currentState = PlayerState.Neutral;
     }
 
