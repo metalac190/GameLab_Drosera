@@ -70,7 +70,7 @@ public class Gunner : PlayerBase
         {
             _grenade.Fire();
         }
-        else
+        else if (_altAbility)
         {
             _dotGrenade.Fire();
         }
