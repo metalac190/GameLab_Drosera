@@ -26,7 +26,7 @@ public abstract class EntityBase : MonoBehaviour
 
     protected virtual void Awake() {
         _controller = GetComponent<CharacterController>();
-        _animator = GetComponent<Animator>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     protected virtual void Start() {
@@ -48,12 +48,15 @@ public abstract class EntityBase : MonoBehaviour
 
     public virtual void TakeDamage(float value)
     {
-        _health -= value;
-        OnTakeDamage?.Invoke();
-        if (_health <= 0)
+        if (!_isInvincible)
         {
-            OnDeath?.Invoke();
-            Destroy(gameObject);
+            _health -= value;
+            OnTakeDamage?.Invoke();
+            if (_health <= 0)
+            {
+                OnDeath?.Invoke();
+                Destroy(gameObject);
+            }
         }
     }
 

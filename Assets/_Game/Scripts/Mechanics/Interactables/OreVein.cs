@@ -24,14 +24,23 @@ public class OreVein : InteractableBase
 
     public override bool Interact(PlayerBase player)
     {
-        if (!base.Interact(player)) return false;
+        if (_uses > 0)
+        {
+            if (player.Ammo + player.AmmoPerOre <= player.MaxAmmo)
+                player.Ammo += player.AmmoPerOre;
+            else if (player.HeldAmmo + player.AmmoPerOre <= player.MaxAmmo)
+                player.HeldAmmo += player.AmmoPerOre;
+
+            if (!base.Interact(player))
+                return false;
+        }
 
         //_animator.SetInteger("stage", _uses);
         //VFX();
         if (effect != null)
             VFXSpawner.vfx.SpawnVFX(effect, effectDuration, player.transform.position).transform.parent = player.transform;
         ChangeState();
-        player.Ammo += player.AmmoPerOre;
+
         //player.Ammo = Mathf.Clamp(player.Ammo, 0 , player.MaxAmmo); ????
         if (_uses <= 0)
         {
