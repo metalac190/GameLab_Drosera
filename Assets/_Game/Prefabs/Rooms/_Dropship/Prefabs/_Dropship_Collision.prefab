@@ -11836,9 +11836,10 @@ GameObject:
   - component: {fileID: 8296670327497075799}
   - component: {fileID: 5122987415479564301}
   - component: {fileID: 1023455826733928483}
-  m_Layer: 0
+  - component: {fileID: 5121038589697632925}
+  m_Layer: 15
   m_Name: Infinite Ammo Volume
-  m_TagString: Untagged
+  m_TagString: InfiniteZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11917,6 +11918,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 25, y: 10, z: 20}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5121038589697632925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6804310488199833376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a346be056e17bac478c7f670a43b9dcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6954139178801845083
 GameObject:
   m_ObjectHideFlags: 0
@@ -16143,6 +16156,11 @@ PrefabInstance:
       propertyPath: waypoints.Array.data[4]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6388667625416121741, guid: bf119a685accdda479249531f451f2d2,
+        type: 3}
+      propertyPath: _maxHealth
+      value: 99999
+      objectReference: {fileID: 0}
     - target: {fileID: 7025081545461049908, guid: bf119a685accdda479249531f451f2d2,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -16150,15 +16168,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf119a685accdda479249531f451f2d2, type: 3}
---- !u!4 &5669372744039366786 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2876863880597785597, guid: bf119a685accdda479249531f451f2d2,
-    type: 3}
-  m_PrefabInstance: {fileID: 7584347697550805887}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3845575874856076557 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6638093568563646066, guid: bf119a685accdda479249531f451f2d2,
+    type: 3}
+  m_PrefabInstance: {fileID: 7584347697550805887}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5669372744039366786 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2876863880597785597, guid: bf119a685accdda479249531f451f2d2,
     type: 3}
   m_PrefabInstance: {fileID: 7584347697550805887}
   m_PrefabAsset: {fileID: 0}
