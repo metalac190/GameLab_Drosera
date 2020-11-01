@@ -10,6 +10,8 @@ public class Gunner : PlayerBase
     GunnerDOTGrenade _dotGrenade;
 
     bool _altAbility = false;
+    bool infiniteAmmo = false;
+    int oldAmmoCost;
 
     protected override void Awake()
     {
@@ -70,10 +72,24 @@ public class Gunner : PlayerBase
         {
             _grenade.Fire();
         }
-        else
+        else if (_altAbility)
         {
             _dotGrenade.Fire();
         }
         currentState = PlayerState.Neutral;
+    }
+
+    public void SetInfiniteAmmo(bool isInfinite)
+    {
+        infiniteAmmo = isInfinite;
+        if (infiniteAmmo)
+        {
+            oldAmmoCost = _primaryFire._ammoCost;
+            _primaryFire._ammoCost = 0;
+        }
+        else
+        {
+            _primaryFire._ammoCost = oldAmmoCost;
+        }
     }
 }
