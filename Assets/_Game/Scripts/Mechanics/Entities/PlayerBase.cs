@@ -18,6 +18,7 @@ public class PlayerBase : EntityBase
     protected bool reloadButton;
     public bool ReloadButton { get { return reloadButton; } }
     protected bool abilityButton;
+    public bool AbilityButton { get { return abilityButton; } }
     protected bool interactButton;
     protected bool pauseButton;
     protected bool shootButtonKey;
@@ -63,9 +64,9 @@ public class PlayerBase : EntityBase
     protected float dodgeTimer = 0.0f;
 
     [SerializeField]
-    protected float abilityCooldownTime = 6.0f;
-    public float AbilityCooldownTime { get { return abilityCooldownTime; } }
-    protected float abilityCooldown = 0.0f;
+    protected float altFireCooldownTime = 6.0f;
+    public float AltFireCooldownTime { get { return altFireCooldownTime; } }
+    protected float altFireCooldown = 0.0f;
 
     protected InteractableBase interactTarget;
     public InteractableBase InteractTarget { get { return interactTarget; } set { interactTarget = value; } }
@@ -103,7 +104,14 @@ public class PlayerBase : EntityBase
 
     [SerializeField]
     protected float lowHealthSoundDelay = .6f;
-    protected float lowHealthSoundtimer = 0f;
+
+    protected bool lowHealthPlaying = false;
+
+    [SerializeField]
+    protected float iFrameRate = .1f;
+
+    public int walkAni = 0; //0 not moving, 1 forward, -1 backward
+    public int dodgeAni = 0; //1 forward, 2 backward, 3 right, 4 left, 0 not dodging
 
     AudioScript[] audioScripts;
 
@@ -147,8 +155,8 @@ public class PlayerBase : EntityBase
                 dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
                 shootButtonGamepad = Input.GetAxisRaw("Shoot");
                 adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
-                altFireButton = Input.GetKey(KeyCode.JoystickButton3) || Input.GetMouseButton(1);
-                swapAbilityButton = Input.GetKeyDown(KeyCode.JoystickButton5) || Input.GetKeyDown(KeyCode.Q);
+                altFireButton = Input.GetKey(KeyCode.JoystickButton5) || Input.GetMouseButton(1);
+                swapAbilityButton = Input.GetKeyDown(KeyCode.JoystickButton3) || Input.GetKeyDown(KeyCode.Q);
             }
             else //keyboard only
             {
@@ -169,6 +177,8 @@ public class PlayerBase : EntityBase
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
             adjustCameraRightKey = Input.GetKey(KeyCode.C);
         }
+
+        
 
         Vector3 cameraForward = Camera.main.transform.forward;
         cameraForward = new Vector3(cameraForward.x, 0, cameraForward.z).normalized;
@@ -231,30 +241,67 @@ public class PlayerBase : EntityBase
         {
             transform.position = new Vector3(transform.position.x, playerY, transform.position.z);
         }
-        if (zMove != Vector3.zero && zMove != Vector3.zero) //moving
-        {
 
-        }
-        else if (currentState == PlayerState.Neutral) //idle
+        //animation variables
+        float facing = Vector3.SignedAngle(transform.forward, movement, transform.up);
+        if (movement != Vector3.zero) //moving
         {
-
-        }
-
-        if(_health/_maxHealth < lowHealthPercentage) //low health
-        {
-            if (lowHealthSoundtimer == lowHealthSoundDelay)
+            //walking
+            if (Input.GetAxis("Vertical") > 0) //forwards
             {
-                audioScripts[9].PlaySound(0);
-                lowHealthSoundtimer = 0;
+                walkAni = 1;
+            }
+            else if(Input.GetAxis("Vertical") < 0) //backwards
+            {
+                walkAni = -1;
+            }
+
+            if (currentState == PlayerState.Dodging)
+            {
+                //dodging
+                if (Mathf.Abs(facing) <= 45) //forward
+                {
+                    dodgeAni = 1;
+                    Debug.Log("F");
+                }
+                if (facing > 45 && facing <= 135) //right
+                {
+                    dodgeAni = 3;
+                    Debug.Log("R");
+                }
+                if (Mathf.Abs(facing) > 135) //back
+                {
+                    dodgeAni = 2;
+                    Debug.Log("B");
+                }
+                if (facing < -45 && facing >= -135) //left
+                {
+                    dodgeAni = 4;
+                    Debug.Log("L");
+                }
             }
             else
             {
-                lowHealthSoundtimer += Time.deltaTime;
+                dodgeAni = 0;
             }
+        }
+        else if (currentState == PlayerState.Neutral) //idle
+        {
+            walkAni = 0;
+        }
+        else if (currentState == PlayerState.Dodging)
+        {
+            dodgeAni = 1;
+            Debug.Log("F");
         }
         else
         {
-            lowHealthSoundtimer = lowHealthSoundDelay;
+            dodgeAni = 0;
+        }
+
+        if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
+        {
+            StartCoroutine("LowHealth");
         }
 
         if(aimToggle)
@@ -263,7 +310,7 @@ public class PlayerBase : EntityBase
         }
 
         //cooldowns
-        abilityCooldown -= Time.deltaTime;
+        altFireCooldown -= Time.deltaTime;
         dodgeCooldown -= Time.deltaTime;
 
         //states
@@ -369,7 +416,6 @@ public class PlayerBase : EntityBase
     {
         //ability stuff
 
-        abilityCooldown = abilityCooldownTime;
         currentState = PlayerState.Neutral;
     }
 
@@ -379,11 +425,15 @@ public class PlayerBase : EntityBase
         tempDVFX.transform.rotation = transform.rotation;
         if (dodgeTimer < dodgeTime)
         {
+            GetComponentInChildren<TrailRenderer>().emitting = true;
+            _isInvincible = true;
             dodgeTimer += Time.deltaTime;
         }
         else
         {
-            Destroy(tempDVFX);
+            GetComponentInChildren<TrailRenderer>().emitting = false;
+            _isInvincible = false;
+            Destroy(tempDVFX, dodgeCooldownTime);
             dodgeCooldown = dodgeCooldownTime;
             currentState = PlayerState.Neutral;
         }
@@ -418,5 +468,25 @@ public class PlayerBase : EntityBase
         {
             audioScripts[4].PlaySound(Random.Range(0, 9));
         }
+
+        StartCoroutine("InvincibleAfterDmg");
+    }
+
+    IEnumerator LowHealth()
+    {
+        while(_health/_maxHealth < lowHealthPercentage)
+        {
+            lowHealthPlaying = true;
+            audioScripts[9].PlaySound(0);
+            yield return new WaitForSeconds(lowHealthSoundDelay);
+        }
+        lowHealthPlaying = false;
+    }
+
+    IEnumerator InvincibleAfterDmg()
+    {
+        _isInvincible = true;
+        yield return new WaitForSeconds(iFrameRate);
+        _isInvincible = false;
     }
 }

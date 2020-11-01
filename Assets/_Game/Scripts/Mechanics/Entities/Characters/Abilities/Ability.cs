@@ -9,6 +9,7 @@ public abstract class Ability : MonoBehaviour
     public float Cooldown { get { return _cooldown; } }
     [SerializeField] public int _ammoCost;
     protected bool _onCooldown = false;
+    public bool OnCooldown { get { return _onCooldown; } }
 
     Room _currentRoom;
     EnemyGroup _enemyGroup;
