@@ -113,14 +113,15 @@ public class PlayerBase : EntityBase
     public int walkAni = 0; //0 not moving, 1 forward, -1 backward
     public int dodgeAni = 0; //1 forward, 2 backward, 3 right, 4 left, 0 not dodging
 
-    AudioScript[] audioScripts;
+    public UnityEvent OnReload;
+    public UnityEvent OnDodge;
+    public UnityEvent OnLowHealth;
 
     protected override void Start()
     {
         base.Start();
         controller = gameObject.GetComponent<CharacterController>();
         currentState = PlayerState.Neutral;
-        audioScripts = GetComponents<AudioScript>();
     }
 
     public static PlayerBase instance;
@@ -304,11 +305,6 @@ public class PlayerBase : EntityBase
             StartCoroutine("LowHealth");
         }
 
-        if(aimToggle)
-        {
-            audioScripts[8].PlaySound(0);
-        }
-
         //cooldowns
         altFireCooldown -= Time.deltaTime;
         dodgeCooldown -= Time.deltaTime;
@@ -348,7 +344,6 @@ public class PlayerBase : EntityBase
             tempDVFX = Instantiate(dodgeVFX, transform.position, Quaternion.identity);
             ParticleSystem part = tempDVFX.GetComponent<ParticleSystem>();
             part.Play();
-            audioScripts[6].PlaySound(0);
             currentState = PlayerState.Dodging;
         }
         if (interactButton && Time.fixedTime > lastInteract + interactCooldown)
@@ -382,12 +377,11 @@ public class PlayerBase : EntityBase
 
     protected void Reloading()
     {
-
         if (reloadCoolDown < 0.01 && heldAmmo > 0) //have ammo to reload and reload time is up
         {     
             if (ammo != maxAmmo) //full
             {
-                audioScripts[5].PlaySound(0);
+                OnReload?.Invoke();
                 int tempAmmo = heldAmmo + ammo;
                 if (tempAmmo > maxAmmo) //can't hold all the ammo
                 {
@@ -421,6 +415,7 @@ public class PlayerBase : EntityBase
 
     protected void Dodging()
     {
+        OnDodge?.Invoke();
         tempDVFX.transform.position = transform.position;
         tempDVFX.transform.rotation = transform.rotation;
         if (dodgeTimer < dodgeTime)
@@ -461,12 +456,7 @@ public class PlayerBase : EntityBase
         OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
-            audioScripts[7].PlaySound(0);
             currentState = PlayerState.Dead;
-        }
-        else
-        {
-            audioScripts[4].PlaySound(Random.Range(0, 9));
         }
 
         StartCoroutine("InvincibleAfterDmg");
@@ -477,7 +467,7 @@ public class PlayerBase : EntityBase
         while(_health/_maxHealth < lowHealthPercentage)
         {
             lowHealthPlaying = true;
-            audioScripts[9].PlaySound(0);
+            OnLowHealth?.Invoke();
             yield return new WaitForSeconds(lowHealthSoundDelay);
         }
         lowHealthPlaying = false;
