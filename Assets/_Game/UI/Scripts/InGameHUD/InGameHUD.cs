@@ -12,20 +12,34 @@ public class InGameHUD : MonoBehaviour
     [SerializeField] Sprite hyperSeedSprite;
     [SerializeField] Sprite dropshipSprite;
     [SerializeField] TextMeshProUGUI objectiveText;
+    [SerializeField] TextMeshProUGUI biomeText;
 
     [Header("Bottom Right UI")]
+    [Header("Ammo")]
     [SerializeField] TextMeshProUGUI currentAmmoText;
     [SerializeField] TextMeshProUGUI maxAmmoText;
 
+    [Header("Ability")]
     [SerializeField] Image selectedAbilityImage;
+    [SerializeField] Image fillUpAbilityCDImage1;
+    [SerializeField] Image otherAbilityImage;
+    [SerializeField] Image fillUpAbilityCDImage2;
     [SerializeField] Sprite[] abilitySprites;
+    [SerializeField] float ability1Timer = 0;
+    [SerializeField] TextMeshProUGUI ability1CooldownText;
+    [SerializeField] float ability2Timer = 0;
+    [SerializeField] TextMeshProUGUI ability2CooldownText;
     bool firstSelected = true;
+    bool ability1OnCD;
+    bool ability2OnCD;
 
+    [Header("Alt Fire")]
     [SerializeField] Image secondaryAttackImage;
     public bool secondaryAttackOnCooldown = false;
     public float secondaryAttackCooldown = 6;
     public float secondaryAttackTimer = 0;
 
+    [Header("Dodge")]
     [SerializeField] Image dodgeImage;
     public bool dodgeOnCooldown = false;
     public float dodgeCooldown = 2;
@@ -36,10 +50,14 @@ public class InGameHUD : MonoBehaviour
 
     // UnityEvent hookups
     HyperSeed hyperSeedHookup;
+    OreVein[] oreVeinHookups;
 
     HealthBar healthBarUI;
+
     Gunner gunnerHookup;
     GunnerPrimaryFire gunnerPrimaryFireHookup;
+    GunnerDOTGrenade gunnerDOTGrenadeHookup;
+    GunnerGrenade gunnerGrenadeHookup;
     GunnerAltFire gunnerSecondaryFireHookup;
 
     private void Awake()
@@ -51,6 +69,8 @@ public class InGameHUD : MonoBehaviour
         gunnerHookup = FindObjectOfType<Gunner>();
 
         gunnerPrimaryFireHookup = gunnerHookup.GetComponent<GunnerPrimaryFire>();
+        gunnerDOTGrenadeHookup = gunnerHookup.GetComponent<GunnerDOTGrenade>();
+        gunnerGrenadeHookup = gunnerHookup.GetComponent<GunnerGrenade>();
         gunnerSecondaryFireHookup = gunnerHookup.GetComponent<GunnerAltFire>();
 
     }
@@ -64,9 +84,11 @@ public class InGameHUD : MonoBehaviour
         gunnerSecondaryFireHookup.OnFire.AddListener(DisplaySecondaryAttackCooldown);
 
         ShowPhaseOneObjectiveText();
+        UpdateAmmoText();
 
-        secondaryAttackCooldown = playerHookup.AbilityCooldownTime;
         dodgeCooldown = playerHookup.DodgeCooldownTime;
+
+        SetupAbilityImage();
 
         GameManager.Instance.OnStateChange += ChangePhaseText;
     }
@@ -75,7 +97,14 @@ public class InGameHUD : MonoBehaviour
     {
         if(GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainOne)
         {
-            ShowPhaseOneObjectiveText();
+            StartCoroutine(ShowPhaseOneObjectiveText());
+
+            // wait for ores to spawn before adding ore vein hookup
+            oreVeinHookups = FindObjectsOfType<OreVein>();
+            foreach (OreVein ore in oreVeinHookups)
+            {
+                ore.OnInteract.AddListener(UpdateAmmoText);
+            }
         }
         else if (GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainTwo)
         {
@@ -102,7 +131,19 @@ public class InGameHUD : MonoBehaviour
         {
             DisplayDodgeCooldown();
         }
-        
+
+        // key Shift
+        if (playerHookup.AbilityButton && !gunnerGrenadeHookup.OnCooldown)
+        {
+            StartAbilityCooldown1();
+        }
+        if (playerHookup.AbilityButton && !gunnerDOTGrenadeHookup.OnCooldown)
+        {
+            StartAbilityCooldown2();
+        }
+
+        AbilityCooldown();
+       
         if (secondaryAttackOnCooldown)
         {
             if (secondaryAttackTimer < secondaryAttackCooldown)
@@ -140,7 +181,7 @@ public class InGameHUD : MonoBehaviour
 
     // top-left stuff
     // call at Start()
-    public void ShowPhaseOneObjectiveText()
+    IEnumerator ShowPhaseOneObjectiveText()
     {
         if (objectiveImage != null)
         {
@@ -149,6 +190,16 @@ public class InGameHUD : MonoBehaviour
         }
 
         objectiveText.text = "LOCATE THE HYPERSEED";
+
+        objectiveImage.DOFade(1, 1);
+        objectiveText.DOFade(1, 1);
+        biomeText.DOFade(1, 1);
+
+        yield return new WaitForSeconds(10);
+
+        objectiveImage.DOFade(0, 2);
+        objectiveText.DOFade(0, 2);
+        biomeText.DOFade(0, 2);
     }
 
     // call when player acquires the Hyperseed
@@ -171,22 +222,124 @@ public class InGameHUD : MonoBehaviour
         maxAmmoText.text = playerHookup.HeldAmmo.ToString();
     }
 
+    void SetupAbilityImage()
+    {
+        selectedAbilityImage.sprite = abilitySprites[0];
+        selectedAbilityImage.SetNativeSize();
+
+        otherAbilityImage.sprite = abilitySprites[3];
+        otherAbilityImage.SetNativeSize();
+    }
+
+    void StartAbilityCooldown1()
+    {
+        if (firstSelected)
+        {
+            ability1Timer = gunnerGrenadeHookup.Cooldown;
+            ability1CooldownText.text = ability1Timer.ToString();
+            ability1OnCD = true;
+
+            Image image = selectedAbilityImage.GetComponent<Image>();
+            var tmpColor = image.color;
+            tmpColor.a = 0.25f;
+            image.color = tmpColor;
+
+            for (int i = 0; i < selectedAbilityImage.transform.childCount; i++)
+            {
+                selectedAbilityImage.transform.GetChild(i).gameObject.SetActive(true);
+            }
+        }
+    }
+
+    void StartAbilityCooldown2()
+    {
+        if (!firstSelected)
+        {
+            ability2Timer = gunnerDOTGrenadeHookup.Cooldown;
+            ability2CooldownText.text = ability2Timer.ToString();
+            ability2OnCD = true;
+
+            Image image = otherAbilityImage.GetComponent<Image>();
+            var tmpColor = image.color;
+            tmpColor.a = 0.25f;
+            image.color = tmpColor;
+
+            for (int i = 0; i < otherAbilityImage.transform.childCount; i++)
+            {
+                otherAbilityImage.transform.GetChild(i).gameObject.SetActive(true);
+            }
+        }
+    }
+
+    void AbilityCooldown()
+    {
+        if (ability1Timer > 0)
+        {
+            ability1Timer -= Time.deltaTime;
+            ability1CooldownText.text = Mathf.RoundToInt(ability1Timer).ToString();
+            fillUpAbilityCDImage1.fillAmount = (gunnerGrenadeHookup.Cooldown - ability1Timer) / gunnerGrenadeHookup.Cooldown;
+        }
+        else
+        {
+            ability1Timer = 0;
+            ability1OnCD = false;
+
+            Image image = selectedAbilityImage.GetComponent<Image>();
+            var tmpColor = image.color;
+            tmpColor.a = 1f;
+            image.color = tmpColor;
+
+            for (int i = 0; i < selectedAbilityImage.transform.childCount; i++)
+            {
+                selectedAbilityImage.transform.GetChild(i).gameObject.SetActive(false);
+            }
+        }
+
+        if (ability2Timer > 0)
+        {
+            ability2Timer -= Time.deltaTime;
+            ability2CooldownText.text = Mathf.RoundToInt(ability2Timer).ToString();
+            fillUpAbilityCDImage2.fillAmount = (gunnerDOTGrenadeHookup.Cooldown - ability2Timer) / gunnerDOTGrenadeHookup.Cooldown;
+        }
+        else
+        {
+            ability2Timer = 0;
+            ability2OnCD = false;
+
+            Image image = otherAbilityImage.GetComponent<Image>();
+            var tmpColor = image.color;
+            tmpColor.a = 1f;
+            image.color = tmpColor;
+
+            for (int i = 0; i < otherAbilityImage.transform.childCount; i++)
+            {
+                otherAbilityImage.transform.GetChild(i).gameObject.SetActive(false);
+            }
+        }
+    }
+
     // call when ability is toggled (Q/Y)
     public void UpdateAbilityImage()
     {
         firstSelected = !firstSelected;
 
         // incediary grenade
-        if (firstSelected)
+        if (firstSelected && ability1Timer == 0)
         {
             selectedAbilityImage.sprite = abilitySprites[0];
             selectedAbilityImage.SetNativeSize();
+
+            otherAbilityImage.sprite = abilitySprites[3];
+            otherAbilityImage.SetNativeSize();
         }
         // pesticide grenade- DOT 
-        else
+        else if (!firstSelected && ability2Timer == 0)
         {
             selectedAbilityImage.sprite = abilitySprites[1];
             selectedAbilityImage.SetNativeSize();
+
+            otherAbilityImage.sprite = abilitySprites[2];
+            otherAbilityImage.SetNativeSize();
         }
     }
 
