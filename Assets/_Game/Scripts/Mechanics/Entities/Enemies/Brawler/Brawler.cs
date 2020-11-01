@@ -28,8 +28,12 @@ public class Brawler : EnemyBase {
 
     // -------------------------------------------------------------------------------------------
 
-    protected override void Awake() {
+    /*protected override void Awake() {
         base.Awake();
+    }*/
+
+    protected override void Start() {
+        base.Start();
 
         GetWaypoints();
         // If no waypoints are set - set temp ones
@@ -49,10 +53,6 @@ public class Brawler : EnemyBase {
         currentWaypoint = 1;
     }
 
-    protected override void Start() {
-        base.Start();
-    }
-
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Main
 
@@ -68,6 +68,8 @@ public class Brawler : EnemyBase {
 
         Vector3 forward;
         while(true) {
+            yield return null;
+
             // Get next position
             try {
                 if(currentWaypoint >= waypointPositions.Count)
@@ -100,8 +102,8 @@ public class Brawler : EnemyBase {
             while(_agent.remainingDistance > 0.2f)
                 yield return null;
 
-            // Wait at position for 1 to 2 sec
-            for(float i = 0; i < Random.Range(1, 2); i += Time.deltaTime) {
+            // Wait at position for 4 to 5 sec
+            for(float i = 0; i < Random.Range(4, 5); i += Time.deltaTime) {
                 yield return null;
                 CheckAggression();
             }

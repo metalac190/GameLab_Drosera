@@ -53,8 +53,6 @@ public abstract class EnemyBase : EntityBase {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
         _agent.speed = _moveSpeed;
-
-        spawnPosition = transform.position;
     }
 
     protected override void Start() {
@@ -78,11 +76,22 @@ public abstract class EnemyBase : EntityBase {
             currentBehavior = StartCoroutine(Die());
         });
 
+        spawnPosition = transform.position;
+
+        // Start behavior
         if(currentState == EnemyState.Aggressive) {
             currentBehavior = StartCoroutine(Idle());
             TurnAggressive.Invoke();
         } else
             currentBehavior = StartCoroutine(Idle());
+    }
+
+    protected virtual void LateUpdate() {
+        // Control animations
+        if(_agent.velocity.magnitude > 0.5f)
+            _animator.SetBool("Moving", true);
+        else
+            _animator.SetBool("Moving", false);
     }
 
     // -------------------------------------------------------------------------------------------
