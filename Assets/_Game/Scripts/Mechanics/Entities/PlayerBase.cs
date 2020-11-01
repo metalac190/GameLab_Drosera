@@ -110,9 +110,6 @@ public class PlayerBase : EntityBase
     [SerializeField]
     protected float iFrameRate = .1f;
 
-    public int walkAni = 0; //0 not moving, 1 forward, -1 backward
-    public int dodgeAni = 0; //1 forward, 2 backward, 3 right, 4 left, 0 not dodging
-
     public UnityEvent OnReload;
     public UnityEvent OnDodge;
     public UnityEvent OnLowHealth;
@@ -130,6 +127,7 @@ public class PlayerBase : EntityBase
         base.Awake();
 
         _gunEnd = transform.GetChild(0).transform;
+        _animator = GetComponent<Animator>();
 
         Physics.IgnoreLayerCollision(11, 16);
         Physics.IgnoreLayerCollision(16, 15);
@@ -248,13 +246,25 @@ public class PlayerBase : EntityBase
         if (movement != Vector3.zero) //moving
         {
             //walking
-            if (Input.GetAxis("Vertical") > 0) //forwards
+            if (Mathf.Abs(facing) <= 45) //forward
             {
-                walkAni = 1;
+                _animator.SetInteger("walkAni", 1);
+                //Debug.Log("F");
             }
-            else if(Input.GetAxis("Vertical") < 0) //backwards
+            if (facing > 45 && facing <= 135) //right
             {
-                walkAni = -1;
+                _animator.SetInteger("walkAni", 3);
+                //Debug.Log("R");
+            }
+            if (Mathf.Abs(facing) > 135) //back
+            {
+                _animator.SetInteger("walkAni", 2);
+                //Debug.Log("B");
+            }
+            if (facing < -45 && facing >= -135) //left
+            {
+                _animator.SetInteger("walkAni", 4);
+                //Debug.Log("L");
             }
 
             if (currentState == PlayerState.Dodging)
@@ -262,42 +272,42 @@ public class PlayerBase : EntityBase
                 //dodging
                 if (Mathf.Abs(facing) <= 45) //forward
                 {
-                    dodgeAni = 1;
-                    Debug.Log("F");
+                    _animator.SetInteger("dodgeAni", 1);
+                    //Debug.Log("F");
                 }
                 if (facing > 45 && facing <= 135) //right
                 {
-                    dodgeAni = 3;
-                    Debug.Log("R");
+                    _animator.SetInteger("dodgeAni", 3);
+                    //Debug.Log("R");
                 }
                 if (Mathf.Abs(facing) > 135) //back
                 {
-                    dodgeAni = 2;
-                    Debug.Log("B");
+                    _animator.SetInteger("dodgeAni", 2);
+                    //Debug.Log("B");
                 }
                 if (facing < -45 && facing >= -135) //left
                 {
-                    dodgeAni = 4;
-                    Debug.Log("L");
+                    _animator.SetInteger("dodgeAni", 4);
+                    //Debug.Log("L");
                 }
             }
             else
             {
-                dodgeAni = 0;
+                _animator.SetInteger("dodgeAni", 0);
             }
         }
         else if (currentState == PlayerState.Neutral) //idle
         {
-            walkAni = 0;
+            _animator.SetInteger("walkAni", 0);
         }
         else if (currentState == PlayerState.Dodging)
         {
-            dodgeAni = 1;
-            Debug.Log("F");
+            _animator.SetInteger("dodgeAni", 1);
+            //Debug.Log("F");
         }
         else
         {
-            dodgeAni = 0;
+            _animator.SetInteger("dodgeAni", 0);
         }
 
         if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
@@ -341,6 +351,7 @@ public class PlayerBase : EntityBase
         }
         if ((dodgeButtonGamepad == 1 || dodgeButtonKey) && dodgeCooldown < 0.01)
         {
+            OnDodge?.Invoke();
             tempDVFX = Instantiate(dodgeVFX, transform.position, Quaternion.identity);
             ParticleSystem part = tempDVFX.GetComponent<ParticleSystem>();
             part.Play();
@@ -381,6 +392,7 @@ public class PlayerBase : EntityBase
         {     
             if (ammo != maxAmmo) //full
             {
+                _animator.SetBool("reloadAni", true);
                 OnReload?.Invoke();
                 int tempAmmo = heldAmmo + ammo;
                 if (tempAmmo > maxAmmo) //can't hold all the ammo
@@ -401,6 +413,7 @@ public class PlayerBase : EntityBase
         }
         else
         {
+            _animator.SetBool("reloadAni", false);
             currentState = PlayerState.Neutral;
         }
         
@@ -415,7 +428,6 @@ public class PlayerBase : EntityBase
 
     protected void Dodging()
     {
-        OnDodge?.Invoke();
         tempDVFX.transform.position = transform.position;
         tempDVFX.transform.rotation = transform.rotation;
         if (dodgeTimer < dodgeTime)
@@ -446,6 +458,7 @@ public class PlayerBase : EntityBase
     protected void Dead()
     {
         //dead sound
+        _animator.SetBool("deathAni", true);
         GameManager.Instance.GameLost();
         Debug.Log("You are dead.");
     }
@@ -457,6 +470,10 @@ public class PlayerBase : EntityBase
         if (_health <= 0)
         {
             currentState = PlayerState.Dead;
+        }
+        else
+        {
+            _animator.SetBool("damageAni", true);
         }
 
         StartCoroutine("InvincibleAfterDmg");

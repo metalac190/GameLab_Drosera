@@ -68,6 +68,7 @@ public class Gunner : PlayerBase
 
     protected override void Ability()
     {
+        _animator.SetBool("grenadeAni", true);
         if (!_altAbility)
         {
             _grenade.Fire();
