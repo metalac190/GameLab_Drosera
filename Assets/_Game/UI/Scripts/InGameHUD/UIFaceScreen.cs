@@ -7,11 +7,15 @@ public class UIFaceScreen : MonoBehaviour
     [SerializeField] Camera cam;
     [SerializeField] GameObject player;
     [SerializeField] Vector3 baseOffset;
+    [SerializeField] bool trackPlayer = true;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (cam == null)
+            cam = Camera.main;
+        if (player == null)
+            player = FindObjectOfType<Gunner>().gameObject;
     }
 
     // Update is called once per frame
@@ -22,7 +26,10 @@ public class UIFaceScreen : MonoBehaviour
 
     private void LateUpdate()
     {
-        Vector3 distanceFromPlayer = player.transform.position - transform.position;
-        transform.position += baseOffset + distanceFromPlayer;
+        if (trackPlayer)
+        {
+            Vector3 distanceFromPlayer = player.transform.position - transform.position;
+            transform.position += baseOffset + distanceFromPlayer;
+        }
     }
 }

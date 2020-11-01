@@ -9,6 +9,9 @@ public class OreVein : InteractableBase
     [Tooltip("Make sure these are children of this object, also the sizes are in decending order starting with an empty vein")]
     private GameObject[] _orePrefabSizes;
 
+    [Tooltip("Check only on the starting room ore vein.")]
+    public bool isInfinite;
+
     //private Animator _animator; // Might be useless, keeping for now if it turns out it is needed
 
     private void Start()
@@ -28,23 +31,32 @@ public class OreVein : InteractableBase
         {
             if (player.Ammo + player.AmmoPerOre <= player.MaxAmmo)
                 player.Ammo += player.AmmoPerOre;
-            else if (player.HeldAmmo + player.AmmoPerOre <= player.MaxAmmo)
+            else if (player.HeldAmmo + player.AmmoPerOre <= player.MaxAmmo && !isInfinite)
                 player.HeldAmmo += player.AmmoPerOre;
 
             if (!base.Interact(player))
                 return false;
+
+            if (effect != null)
+                VFXSpawner.vfx.SpawnVFX(effect, effectDuration, player.transform.position).transform.parent = player.transform;
+            ChangeState();
         }
 
         //_animator.SetInteger("stage", _uses);
         //VFX();
-        if (effect != null)
-            VFXSpawner.vfx.SpawnVFX(effect, effectDuration, player.transform.position).transform.parent = player.transform;
-        ChangeState();
+        
 
         //player.Ammo = Mathf.Clamp(player.Ammo, 0 , player.MaxAmmo); ????
         if (_uses <= 0)
         {
-            GetComponent<Collider>().enabled = false;
+            if (isInfinite)
+            {
+                _uses = _maxUses;
+            }
+            else
+            {
+                GetComponent<Collider>().enabled = false;
+            }
         }
 
         return true;
