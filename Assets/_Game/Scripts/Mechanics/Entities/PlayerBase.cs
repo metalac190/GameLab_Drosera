@@ -337,6 +337,7 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
+        _animator.SetBool("grenadeAni", false);
         if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
@@ -494,6 +495,7 @@ public class PlayerBase : EntityBase
     {
         _isInvincible = true;
         yield return new WaitForSeconds(iFrameRate);
+        _animator.SetBool("damageAni", false);
         _isInvincible = false;
     }
 }
