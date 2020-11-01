@@ -9,7 +9,7 @@ public class InfiniteAmmoTrigger : MonoBehaviour
     [SerializeField] GameObject oreInteractUI;
     [SerializeField] GameObject tutorialPrompt;
 
-    private static bool firstTime = false;
+    private static bool firstTime = true;
     private bool hasBeenEnabled = false;
 
     private void Start()
