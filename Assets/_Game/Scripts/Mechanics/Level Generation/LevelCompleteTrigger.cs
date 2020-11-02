@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LevelCompleteTrigger : MonoBehaviour
 {
     [SerializeField] LevelGeneration levelGen;
+    public UnityEvent LevelComplete;
 
     private void Start()
     {
@@ -13,7 +15,6 @@ public class LevelCompleteTrigger : MonoBehaviour
 
         //Not technically a level compomplete, but will play first cutscene and gen the first level.
         GameManager.Instance.LevelComplete();
-        //levelGen.GenerateLevelTrigger();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -21,6 +22,7 @@ public class LevelCompleteTrigger : MonoBehaviour
         if(other.GetComponent<PlayerBase>() && GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainTwo)
         {
             print("Player completed level: " + levelGen.LevelNumber);
+            LevelComplete.Invoke();
             if(levelGen.LevelNumber >= 6)
             {
                 GameManager.Instance.GameWon();
