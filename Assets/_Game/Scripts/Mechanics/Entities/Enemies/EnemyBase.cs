@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public abstract class EnemyBase : EntityBase {
 
@@ -32,7 +33,7 @@ public abstract class EnemyBase : EntityBase {
     protected float hyperseedHealthMultiplier = 0.7f;
     protected float hyperseedDamageMultiplier = 1.2f;
     protected float cooldownTimer; // Timer for attack cooldowns
-    [HideInInspector] public bool attackDone;
+    [HideInInspector] public bool attackDone, aggroAnimDone;
 
     [System.Serializable]
     public class EnemyFX {
@@ -53,6 +54,8 @@ public abstract class EnemyBase : EntityBase {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
         _agent.speed = _moveSpeed;
+
+        aggroAnimDone = true;
     }
 
     protected override void Start() {
@@ -121,7 +124,10 @@ public abstract class EnemyBase : EntityBase {
             // Stop in place
             _agent.SetDestination(transform.position);
 
-            // TODO - Turn aggressive animation
+            // Turn aggressive animation
+            aggroAnimDone = false;
+            yield return new WaitForSeconds(Random.Range(0f, 0.3f));
+            _animator.SetTrigger("Alerted");
 
             _enemyFX.Alerted.Invoke();
         }
@@ -142,6 +148,10 @@ public abstract class EnemyBase : EntityBase {
         // Set stats
         aggressive = true;
         isHealing = false;
+
+        // Wait for aggro animation to finish
+        while(!aggroAnimDone)
+            yield return null;
 
         // Change behavior
         currentBehavior = StartCoroutine(AggressiveMove());
