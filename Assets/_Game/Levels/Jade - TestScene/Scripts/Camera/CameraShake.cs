@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class CameraShake : MonoBehaviour
 {
+    public bool testShake = false;
+    public float testDuration = 1f;
+    public float testMagnitude = 1f;
+
     public IEnumerator Shake(float duration, float magnitude)
     {
         Debug.Log("Shake called");
@@ -22,18 +26,32 @@ public class CameraShake : MonoBehaviour
         transform.localPosition = originalPos;
     }
 
+    public void TriggerCameraShake(float duration, float magnitude)
+    {
+        StartCoroutine(Shake(duration, magnitude));
+    }
+
     public void TriggerShakeLight(float duration)
     {
-        Shake(duration, .1f);
+        StartCoroutine(Shake(duration, .1f));
     }
 
     public void TriggerShakeMedium(float duration)
     {
-        Shake(duration, .5f);
+        StartCoroutine(Shake(duration, .5f));
     }
 
     public void TriggerShakeHeavy(float duration)
     {
-        Shake(duration, 1f);
+        StartCoroutine(Shake(duration, 1f));
+    }
+
+    private void Update()
+    {
+        if(testShake)
+        {
+            testShake = false;
+            StartCoroutine(Shake(testDuration, testMagnitude));
+        }
     }
 }

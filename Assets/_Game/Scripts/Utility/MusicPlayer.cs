@@ -66,7 +66,7 @@ public class MusicPlayer : MonoBehaviour
         {
             if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
             {
-                audioSource.clip = jungleTwo;
+                audioSource.clip = desertTwo;
                 audioSource.Play();
             }
             else if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Jungle)
