@@ -138,7 +138,7 @@ public class PlayerBase : EntityBase
     {
         //note: for dodge and shoot on controller need to use != 0
 
-        if (currentState != PlayerState.Dead && GameManager.Instance.GameState != DroseraGlobalEnums.GameState.CutScene)
+        if (currentState != PlayerState.Dead && GameManager.Instance.GameState != DroseraGlobalEnums.GameState.CutScene && Time.timeScale > 0)
         {
             if (Input.GetJoystickNames().Length != 0) //controller or keyboard
             {
