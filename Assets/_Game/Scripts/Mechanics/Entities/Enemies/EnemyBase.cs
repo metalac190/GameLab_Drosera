@@ -68,9 +68,14 @@ public abstract class EnemyBase : EntityBase {
         TurnAggressiveHyperseed.AddListener(() => {
             TurnAggressiveWrapper(true);
         });
-        // Aggro scurriers when damage is taken & play damaged SFX
+        // Aggro enemies when damage is taken & play damaged SFX
         OnTakeDamage.AddListener(() => {
-            _enemyFX.DamageTaken.Invoke();
+            // If enemy damaged sound is playing, don't repeat
+            if(EnemySoundSingleton.instance.DamageTakenSoundActive == false) {
+                EnemySoundSingleton.instance.DamageTakenSoundActive = true;
+                _enemyFX.DamageTaken.Invoke();
+            }
+            // Aggro group
             GetComponentInParent<EnemyGroup>()?.OnEnemyDamage.Invoke();
         });
         // Death Event
