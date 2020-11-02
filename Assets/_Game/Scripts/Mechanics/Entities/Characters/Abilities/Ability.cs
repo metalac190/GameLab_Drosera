@@ -9,6 +9,7 @@ public abstract class Ability : MonoBehaviour
     public float Cooldown { get { return _cooldown; } }
     [SerializeField] public int _ammoCost;
     protected bool _onCooldown = false;
+    public bool OnCooldown { get { return _onCooldown; } }
 
     Room _currentRoom;
     EnemyGroup _enemyGroup;
@@ -35,7 +36,14 @@ public abstract class Ability : MonoBehaviour
         if (other.GetComponent<Door>() != null)
         {
             _currentRoom = other.GetComponent<Door>().room;
-            _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
+            if (_currentRoom != null)
+            {
+                _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
+            }
+            else
+            {
+                _enemyGroup = null;
+            }
         }
     }
 

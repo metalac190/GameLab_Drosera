@@ -18,6 +18,7 @@ public class PlayerBase : EntityBase
     protected bool reloadButton;
     public bool ReloadButton { get { return reloadButton; } }
     protected bool abilityButton;
+    public bool AbilityButton { get { return abilityButton; } }
     protected bool interactButton;
     protected bool pauseButton;
     protected bool shootButtonKey;
@@ -63,9 +64,9 @@ public class PlayerBase : EntityBase
     protected float dodgeTimer = 0.0f;
 
     [SerializeField]
-    protected float abilityCooldownTime = 6.0f;
-    public float AbilityCooldownTime { get { return abilityCooldownTime; } }
-    protected float abilityCooldown = 0.0f;
+    protected float altFireCooldownTime = 6.0f;
+    public float AltFireCooldownTime { get { return altFireCooldownTime; } }
+    protected float altFireCooldown = 0.0f;
 
     protected InteractableBase interactTarget;
     public InteractableBase InteractTarget { get { return interactTarget; } set { interactTarget = value; } }
@@ -103,16 +104,21 @@ public class PlayerBase : EntityBase
 
     [SerializeField]
     protected float lowHealthSoundDelay = .6f;
-    protected float lowHealthSoundtimer = 0f;
 
-    AudioScript[] audioScripts;
+    protected bool lowHealthPlaying = false;
+
+    [SerializeField]
+    protected float iFrameRate = .1f;
+
+    public UnityEvent OnReload;
+    public UnityEvent OnDodge;
+    public UnityEvent OnLowHealth;
 
     protected override void Start()
     {
         base.Start();
         controller = gameObject.GetComponent<CharacterController>();
         currentState = PlayerState.Neutral;
-        audioScripts = GetComponents<AudioScript>();
     }
 
     public static PlayerBase instance;
@@ -121,6 +127,7 @@ public class PlayerBase : EntityBase
         base.Awake();
 
         _gunEnd = transform.GetChild(0).transform;
+        _animator = GetComponent<Animator>();
 
         Physics.IgnoreLayerCollision(11, 16);
         Physics.IgnoreLayerCollision(16, 15);
@@ -147,8 +154,8 @@ public class PlayerBase : EntityBase
                 dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
                 shootButtonGamepad = Input.GetAxisRaw("Shoot");
                 adjustCameraGamepad = Input.GetAxisRaw("CameraAdjust");
-                altFireButton = Input.GetKey(KeyCode.JoystickButton3) || Input.GetMouseButton(1);
-                swapAbilityButton = Input.GetKeyDown(KeyCode.JoystickButton5) || Input.GetKeyDown(KeyCode.Q);
+                altFireButton = Input.GetKey(KeyCode.JoystickButton5) || Input.GetMouseButton(1);
+                swapAbilityButton = Input.GetKeyDown(KeyCode.JoystickButton3) || Input.GetKeyDown(KeyCode.Q);
             }
             else //keyboard only
             {
@@ -169,6 +176,8 @@ public class PlayerBase : EntityBase
             adjustCameraLeftKey = Input.GetKey(KeyCode.Z);
             adjustCameraRightKey = Input.GetKey(KeyCode.C);
         }
+
+        
 
         Vector3 cameraForward = Camera.main.transform.forward;
         cameraForward = new Vector3(cameraForward.x, 0, cameraForward.z).normalized;
@@ -231,39 +240,83 @@ public class PlayerBase : EntityBase
         {
             transform.position = new Vector3(transform.position.x, playerY, transform.position.z);
         }
-        if (zMove != Vector3.zero && zMove != Vector3.zero) //moving
-        {
 
-        }
-        else if (currentState == PlayerState.Neutral) //idle
+        //animation variables
+        float facing = Vector3.SignedAngle(transform.forward, movement, transform.up);
+        if (movement != Vector3.zero) //moving
         {
-
-        }
-
-        if(_health/_maxHealth < lowHealthPercentage) //low health
-        {
-            if (lowHealthSoundtimer == lowHealthSoundDelay)
+            //walking
+            if (Mathf.Abs(facing) <= 45) //forward
             {
-                audioScripts[9].PlaySound(0);
-                lowHealthSoundtimer = 0;
+                _animator.SetInteger("walkAni", 1);
+                //Debug.Log("F");
+            }
+            if (facing > 45 && facing <= 135) //right
+            {
+                _animator.SetInteger("walkAni", 3);
+                //Debug.Log("R");
+            }
+            if (Mathf.Abs(facing) > 135) //back
+            {
+                _animator.SetInteger("walkAni", 2);
+                //Debug.Log("B");
+            }
+            if (facing < -45 && facing >= -135) //left
+            {
+                _animator.SetInteger("walkAni", 4);
+                //Debug.Log("L");
+            }
+
+            if (currentState == PlayerState.Dodging)
+            {
+                //dodging
+                if (Mathf.Abs(facing) <= 45) //forward
+                {
+                    _animator.SetInteger("dodgeAni", 1);
+                    //Debug.Log("F");
+                }
+                if (facing > 45 && facing <= 135) //right
+                {
+                    _animator.SetInteger("dodgeAni", 3);
+                    //Debug.Log("R");
+                }
+                if (Mathf.Abs(facing) > 135) //back
+                {
+                    _animator.SetInteger("dodgeAni", 2);
+                    //Debug.Log("B");
+                }
+                if (facing < -45 && facing >= -135) //left
+                {
+                    _animator.SetInteger("dodgeAni", 4);
+                    //Debug.Log("L");
+                }
             }
             else
             {
-                lowHealthSoundtimer += Time.deltaTime;
+                _animator.SetInteger("dodgeAni", 0);
             }
+        }
+        else if (currentState == PlayerState.Neutral) //idle
+        {
+            _animator.SetInteger("walkAni", 0);
+        }
+        else if (currentState == PlayerState.Dodging)
+        {
+            _animator.SetInteger("dodgeAni", 1);
+            //Debug.Log("F");
         }
         else
         {
-            lowHealthSoundtimer = lowHealthSoundDelay;
+            _animator.SetInteger("dodgeAni", 0);
         }
 
-        if(aimToggle)
+        if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
         {
-            audioScripts[8].PlaySound(0);
+            StartCoroutine("LowHealth");
         }
 
         //cooldowns
-        abilityCooldown -= Time.deltaTime;
+        altFireCooldown -= Time.deltaTime;
         dodgeCooldown -= Time.deltaTime;
 
         //states
@@ -284,6 +337,7 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
+        _animator.SetBool("grenadeAni", false);
         if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
@@ -298,10 +352,10 @@ public class PlayerBase : EntityBase
         }
         if ((dodgeButtonGamepad == 1 || dodgeButtonKey) && dodgeCooldown < 0.01)
         {
+            OnDodge?.Invoke();
             tempDVFX = Instantiate(dodgeVFX, transform.position, Quaternion.identity);
             ParticleSystem part = tempDVFX.GetComponent<ParticleSystem>();
             part.Play();
-            audioScripts[6].PlaySound(0);
             currentState = PlayerState.Dodging;
         }
         if (interactButton && Time.fixedTime > lastInteract + interactCooldown)
@@ -335,12 +389,12 @@ public class PlayerBase : EntityBase
 
     protected void Reloading()
     {
-
         if (reloadCoolDown < 0.01 && heldAmmo > 0) //have ammo to reload and reload time is up
         {     
             if (ammo != maxAmmo) //full
             {
-                audioScripts[5].PlaySound(0);
+                _animator.SetBool("reloadAni", true);
+                OnReload?.Invoke();
                 int tempAmmo = heldAmmo + ammo;
                 if (tempAmmo > maxAmmo) //can't hold all the ammo
                 {
@@ -360,6 +414,7 @@ public class PlayerBase : EntityBase
         }
         else
         {
+            _animator.SetBool("reloadAni", false);
             currentState = PlayerState.Neutral;
         }
         
@@ -369,7 +424,6 @@ public class PlayerBase : EntityBase
     {
         //ability stuff
 
-        abilityCooldown = abilityCooldownTime;
         currentState = PlayerState.Neutral;
     }
 
@@ -379,11 +433,15 @@ public class PlayerBase : EntityBase
         tempDVFX.transform.rotation = transform.rotation;
         if (dodgeTimer < dodgeTime)
         {
+            GetComponentInChildren<TrailRenderer>().emitting = true;
+            _isInvincible = true;
             dodgeTimer += Time.deltaTime;
         }
         else
         {
-            Destroy(tempDVFX);
+            GetComponentInChildren<TrailRenderer>().emitting = false;
+            _isInvincible = false;
+            Destroy(tempDVFX, dodgeCooldownTime);
             dodgeCooldown = dodgeCooldownTime;
             currentState = PlayerState.Neutral;
         }
@@ -401,6 +459,7 @@ public class PlayerBase : EntityBase
     protected void Dead()
     {
         //dead sound
+        _animator.SetBool("deathAni", true);
         GameManager.Instance.GameLost();
         Debug.Log("You are dead.");
     }
@@ -411,12 +470,32 @@ public class PlayerBase : EntityBase
         OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
-            audioScripts[7].PlaySound(0);
             currentState = PlayerState.Dead;
         }
         else
         {
-            audioScripts[4].PlaySound(Random.Range(0, 9));
+            _animator.SetBool("damageAni", true);
         }
+
+        StartCoroutine("InvincibleAfterDmg");
+    }
+
+    IEnumerator LowHealth()
+    {
+        while(_health/_maxHealth < lowHealthPercentage)
+        {
+            lowHealthPlaying = true;
+            OnLowHealth?.Invoke();
+            yield return new WaitForSeconds(lowHealthSoundDelay);
+        }
+        lowHealthPlaying = false;
+    }
+
+    IEnumerator InvincibleAfterDmg()
+    {
+        _isInvincible = true;
+        yield return new WaitForSeconds(iFrameRate);
+        _animator.SetBool("damageAni", false);
+        _isInvincible = false;
     }
 }
