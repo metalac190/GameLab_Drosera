@@ -26,9 +26,9 @@ public class InfiniteAmmoTrigger : MonoBehaviour
         Gunner player = other.GetComponent<Gunner>();
         if(player && !hasBeenEnabled)
         {
+            hasBeenEnabled = true;
             player.SetInfiniteAmmo(true);
             print("Player has infinite ammo.");
-            hasBeenEnabled = true;
         }
     }
 
