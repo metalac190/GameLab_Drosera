@@ -24,22 +24,17 @@ public class EnemySoundSingleton : MonoBehaviour
     }
 
 
-    void Awake()
-    {
-        if (instance !=null && instance != this)
-        {
-            Destroy(this.gameObject);
-        }
+    void Awake() {
         instance = this;
     }
 
     public IEnumerator EnemyDamagedSoundDelay(float delayTime)
     {
-        Debug.Log("Damage Taken: true");
+        //Debug.Log("Damage Taken: true");
         _damageTakenSoundActive = true;  //activates a stopper to prevent sound overlap
         yield return new WaitForSeconds(delayTime);   //delay for next sound after a sounds activation
         _damageTakenSoundActive = false; //allows next enemy damage sound to be activated
-        Debug.Log("Damage Taken: false");
+        //Debug.Log("Damage Taken: false");
         yield return null;
     }
 }
