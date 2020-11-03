@@ -284,11 +284,11 @@ public class LevelGeneration : MonoBehaviour
             genTest = false;
             yield break;
         }
-        AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
+        /*AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
         foreach(AwesomeToon.AwesomeToonHelper toon in toons)
         {
             toon.GetLights();
-        }
+        }*/
         yield return null;
     }
 
