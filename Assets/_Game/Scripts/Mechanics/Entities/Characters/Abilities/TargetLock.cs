@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class TargetLock : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class TargetLock : MonoBehaviour
     Vector3 _offset = Vector3.zero;
     Vector3 _lastMousePosition = Vector3.zero;
 
+    public UnityEvent OnTargetLock;
+
     private void Awake()
     {
         //get reference to player and set layer mask for enemies
@@ -42,10 +45,12 @@ public class TargetLock : MonoBehaviour
         //if player changes target and no target is selected, target nearest enemy
         if (_player.AimToggle && _currentTarget == _aimingReticle)
         {
+            OnTargetLock?.Invoke();
             GetNearestEnemy();
         }
         else if (_player.AimToggle && _currentTarget != _aimingReticle)
         {
+            OnTargetLock?.Invoke();
             _currentTarget = _aimingReticle;
         }
 

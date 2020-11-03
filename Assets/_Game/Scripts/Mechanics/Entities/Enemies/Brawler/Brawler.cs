@@ -68,6 +68,8 @@ public class Brawler : EnemyBase {
 
         Vector3 forward;
         while(true) {
+            yield return null;
+
             // Get next position
             try {
                 if(currentWaypoint >= waypointPositions.Count)

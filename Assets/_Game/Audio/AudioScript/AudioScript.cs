@@ -117,6 +117,8 @@ public class AudioScript : MonoBehaviour
     public bool stopSoundOnFadeOut = false;
     [Tooltip("Lets the clip playing when the StopSound() function is called finish. Useful when using playlists.")]
     public bool letClipFinishOnStop = false;
+    [Tooltip("Lets the clip play when the audioListener is pasued")]
+    public bool letClipPlayInPause = false;
     [Header("Fade Settings")]
     [Space(10)]
     [Tooltip("Sets the fade in speed. Lower numbers are slower speeds while higher numbers are faster.")]
@@ -204,6 +206,11 @@ public class AudioScript : MonoBehaviour
         } else
         {
             audioPrefabSource.pitch = 1.0f;
+        }
+        //Added ignore pause
+        if(letClipPlayInPause)
+        {
+            audioPrefabSource.ignoreListenerPause = true;
         }
         audioPrefabSource.Play();
         if (loop)
