@@ -13,6 +13,9 @@ public class GunnerGrenadeProjectile : MonoBehaviour
     [SerializeField] float _explosionDelay = .2f;
     [SerializeField] float _explosionRadius = 5f;
     [SerializeField] int _damage = 30;
+    [SerializeField] float _screenShakeDuration = .1f;
+    [SerializeField] float _screenShakeMagnitude = .1f;
+
 
     [SerializeField] GameObject _vfx;
 
@@ -32,6 +35,7 @@ public class GunnerGrenadeProjectile : MonoBehaviour
     private void Start()
     {
         _rb.AddForce(((Vector3.up * _upwardForce) + transform.forward * _forwardForce));
+        OnExplode.AddListener(ShakeScreen);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -83,5 +87,10 @@ public class GunnerGrenadeProjectile : MonoBehaviour
 
         Destroy(vfx);
         Destroy(gameObject);
+    }
+
+    private void ShakeScreen()
+    {
+        FindObjectOfType<CameraShake>().TriggerCameraShake(_screenShakeDuration, _screenShakeMagnitude);
     }
 }

@@ -66,4 +66,10 @@ public abstract class InteractableBase : MonoBehaviour
             other.GetComponent<PlayerBase>().InteractTarget = this;
         }
     }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.GetComponent<PlayerBase>() == null) return;
+        other.GetComponent<PlayerBase>().InteractTarget = null;
+    }
 }
