@@ -59,6 +59,48 @@ public class Scurrier : EnemyBase {
         });
     }
 
+    // TEMPORARY - PLACEHOLDER WHILE WAITING ON SCURRIER ANIMATIONS
+
+    protected override IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
+        // First time aggressive
+        if(!aggressive) {
+            // Stop in place
+            _agent.SetDestination(transform.position);
+
+            // Turn aggressive animation
+            /*aggroAnimDone = false;
+            yield return new WaitForSeconds(Random.Range(0f, 0.3f));
+            _animator.SetTrigger("Alerted");*/
+
+            _enemyFX.Alerted.Invoke();
+        }
+
+        // First time Hyperseed
+        if(hyperseed && !this.hyperseed) {
+            this.hyperseed = true;
+            _health *= hyperseedHealthMultiplier;
+            _maxHealth *= hyperseedHealthMultiplier;
+
+            Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
+            foreach(Hitbox hitbox in hitboxes) {
+                hitbox.baseDamage *= hyperseedDamageMultiplier;
+                hitbox.damage *= hyperseedDamageMultiplier;
+            }
+        }
+
+        // Set stats
+        aggressive = true;
+        isHealing = false;
+
+        // Wait for aggro animation to finish
+        /*while(!aggroAnimDone)
+            yield return null;*/
+        
+        // Change behavior
+        currentBehavior = StartCoroutine(AggressiveMove());
+        yield return null;
+    }
+
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Main
 
