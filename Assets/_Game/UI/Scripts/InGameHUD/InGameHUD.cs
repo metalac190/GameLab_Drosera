@@ -373,4 +373,9 @@ public class InGameHUD : MonoBehaviour
             dodgeOnCooldown = true;
         }
     }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnStateChange -= ChangePhaseText;
+    }
 }
