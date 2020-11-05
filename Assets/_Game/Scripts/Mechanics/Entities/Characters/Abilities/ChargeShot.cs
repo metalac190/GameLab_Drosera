@@ -83,7 +83,7 @@ public class ChargeShot : MonoBehaviour
                 _hitbox.baseDamage = _charge * _damageMultiplier;
             }
 
-            _vfxController.Charge();
+            _vfxController.Charge((1/_altFire.ChargeRate));
 
             /*
             var shape = _vfx.shape;

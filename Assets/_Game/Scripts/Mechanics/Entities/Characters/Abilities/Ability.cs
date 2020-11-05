@@ -36,7 +36,14 @@ public abstract class Ability : MonoBehaviour
         if (other.GetComponent<Door>() != null)
         {
             _currentRoom = other.GetComponent<Door>().room;
-            _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
+            if (_currentRoom != null)
+            {
+                _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
+            }
+            else
+            {
+                _enemyGroup = null;
+            }
         }
     }
 
