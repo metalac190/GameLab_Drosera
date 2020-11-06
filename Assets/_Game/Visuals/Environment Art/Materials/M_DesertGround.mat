@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7921776081030926507
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 2
 --- !u!21 &2100000
 Material:
   serializedVersion: 6
@@ -7,15 +20,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_BoababTree_Bark
+  m_Name: M_DesertGround
   m_Shader: {fileID: 4800000, guid: 6e4ae4064600d784cac1e41a9e6f2e59, type: 3}
-  m_ShaderKeywords: _NORMALMAP_TANGENT_SPACE
+  m_ShaderKeywords: _NORMALMAP_TANGENT_SPACE _SPECULARCOLORMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap:
-    MotionVector: User
+  stringTagMap: {}
   disabledShaderPasses:
   - DistortionVectors
   - MOTIONVECTORS
@@ -25,17 +37,13 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - Texture2D_F5D7B476:
-        m_Texture: {fileID: 10307, guid: 0000000000000000f000000000000000, type: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _AnisotropyMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseColorMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: -0.03, y: -0.08}
         m_Offset: {x: 0, y: 0}
     - _BentNormalMap:
         m_Texture: {fileID: 0}
@@ -90,7 +98,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecularColorMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: c566f31a10ba83c49910c7342f6f70b5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SubsurfaceMaskMap:
@@ -114,17 +122,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Boolean_4598239B: 0
-    - Boolean_53FA7B3C: 1
-    - Boolean_70DC8568: 1
-    - Boolean_7B3DC251: 1
-    - Boolean_92686935: 1
-    - Boolean_E5EF1A2F: 0
-    - Boolean_F4268FBD: 0
-    - Vector1_2FACF48F: 0.643
-    - Vector1_4B4B1643: 9.1
-    - Vector1_65A1CCBA: 0.313
-    - Vector1_CEC9BF59: 0.938
     - _AORemapMax: 1
     - _AORemapMin: 0
     - _ATDistance: 1
@@ -186,7 +183,7 @@ Material:
     - _HeightPoMAmplitude: 2
     - _HeightTessAmplitude: 2
     - _HeightTessCenter: 0.5
-    - _InvTilingScale: 1
+    - _InvTilingScale: 18.181818
     - _Ior: 1.5
     - _IridescenceMask: 1
     - _IridescenceThickness: 1
@@ -202,8 +199,6 @@ Material:
     - _PPDPrimitiveWidth: 1
     - _ReceivesSSR: 1
     - _RefractionModel: 0
-    - _RenderQueueType: 1
-    - _RequireSplitLighting: 0
     - _SSRefractionProjectionModel: 0
     - _Smoothness: 0
     - _SmoothnessRemapMax: 1
@@ -247,47 +242,19 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
-    - Color_25431453: {r: 0, g: 0.40252304, b: 1, a: 1}
-    - Color_5BBB7D65: {r: 1, g: 1, b: 1, a: 1}
-    - Color_84686C61: {r: 0.5411765, g: 0.6509804, b: 0.3254902, a: 1}
-    - _BaseColor: {r: 0.5411765, g: 0.6509804, b: 0.32549015, a: 1}
+    - _BaseColor: {r: 0.9176471, g: 0.8313726, b: 0.74509805, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.5411765, g: 0.6509804, b: 0.32549012, a: 1}
+    - _Color: {r: 0.9176471, g: 0.8313726, b: 0.74509805, a: 1}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissiveColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissiveColorLDR: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissiveColor: {r: 0.8235295, g: 0.6901961, b: 0.43529415, a: 1}
+    - _EmissiveColorLDR: {r: 0.8235295, g: 0.6901961, b: 0.43529415, a: 1}
     - _InvPrimScale: {r: 1, g: 1, b: 0, a: 0}
     - _IridescenceThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
-    - _L1_color: {r: 1.3648003, g: 0, b: 1.5951118, a: 0.33407947}
-    - _L1_dir: {r: 0.8712019, g: 0.3541471, b: -0.33998105, a: 0}
-    - _L2_color: {r: 0, g: 0, b: 1.015942, a: 0.2127784}
-    - _L2_dir: {r: -0.88901967, g: 0.25994727, b: 0.37692362, a: 0}
-    - _L3_color: {r: 0, g: 0, b: 0, a: 1}
-    - _L3_dir: {r: 0, g: 1, b: 0, a: 0}
-    - _L4_color: {r: 0.36130318, g: 0, b: 0.36130318, a: 0.07567116}
-    - _L4_dir: {r: -0.0014306123, g: 0.0014306109, b: -0.999998, a: 0}
-    - _L5_color: {r: 0.31723866, g: 0, b: 0, a: 0.0664423}
-    - _L5_dir: {r: 0.77365935, g: 0.0013338942, b: -0.63360035, a: 0}
-    - _L6_color: {r: 0, g: 0, b: 0.32007784, a: 0.06703694}
-    - _L6_dir: {r: -0.78942364, g: 0.0013402767, b: -0.61384726, a: 0}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
---- !u!114 &7616446654206892600
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 2
