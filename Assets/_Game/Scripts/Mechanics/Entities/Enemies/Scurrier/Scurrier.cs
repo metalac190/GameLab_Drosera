@@ -23,6 +23,7 @@ public class Scurrier : EnemyBase {
     [SerializeField] private Hitbox goreHitbox;
 
     private ScurrierCrashDetector crashDetector;
+    private bool inGore;
 
     [System.Serializable]
     public class FX {
@@ -46,6 +47,7 @@ public class Scurrier : EnemyBase {
         base.Awake();
         crashDetector = GetComponentInChildren<ScurrierCrashDetector>(true);
         crashDetector.gameObject.SetActive(false);
+        inGore = false;
     }
 
     protected override void Start() {
@@ -57,6 +59,48 @@ public class Scurrier : EnemyBase {
         GetComponentInParent<EnemyGroup>()?.OnEnemyDamage.AddListener(() => {
             _scurrierFX.NearbyAlerted.Invoke();
         });
+    }
+
+    // TEMPORARY - PLACEHOLDER WHILE WAITING ON SCURRIER ANIMATIONS
+
+    protected override IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
+        // First time aggressive
+        if(!aggressive) {
+            // Stop in place
+            _agent.SetDestination(transform.position);
+
+            // Turn aggressive animation
+            /*aggroAnimDone = false;
+            yield return new WaitForSeconds(Random.Range(0f, 0.3f));
+            _animator.SetTrigger("Alerted");*/
+
+            _enemyFX.Alerted.Invoke();
+        }
+
+        // First time Hyperseed
+        if(hyperseed && !this.hyperseed) {
+            this.hyperseed = true;
+            _health *= hyperseedHealthMultiplier;
+            _maxHealth *= hyperseedHealthMultiplier;
+
+            Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
+            foreach(Hitbox hitbox in hitboxes) {
+                hitbox.baseDamage *= hyperseedDamageMultiplier;
+                hitbox.damage *= hyperseedDamageMultiplier;
+            }
+        }
+
+        // Set stats
+        aggressive = true;
+        isHealing = false;
+
+        // Wait for aggro animation to finish
+        /*while(!aggroAnimDone)
+            yield return null;*/
+        
+        // Change behavior
+        currentBehavior = StartCoroutine(AggressiveMove());
+        yield return null;
     }
 
     // -------------------------------------------------------------------------------------------
@@ -167,9 +211,10 @@ public class Scurrier : EnemyBase {
         // TODO - make looping
         _enemyFX.AlertState.Invoke();
 
+        yield return null;
+        FindTarget();
         while(true) {
             yield return null;
-            FindTarget();
 
             // No target player available - idle instead
             if(targetPlayer == null) {
@@ -232,6 +277,8 @@ public class Scurrier : EnemyBase {
     /// Gore (charge) attack
     /// </summary>
     private IEnumerator AttackGore() {
+        inGore = true;
+
         currentState = EnemyState.Attacking;
         _agent.stoppingDistance = 0;
         _agent.autoBraking = false;
@@ -333,6 +380,7 @@ public class Scurrier : EnemyBase {
         yield return new WaitForSeconds(0.25f);
 
         // Set cooldown & return to movement
+        inGore = false;
         cooldownTimer = _cooldown;
         cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
@@ -351,6 +399,7 @@ public class Scurrier : EnemyBase {
         yield return new WaitForSeconds(1f);
 
         // Set cooldown & return to movement
+        inGore = false;
         cooldownTimer = _cooldown;
         cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
@@ -389,8 +438,16 @@ public class Scurrier : EnemyBase {
     // -------------------------------------------------------------------------------------------
 
     public override void ResetEnemy() {
+        if(inGore)
+            return;
         GoreReset();
         base.ResetEnemy();
+    }
+
+    public override void ForceIdle() {
+        if(inGore)
+            return;
+        base.ForceIdle();
     }
 
     // -------------------------------------------------------------------------------------------

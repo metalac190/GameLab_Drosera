@@ -7,6 +7,7 @@ public class EnemyGroup : MonoBehaviour {
 
     public UnityEvent OnEnemyDamage, OnShotFired, GrabHyperseed;
     public UnityEvent TurnGroupAggressive, TurnGroupPassive;
+    public UnityEvent OnPlayerEnter, OnPlayerExit;
 
     private void Awake() {
         AddDebugCalls();
@@ -24,6 +25,14 @@ public class EnemyGroup : MonoBehaviour {
             // Testing - all enemies turn passive
             TurnGroupPassive.AddListener(() => {
                 enemy.ForceIdle();
+            });
+
+            // Stop/resume aggro when player exits/enters a room
+            OnPlayerExit.AddListener(() => {
+                enemy.ForceIdle();
+            });
+            OnPlayerEnter.AddListener(() => {
+                enemy.ResetEnemy();
             });
         }
 
