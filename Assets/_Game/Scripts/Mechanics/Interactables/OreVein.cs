@@ -9,9 +9,11 @@ public class OreVein : InteractableBase
     [Tooltip("Make sure these are children of this object, also the sizes are in decending order starting with an empty vein")]
     private GameObject[] _orePrefabSizes;
     [SerializeField]
-    protected GameObject mineEffect;
+    GameObject mineEffect;
     [SerializeField]
-    protected float mineEffectDuration;
+    float mineEffectDuration;
+    [SerializeField]
+    Vector3 VFXPlayerCenterOffset;
 
     [Tooltip("Check only on the starting room ore vein.")]
     public bool isInfinite;
@@ -46,10 +48,10 @@ public class OreVein : InteractableBase
             if(mineEffect != null)
             {
                 RaycastHit hit;
-                Ray ray = new Ray(player.transform.position, transform.position - player.transform.position);
+                Ray ray = new Ray(player.transform.position + VFXPlayerCenterOffset, transform.position - VFXPlayerCenterOffset - player.transform.position);
                 if(Physics.Raycast(ray, out hit, 10f, LayerMask.GetMask("Hitbox"), QueryTriggerInteraction.Ignore))
                 {
-                    VFXSpawner.vfx.SpawnVFX(mineEffect, mineEffectDuration, hit.point).transform.up = hit.normal;
+                    VFXSpawner.vfx.SpawnVFX(mineEffect, mineEffectDuration, hit.point).transform.up = -ray.direction.normalized;//hit.normal;
                 }
             }
             ChangeState();
@@ -68,7 +70,7 @@ public class OreVein : InteractableBase
             }
             else
             {
-                GetComponent<Collider>().enabled = false;
+                //GetComponent<Collider>().enabled = false;
             }
         }
 
