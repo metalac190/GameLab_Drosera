@@ -58,14 +58,15 @@ public class PesticideGrenadeProjectile : MonoBehaviour
 
         _audioScript.PlaySound(0);
 
-        GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
-        vfx.GetComponentInChildren<SphereCollider>().enabled = false;
+       // GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
+        //vfx.GetComponentInChildren<SphereCollider>().enabled = false;
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         gameObject.GetComponent<SphereCollider>().enabled = false;
 
-        StartCoroutine(ClearVFX(vfx));
+        //StartCoroutine(ClearVFX(vfx));
     }
 
+    //Not used currently
     IEnumerator ClearVFX(GameObject vfx)
     {
         PlayableDirector director = vfx.GetComponentInChildren<PlayableDirector>();
