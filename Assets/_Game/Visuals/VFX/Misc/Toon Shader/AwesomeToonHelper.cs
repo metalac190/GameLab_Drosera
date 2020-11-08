@@ -15,7 +15,7 @@ namespace AwesomeToon {
             {
                 foreach(Material m in materials)
                 {
-                    if (m == null) continue;
+                    if (m == null || m.shader.Equals(Shader.Find("HDRP/Lit"))) continue;
                     m.shader = Shader.Find("Shader Graphs/SG_Multi_Toon");
                     Color mainColor = m.GetColor("Color_84686C61");
                     m.shader = Shader.Find("HDRP/Lit");
