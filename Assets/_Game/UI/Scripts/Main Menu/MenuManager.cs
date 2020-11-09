@@ -28,8 +28,8 @@ public class MenuManager : MonoBehaviour
 
     // controller support
     bool axisInUse = false;
-    bool cycleUp;
     bool cycleDown;
+    bool cycleUp;
 
     private void Awake()
     {
@@ -82,27 +82,43 @@ public class MenuManager : MonoBehaviour
     {
         if (Input.GetJoystickNames().Length != 0)
         {
-            cycleUp = Input.GetAxisRaw("Vertical") == -1;
-            cycleDown = Input.GetAxisRaw("Vertical") == 1;
+            cycleUp = Input.GetAxisRaw("Vertical") == 1;
+            cycleDown = Input.GetAxisRaw("Vertical") == -1;
 
-            if (currentlySelectedButton == -1)
-                currentlySelectedButton = 0;
-
-            if (cycleUp && !axisInUse)
+            if (cycleDown && currentlySelectedButton == -1)
             {
-                if (currentlySelectedButton + 1 < 5)
+                currentlySelectedButton = 0;
+                OnHoverMenuButton(currentlySelectedButton);
+
+                return;
+            }
+
+            if (cycleDown && !axisInUse)
+            {
+                if (currentlySelectedButton + 1 <= 4)
                     OnHoverMenuButton(currentlySelectedButton + 1);
 
                 axisInUse = true;
                 StartCoroutine(ControllerAxisCooldown());
             }
-            if (cycleDown && !axisInUse)
+            if (cycleUp && !axisInUse)
             {
                 if (currentlySelectedButton - 1 >= 0)
                     OnHoverMenuButton(currentlySelectedButton - 1);
 
                 axisInUse = true;
                 StartCoroutine(ControllerAxisCooldown());
+            }
+
+            // confirm
+            if (Input.GetKeyDown(KeyCode.Joystick1Button2))
+            {
+                ControllerConfirm();
+            }
+            // go back
+            if (Input.GetKeyDown(KeyCode.Joystick1Button1))
+            {
+                DisplayMainMenuPanel();
             }
         }
     }
@@ -112,6 +128,38 @@ public class MenuManager : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         axisInUse = false;
+    }
+
+    void ControllerConfirm()
+    {
+        switch (currentlySelectedButton)
+        {
+            case 0:
+                StartGame("Main");
+                break;
+            case 1:
+                DisplayInstructionsPanel();
+                break;
+            case 2:
+                DisplayExtrasPanel();
+                break;
+            case 3:
+                DisplaySettingsPanel();
+                break;
+            case 4:
+                QuitGame();
+                break;
+        }
+    }
+
+    void ControllerActionsForExtras()
+    {
+
+    }
+
+    void ControllerActionsForSettings()
+    {
+
     }
 
     void PlaySound(int clipIndex)
