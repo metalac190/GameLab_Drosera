@@ -162,18 +162,23 @@ public class Scurrier : EnemyBase {
     /// </summary>
     /// <returns>Scurrier's next idle destination</returns>
     private Vector3 GetIdleDestination() {
-        Vector3 destination, forward;
+        Vector3 destination = spawnPosition, forward;
+        Vector3 heightOffset = new Vector3(0, -0.75f, 0); // Offset for detecting ground-level obstacles
         RaycastHit hit;
-        int i = 0;
 
-        do {
+        // If tried too many times, return to spawn
+        for(int i = 0; i < 5; i++) {
             destination = spawnPosition + (new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized * idleWanderRange);
             forward = destination - transform.position;
             forward.y = 0;
             //Debug.DrawRay(transform.position, forward, Color.red, 5f);
 
+            // If point is floating over void, try again
+            if(!Physics.Raycast(destination, Vector3.down, 2f, LayerMask.GetMask("Terrain")))
+                continue;
+
             // Check wall between destination
-            if(Physics.Raycast(transform.position, forward, out hit, forward.magnitude, LayerMask.GetMask("Terrain"))) {
+            if(Physics.Raycast(transform.position + heightOffset, forward, out hit, forward.magnitude, LayerMask.GetMask("Terrain"))) {
                 //Debug.Log(hit.point);
                 destination = hit.point;
             }
@@ -181,18 +186,15 @@ public class Scurrier : EnemyBase {
             // If path is long enough, return (if path too short, try again)
             if((destination - transform.position).magnitude > 1f)
                 break;
-
-            // Tried too many times - return to spawn
-            if(++i == 5)
-                return spawnPosition;
-        } while(true);
+        }
 
         return destination;
     }
 
     protected override void CheckAggression() {
-        if(Vector3.Distance((PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero), transform.position) < aggressiveRange) {
-            TurnAggressive.Invoke();
+        if(Vector3.Distance((PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero), transform.position) < aggressiveRange) { // Check distance
+            if(!Physics.Raycast(transform.position, PlayerBase.instance.transform.position, VectorToPlayer().magnitude, LayerMask.GetMask("Terrain"))) // Check wall obstruction
+                TurnAggressive.Invoke();
         }
     }
 
@@ -277,8 +279,6 @@ public class Scurrier : EnemyBase {
     /// Gore (charge) attack
     /// </summary>
     private IEnumerator AttackGore() {
-        inGore = true;
-
         currentState = EnemyState.Attacking;
         _agent.stoppingDistance = 0;
         _agent.autoBraking = false;
@@ -306,6 +306,9 @@ public class Scurrier : EnemyBase {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 360f);
             yield return null;
         }
+
+        // Can no longer interrupt via exiting room
+        inGore = true;
 
         // Set vars
         _agent.speed *= goreSpeedMultiplier;

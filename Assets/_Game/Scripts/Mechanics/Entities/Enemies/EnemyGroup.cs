@@ -57,10 +57,13 @@ public class EnemyGroup : MonoBehaviour {
         GrabHyperseed.AddListener(() => {
             OnEnemyDamage.RemoveAllListeners();
             OnShotFired.RemoveAllListeners();
+
+            OnPlayerEnter.RemoveAllListeners();
+            OnPlayerExit.RemoveAllListeners();
         });
-        OnEnemyDamage.AddListener(() => {
+        /*OnEnemyDamage.AddListener(() => { TEMP FIX - waiting on OnPlayerEnter and OnPlayerExit to be implemented
             OnEnemyDamage.RemoveAllListeners();
-        });
+        });*/
         OnShotFired.AddListener(() => {
             OnShotFired.RemoveAllListeners();
         });

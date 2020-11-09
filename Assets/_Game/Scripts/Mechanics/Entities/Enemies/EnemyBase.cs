@@ -91,8 +91,10 @@ public abstract class EnemyBase : EntityBase {
         if(currentState == EnemyState.Aggressive) {
             currentBehavior = StartCoroutine(Idle());
             TurnAggressive.Invoke();
-        } else
+        } else {
             currentBehavior = StartCoroutine(Idle());
+        }
+
         StartCoroutine(CheckBehavior());
     }
 
@@ -241,8 +243,10 @@ public abstract class EnemyBase : EntityBase {
     protected virtual IEnumerator CheckBehavior() {
         while(gameObject.activeSelf) {
             yield return new WaitForSeconds(0.25f);
-            if(currentBehavior == null)
+            if(currentBehavior == null) {
+                Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + " encountered an error in its behavior.");
                 ResetEnemy();
+            }
         }
     }
 
