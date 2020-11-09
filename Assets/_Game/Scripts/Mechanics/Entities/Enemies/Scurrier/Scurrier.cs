@@ -23,6 +23,7 @@ public class Scurrier : EnemyBase {
     [SerializeField] private Hitbox goreHitbox;
 
     private ScurrierCrashDetector crashDetector;
+    private bool inGore;
 
     [System.Serializable]
     public class FX {
@@ -46,6 +47,7 @@ public class Scurrier : EnemyBase {
         base.Awake();
         crashDetector = GetComponentInChildren<ScurrierCrashDetector>(true);
         crashDetector.gameObject.SetActive(false);
+        inGore = false;
     }
 
     protected override void Start() {
@@ -209,9 +211,10 @@ public class Scurrier : EnemyBase {
         // TODO - make looping
         _enemyFX.AlertState.Invoke();
 
+        yield return null;
+        FindTarget();
         while(true) {
             yield return null;
-            FindTarget();
 
             // No target player available - idle instead
             if(targetPlayer == null) {
@@ -274,6 +277,8 @@ public class Scurrier : EnemyBase {
     /// Gore (charge) attack
     /// </summary>
     private IEnumerator AttackGore() {
+        inGore = true;
+
         currentState = EnemyState.Attacking;
         _agent.stoppingDistance = 0;
         _agent.autoBraking = false;
@@ -375,6 +380,7 @@ public class Scurrier : EnemyBase {
         yield return new WaitForSeconds(0.25f);
 
         // Set cooldown & return to movement
+        inGore = false;
         cooldownTimer = _cooldown;
         cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
@@ -393,6 +399,7 @@ public class Scurrier : EnemyBase {
         yield return new WaitForSeconds(1f);
 
         // Set cooldown & return to movement
+        inGore = false;
         cooldownTimer = _cooldown;
         cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
@@ -431,8 +438,16 @@ public class Scurrier : EnemyBase {
     // -------------------------------------------------------------------------------------------
 
     public override void ResetEnemy() {
+        if(inGore)
+            return;
         GoreReset();
         base.ResetEnemy();
+    }
+
+    public override void ForceIdle() {
+        if(inGore)
+            return;
+        base.ForceIdle();
     }
 
     // -------------------------------------------------------------------------------------------

@@ -80,7 +80,8 @@ public abstract class EnemyBase : EntityBase {
         });
         // Death Event
         OnDeath.AddListener(() => {
-            StopCoroutine(currentBehavior);
+            if(currentBehavior != null)
+                StopCoroutine(currentBehavior);
             currentBehavior = StartCoroutine(Die());
         });
 
@@ -92,6 +93,7 @@ public abstract class EnemyBase : EntityBase {
             TurnAggressive.Invoke();
         } else
             currentBehavior = StartCoroutine(Idle());
+        StartCoroutine(CheckBehavior());
     }
 
     protected virtual void LateUpdate() {
@@ -170,8 +172,25 @@ public abstract class EnemyBase : EntityBase {
     /// Determines which player the enemy should target
     /// </summary>
     protected virtual void FindTarget() {
-        // TODO - check player room
-        targetPlayer = PlayerBase.instance?.gameObject;
+        if(hyperseed || PlayerInRoom())
+            targetPlayer = PlayerBase.instance?.gameObject;
+        else
+            targetPlayer = null;
+    }
+
+    /// <summary>
+    /// Checks if the player is in the same room as the enemy
+    /// </summary>
+    protected virtual bool PlayerInRoom() {
+        Physics.Raycast(PlayerBase.instance.transform.position + Vector3.up, Vector3.down, out RaycastHit hit, 1.5f, LayerMask.GetMask("Terrain"));
+        //Debug.Log(hit.transform.GetComponentInParent<Room>().gameObject.name);
+        try {
+            if(hit.transform.GetComponentInParent<Room>() == GetComponentInParent<Room>())
+                return true;
+        } catch {
+            Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + ": Error in detecting if player is in the same room as player");
+        }
+        return false;
     }
 
     /// <summary>
@@ -215,6 +234,17 @@ public abstract class EnemyBase : EntityBase {
         Destroy(gameObject);
         yield return null;
     }
+    
+    /// <summary>
+    /// Periodically checks behavior, and resets if none is active
+    /// </summary>
+    protected virtual IEnumerator CheckBehavior() {
+        while(gameObject.activeSelf) {
+            yield return new WaitForSeconds(0.25f);
+            if(currentBehavior == null)
+                ResetEnemy();
+        }
+    }
 
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Other
@@ -251,7 +281,8 @@ public abstract class EnemyBase : EntityBase {
 
         if(currentState == EnemyState.Passive && !aggressive) // Don't re-start idle behavior if not aggressive
             return;
-        StopCoroutine(currentBehavior);
+        if(currentBehavior != null)
+            StopCoroutine(currentBehavior);
 
         if(aggressive)
             currentBehavior = StartCoroutine(AggressiveMove());
@@ -263,7 +294,8 @@ public abstract class EnemyBase : EntityBase {
     /// Forces the enemy into its idle state (but stays aggressive if already so)
     /// </summary>
     public virtual void ForceIdle() {
-        StopCoroutine(currentBehavior);
+        if(currentBehavior != null)
+            StopCoroutine(currentBehavior);
         currentBehavior = StartCoroutine(Idle(true));
     }
 

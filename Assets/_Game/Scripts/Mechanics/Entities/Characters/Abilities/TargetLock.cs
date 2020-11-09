@@ -15,8 +15,11 @@ public class TargetLock : MonoBehaviour
     [Header("Set this to an empty GameObject")]
     [SerializeField] GameObject _aimingReticle;
 
-    [Header("Set this to the UI element for the lock-on")]
-    [SerializeField] RectTransform _targetingReticle;
+    //[Header("Set this to the UI element for the lock-on")]
+    //[SerializeField] RectTransform _targetingReticle;
+
+    [SerializeField] SelectionSwarmFollow _targetingVFX;
+    SelectionSwarmFollow _swarm;
 
     [HideInInspector] public GameObject _currentTarget;
     float _inputCooldown;
@@ -36,7 +39,7 @@ public class TargetLock : MonoBehaviour
         _player = GetComponent<PlayerBase>();
         _mask = LayerMask.GetMask("Enemy");
         
-        _targetingReticle.gameObject.SetActive(false);
+        //_targetingReticle.gameObject.SetActive(false);
         _currentTarget = _aimingReticle;
     }
 
@@ -52,6 +55,7 @@ public class TargetLock : MonoBehaviour
         {
             OnTargetLock?.Invoke();
             _currentTarget = _aimingReticle;
+            _swarm.SetFollowTarget(null);
         }
 
         if (_currentTarget == null)
@@ -83,6 +87,7 @@ public class TargetLock : MonoBehaviour
             _stickRelease = true;
         }
 
+        /*
         if (_currentTarget != _aimingReticle)
         {
             _targetingReticle.gameObject.SetActive(true);
@@ -92,6 +97,7 @@ public class TargetLock : MonoBehaviour
         {
             _targetingReticle.gameObject.SetActive(false);
         }
+        */
 
         //if currently targeted enemy moves outside of range, target nearest enemy
         if (_currentTarget != _aimingReticle && Vector3.Distance(_currentTarget.transform.position, transform.position) > _maxRange)
@@ -127,6 +133,8 @@ public class TargetLock : MonoBehaviour
             if (distance < minDistance)
             {
                 _currentTarget = enemy.gameObject;
+                _swarm = Instantiate(_targetingVFX, transform.position, Quaternion.identity);
+                _swarm.SetFollowTarget(_currentTarget.transform);
                 minDistance = distance;
             }
         }
@@ -157,6 +165,7 @@ public class TargetLock : MonoBehaviour
                 {
                     smallestAngle = angle;
                     _currentTarget = enemy.gameObject;
+                    _swarm.SetFollowTarget(_currentTarget.transform);
                     moreThan180 = false;
                 }
             }
@@ -169,6 +178,7 @@ public class TargetLock : MonoBehaviour
                     {
                         smallestAngle = angle;
                         _currentTarget = enemy.gameObject;
+                        _swarm.SetFollowTarget(_currentTarget.transform);
                     }
                 }
             }
@@ -184,6 +194,7 @@ public class TargetLock : MonoBehaviour
                 {
                     largestAngle = angle;
                     _currentTarget = enemy.gameObject;
+                    _swarm.SetFollowTarget(_currentTarget.transform);
                     moreThan180 = false;
                 }
             }
@@ -196,6 +207,7 @@ public class TargetLock : MonoBehaviour
                     {
                         largestAngle = angle;
                         _currentTarget = enemy.gameObject;
+                        _swarm.SetFollowTarget(_currentTarget.transform);
                     }
                 }
             }

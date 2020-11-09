@@ -40,7 +40,7 @@ public class Brawler : EnemyBase {
         if(waypoints.Count == 0) {
             AddWaypoint();
             AddWaypoint();
-            //Debug.LogError(gameObject.name + " in " + transform.parent.parent.name + " has no waypoints.");
+            Debug.LogError(gameObject.name + " in " + transform.parent.parent.parent.name + " has no waypoints.");
 
             int i = 1;
             foreach(GameObject waypoint in waypoints) {
@@ -124,9 +124,10 @@ public class Brawler : EnemyBase {
         // TODO - make looping
         _enemyFX.AlertState.Invoke();
 
+        yield return null;
+        FindTarget();
         while(true) {
             yield return null;
-            FindTarget();
 
             // No target player available - idle instead
             if(targetPlayer == null) {
