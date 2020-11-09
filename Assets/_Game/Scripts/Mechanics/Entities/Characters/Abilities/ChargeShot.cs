@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class ChargeShot : MonoBehaviour
 {
     public UnityEvent OnHit;
+    public UnityEvent OnCriticalHit;
 
     GunnerAltFire _altFire;
     Hitbox _hitbox;
@@ -15,14 +16,17 @@ public class ChargeShot : MonoBehaviour
     ElectricRoundExpandFire _vfxController;
 
     bool _isCharging = true;
+    bool _crit = false;
     float _charge;
     Vector3 _startScale;
+
+    public float Charge { get { return _charge; } }
 
     [Header("Shot Properties")]
     [SerializeField] float _moveSpeed;
     [SerializeField] float _damageMultiplier = 1f;
-    [SerializeField] float _scaleMultiplier = 1f;
     [SerializeField] float _lifespan = 5f;
+    [SerializeField] GameObject _AOEEffect;
 
     [Header("VFX")]
     [SerializeField]
@@ -78,10 +82,8 @@ public class ChargeShot : MonoBehaviour
             transform.position = _altFire.GunEnd.position;
             transform.rotation = _altFire.GunEnd.rotation;
             //transform.localScale = _startScale + Vector3.one * _charge * _scaleMultiplier;
-            if (_charge >= .2)
-            {
-                _hitbox.baseDamage = _charge * _damageMultiplier;
-            }
+            
+            _hitbox.baseDamage = 5 + _charge * _damageMultiplier;
 
             _vfxController.Charge((1/_altFire.ChargeRate));
 
@@ -105,6 +107,8 @@ public class ChargeShot : MonoBehaviour
         int num = Random.Range(0, 3);
         if (num == 0)
         {
+            Debug.Log("Crit!");
+            _crit = true;
             _hitbox.baseDamage *= 2;
         }
     }
@@ -114,7 +118,18 @@ public class ChargeShot : MonoBehaviour
         int layer = other.gameObject.layer;
         if (!(layer == 11 || layer == 13 || layer == 15)) //hit anything but player, other hitboxes, and invisible walls
         {
-            OnHit?.Invoke();
+            Vector3 pos = transform.position + transform.forward;
+            ChargeShotAOE aoe = Instantiate(_AOEEffect, pos, Quaternion.identity).GetComponent<ChargeShotAOE>();
+            aoe.IgnoreTarget(other.gameObject);
+            if (_crit)
+            {
+                OnCriticalHit?.Invoke();
+                aoe.crit = true;
+            }
+            else
+            {
+                OnHit?.Invoke();
+            }
             Destroy(gameObject);
         }
     }
