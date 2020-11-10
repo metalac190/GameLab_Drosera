@@ -17,6 +17,8 @@ public class Projectile : MonoBehaviour
     [SerializeField]
     protected GameObject effect;
     [SerializeField]
+    protected GameObject critEffect;
+    [SerializeField]
     protected float effectDuration;
 
     private Rigidbody rb;
@@ -68,6 +70,14 @@ public class Projectile : MonoBehaviour
         if (effect != null && VFXSpawner.vfx != null)
         {
             GameObject vfx = VFXSpawner.vfx.SpawnVFX(effect, effectDuration, transform.position, transform.rotation);
+        }
+    }
+
+    public void SpawnCritVFX()
+    {
+        if (effect != null && VFXSpawner.vfx != null)
+        {
+            GameObject vfx = VFXSpawner.vfx.SpawnVFX(critEffect, effectDuration, transform.position, transform.rotation);
         }
     }
 }
