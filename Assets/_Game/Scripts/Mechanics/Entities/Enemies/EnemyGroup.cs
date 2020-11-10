@@ -27,20 +27,19 @@ public class EnemyGroup : MonoBehaviour {
                 enemy.ForceIdle();
             });
 
-            // Stop/resume aggro when player exits/enters a room
-            OnPlayerExit.AddListener(() => {
-                enemy.ForceIdle();
-            });
-            OnPlayerEnter.AddListener(() => {
-                enemy.ResetEnemy();
-            });
-        }
-
-        // Scurriers aggro in a group when one is damaged
-        enemies = GetComponentsInChildren<Scurrier>(true);
-        foreach(Scurrier enemy in enemies) {
+            // Aggro when enemy is damaged
             OnEnemyDamage.AddListener(() => {
                 enemy.TurnAggressive.Invoke();
+            });
+
+            // Stop/resume aggro when player exits/enters a room
+            OnPlayerExit.AddListener(() => {
+                if(enemy.gameObject.activeSelf)
+                    enemy.ForceIdle();
+            });
+            OnPlayerEnter.AddListener(() => {
+                if(enemy.gameObject.activeSelf)
+                    enemy.ResetEnemy();
             });
         }
 
@@ -61,9 +60,9 @@ public class EnemyGroup : MonoBehaviour {
             OnPlayerEnter.RemoveAllListeners();
             OnPlayerExit.RemoveAllListeners();
         });
-        /*OnEnemyDamage.AddListener(() => { TEMP FIX - waiting on OnPlayerEnter and OnPlayerExit to be implemented
+        OnEnemyDamage.AddListener(() => {
             OnEnemyDamage.RemoveAllListeners();
-        });*/
+        });
         OnShotFired.AddListener(() => {
             OnShotFired.RemoveAllListeners();
         });
@@ -76,6 +75,8 @@ public class EnemyGroup : MonoBehaviour {
         OnEnemyDamage.AddListener(() => {
             Debug.Log("Enemy damaged detected in " + transform.parent.parent.name);
         });
+
+        // TODO - add enter/exit debug calls
     }
 
 }

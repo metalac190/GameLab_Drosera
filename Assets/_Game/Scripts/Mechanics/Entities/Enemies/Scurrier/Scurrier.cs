@@ -109,6 +109,7 @@ public class Scurrier : EnemyBase {
     protected override IEnumerator Idle(bool regen = false) {
         _agent.stoppingDistance = 0f;
         _agent.SetDestination(transform.position);
+        yield return new WaitForSeconds(0.5f);
 
         if(regen) {
             isHealing = true;
@@ -118,10 +119,12 @@ public class Scurrier : EnemyBase {
 
         GoreReset();
 
+        bool firstIdle = true; // On first time, if away from spawn point, go back to spawn point
         Vector3 forward;
         while(true) {
             // Get target position
-            targetPosition = GetIdleDestination();
+            targetPosition = GetIdleDestination(firstIdle);
+            firstIdle = false;
             forward = targetPosition - transform.position;
             forward.y = 0;
 
@@ -161,7 +164,10 @@ public class Scurrier : EnemyBase {
     /// Determines the Scurrier's idle destination - stops it from attempting to go around walls or staying in the same spot
     /// </summary>
     /// <returns>Scurrier's next idle destination</returns>
-    private Vector3 GetIdleDestination() {
+    private Vector3 GetIdleDestination(bool firstIdle) {
+        if(firstIdle)
+            return spawnPosition;
+
         Vector3 destination = spawnPosition, forward;
         Vector3 heightOffset = new Vector3(0, -0.75f, 0); // Offset for detecting ground-level obstacles
         RaycastHit hit;
@@ -192,6 +198,7 @@ public class Scurrier : EnemyBase {
     }
 
     protected override void CheckAggression() {
+        // TODO - check if both scurrier and player are in own
         if(Vector3.Distance((PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero), transform.position) < aggressiveRange) { // Check distance
             if(!Physics.Raycast(transform.position, PlayerBase.instance.transform.position, VectorToPlayer().magnitude, LayerMask.GetMask("Terrain"))) // Check wall obstruction
                 TurnAggressive.Invoke();
@@ -212,6 +219,9 @@ public class Scurrier : EnemyBase {
         // Play aggro SFX
         // TODO - make looping
         _enemyFX.AlertState.Invoke();
+
+        // TODO - random errors in behavior during aggro
+        // TODO - enemies keep aggroing after exiting room, reset after gore (POTENTIAL IMPROVEMENT - ADD ROOM DETECTION TO PLAYER)
 
         yield return null;
         FindTarget();
@@ -301,14 +311,11 @@ public class Scurrier : EnemyBase {
                 yield break;
             }
 
-            initialTargetPos = targetPlayer.transform.position;
+            initialTargetPos = PlayerBase.instance.transform.position;
             forward = (initialTargetPos - transform.position).normalized;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 360f);
             yield return null;
         }
-
-        // Can no longer interrupt via exiting room
-        inGore = true;
 
         // Set vars
         _agent.speed *= goreSpeedMultiplier;
@@ -317,6 +324,9 @@ public class Scurrier : EnemyBase {
             yield return null;
         //Debug.DrawRay(transform.position, _agent.destination + (forward * goreSkidDistance) - transform.position, Color.red, 2);
         //Debug.DrawRay(transform.position, _agent.destination - transform.position, Color.green, 2);
+
+        // Can no longer interrupt via exiting room
+        inGore = true;
 
         // TODO - begin charge animation
 
@@ -335,6 +345,10 @@ public class Scurrier : EnemyBase {
             }
 
             yield return null;
+
+            // Premature end (player exit room)
+            if(!inGore)
+                break;
 
             // Check timeout
             timeout += Time.deltaTime;
@@ -441,15 +455,19 @@ public class Scurrier : EnemyBase {
     // -------------------------------------------------------------------------------------------
 
     public override void ResetEnemy() {
-        if(inGore)
+        if(inGore) {
+            inGore = false;
             return;
+        }
         GoreReset();
         base.ResetEnemy();
     }
 
     public override void ForceIdle() {
-        if(inGore)
+        if(inGore) {
+            inGore = false;
             return;
+        }
         base.ForceIdle();
     }
 
