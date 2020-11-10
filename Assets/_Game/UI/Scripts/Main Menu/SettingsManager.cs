@@ -17,6 +17,8 @@ public class SettingsManager : MonoBehaviour
     MenuManager menuManager;
     SetVolume setVolume;
 
+    PauseController pauseController;
+
     // controller support
     bool axisInUse = false;
     bool cycleDown;
@@ -29,6 +31,8 @@ public class SettingsManager : MonoBehaviour
     {
         menuManager = FindObjectOfType<MenuManager>();
         setVolume = FindObjectOfType<SetVolume>();
+
+        pauseController = FindObjectOfType<PauseController>();
 
         HighlightElement(1);
     }
@@ -74,12 +78,14 @@ public class SettingsManager : MonoBehaviour
         {
             volumeText.outlineWidth = 0;
 
-            selectedStuff[index].SetActive(true);
+            if (selectedStuff[index] != null)
+                selectedStuff[index].SetActive(true);
         }
         // highlight volume text;
         else if (currentlySelected == 1)
         {
-            selectedStuff[0].SetActive(false);
+            if (selectedStuff[0] != null)
+                selectedStuff[0].SetActive(false);
 
             volumeText.outlineWidth = 0.2f;
         }
@@ -116,13 +122,16 @@ public class SettingsManager : MonoBehaviour
         cycleUp = Input.GetAxisRaw("Vertical") == 1;
         cycleDown = Input.GetAxisRaw("Vertical") == -1;
 
-        if (cycleUp)
+        if (pauseController == null)
         {
-            HighlightElement(1);
-        }
-        if (cycleDown)
-        {
-            HighlightElement(0);
+            if (cycleUp)
+            {
+                HighlightElement(1);
+            }
+            if (cycleDown)
+            {
+                HighlightElement(0);
+            }
         }
     }
 }
