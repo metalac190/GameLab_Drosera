@@ -17,6 +17,10 @@ public class EnemyAnimationController : MonoBehaviour {
         enemyBase.attackDone = true;
     }
 
+    public void FinishAggroAnim() {
+        enemyBase.aggroAnimDone = true;
+    }
+
     public void EnableHitbox(int index) {
         hitboxes[index].SetActive(true);
     }

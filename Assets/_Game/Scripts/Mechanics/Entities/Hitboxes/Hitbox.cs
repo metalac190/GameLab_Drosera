@@ -10,6 +10,8 @@ public class Hitbox : MonoBehaviour {
     public float baseDamage, damage;
     public bool canDamageWalls;
     [SerializeField] protected HitboxTarget hitboxTarget;
+    [SerializeField] GameObject hitVFX;
+    [SerializeField] float hitVFXDuration;
 
     protected List<GameObject> hitTargets = new List<GameObject>();
 
@@ -33,6 +35,12 @@ public class Hitbox : MonoBehaviour {
             OnHit.Invoke();
             other.GetComponentInParent<EntityBase>()?.TakeDamage(damage);
             hitTargets.Add(other.gameObject);
+
+            //Spawn VFX if hit player
+            if ((other.gameObject.layer == LayerMask.NameToLayer("Player") && CanHitPlayer()) && hitVFX != null && VFXSpawner.vfx != null)
+            {
+                GameObject vfx = VFXSpawner.vfx.SpawnVFX(hitVFX, hitVFXDuration, other.transform.position, transform.rotation);
+            }
         }
     }
 
@@ -60,6 +68,15 @@ public class Hitbox : MonoBehaviour {
     public void ResetHitbox() {
         hitTargets.Clear();
         damage = baseDamage;
+    }
+
+    //Mainly for when an enemy hits the player
+    public void SpawnHitVFX()
+    {
+        if (hitVFX != null && VFXSpawner.vfx != null)
+        {
+            GameObject vfx = VFXSpawner.vfx.SpawnVFX(hitVFX, hitVFXDuration, transform.position, transform.rotation);
+        }
     }
 
 }

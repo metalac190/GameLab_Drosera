@@ -40,16 +40,22 @@ public class GunnerGrenadeProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.GetComponent<EnemyBase>() != null)
+        {
+            StopAllCoroutines();
+            StartCoroutine(Explode(0));
+            _exploded = true;
+        }
         if (!_exploded)
         {
-            StartCoroutine(Explode());
+            StartCoroutine(Explode(_explosionDelay));
             _exploded = true;
-        }  
+        }
     }
 
-    IEnumerator Explode()
+    IEnumerator Explode(float explosionDelay)
     {
-        yield return new WaitForSeconds(_explosionDelay);
+        yield return new WaitForSeconds(explosionDelay);
         OnExplode?.Invoke();
 
         Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius);
