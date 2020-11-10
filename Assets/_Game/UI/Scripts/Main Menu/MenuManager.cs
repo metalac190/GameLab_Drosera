@@ -26,6 +26,11 @@ public class MenuManager : MonoBehaviour
     int currentlySelectedButton = -1;
     int previouslySelectedButton = -1;
 
+    // controller support
+    bool axisInUse = false;
+    bool cycleDown;
+    bool cycleUp;
+
     private void Awake()
     {
         foreach (Image h in hoverlineImages)
@@ -69,6 +74,96 @@ public class MenuManager : MonoBehaviour
         {
             DisplayMainMenuPanel();
         }
+
+        if (mainMenuPanel.activeInHierarchy)
+            ControllerSupport();
+    }
+
+    void ControllerSupport()
+    {
+        if (Input.GetJoystickNames().Length != 0)
+        {
+            cycleUp = Input.GetAxisRaw("Vertical") == 1;
+            cycleDown = Input.GetAxisRaw("Vertical") == -1;
+
+            if (cycleDown && currentlySelectedButton == -1)
+            {
+                OnHoverMenuButton(0);
+
+                axisInUse = true;
+                StartCoroutine(ControllerAxisCooldown());
+
+                return;
+            }
+
+            if (cycleDown && !axisInUse)
+            {
+                if (currentlySelectedButton + 1 <= 4)
+                    OnHoverMenuButton(currentlySelectedButton + 1);
+
+                axisInUse = true;
+                StartCoroutine(ControllerAxisCooldown());
+            }
+            if (cycleUp && !axisInUse)
+            {
+                if (currentlySelectedButton - 1 >= 0)
+                    OnHoverMenuButton(currentlySelectedButton - 1);
+
+                axisInUse = true;
+                StartCoroutine(ControllerAxisCooldown());
+            }
+
+            // confirm
+            if (Input.GetKeyDown(KeyCode.Joystick1Button2))
+            {
+                ControllerConfirm();
+            }
+        }
+    }
+
+    IEnumerator ControllerAxisCooldown()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        axisInUse = false;
+    }
+
+    void ControllerConfirm()
+    {
+        switch (currentlySelectedButton)
+        {
+            case 0:
+                StartGame("Main");
+                break;
+            case 1:
+                DisplayInstructionsPanel();
+                break;
+            case 2:
+                DisplayExtrasPanel();
+                break;
+            case 3:
+                DisplaySettingsPanel();
+                break;
+            case 4:
+                QuitGame();
+                break;
+        }
+    }
+
+    void ControllerActionsForExtras()
+    {
+
+    }
+
+    void ControllerActionsForSettings()
+    {
+
+    }
+
+    public void PlaySound(int clipIndex)
+    {
+        AudioScript audioScript = buttonImages[currentlySelectedButton].GetComponent<AudioScript>();
+        audioScript.PlayOneSound(clipIndex);
     }
 
     // highlight menu button on hover
@@ -92,6 +187,8 @@ public class MenuManager : MonoBehaviour
                 hoverlineImages[previouslySelectedButton].enabled = false;
             }
         }
+
+        PlaySound(1);
     }
 
     void ClearButtons()
@@ -105,13 +202,14 @@ public class MenuManager : MonoBehaviour
 
     public void StartGame(string name)
     {
+        PlaySound(0);
+
         SceneManager.LoadScene(name);
     }
 
     public void DisplayMainMenuPanel()
     {
         CloseAllPanels();
-
         ClearButtons();
 
         mainMenuPanel.SetActive(true);
@@ -119,18 +217,24 @@ public class MenuManager : MonoBehaviour
 
     public void DisplayInstructionsPanel()
     {
+        PlaySound(0);
+
         CloseAllPanels();
         instructionsPanel.SetActive(true);
     }
 
     public void DisplayExtrasPanel()
     {
+        PlaySound(0);
+
         CloseAllPanels();
         extrasPanel.SetActive(true);
     }
 
     public void DisplaySettingsPanel()
     {
+        PlaySound(0);
+
         CloseAllPanels();
         settingsPanel.SetActive(true);
     }
@@ -145,6 +249,8 @@ public class MenuManager : MonoBehaviour
 
     public void QuitGame()
     {
+        PlaySound(0);
+
         Application.Quit();
     }
 }

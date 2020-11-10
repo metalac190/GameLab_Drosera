@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class Projectile : MonoBehaviour
 {
     public UnityEvent OnHit;
+    public UnityEvent OnCriticalHit;
 
     [SerializeField]
     protected float moveSpeed = 15f;
@@ -20,6 +21,7 @@ public class Projectile : MonoBehaviour
 
     private Rigidbody rb;
     Hitbox hitbox;
+    bool crit;
 
     void Awake()
     {
@@ -34,6 +36,7 @@ public class Projectile : MonoBehaviour
         int temp = Random.Range(0, 6);
         if (temp == 0)
         {
+            crit = true;
             hitbox.baseDamage *= 2;
         }
     }
@@ -48,7 +51,14 @@ public class Projectile : MonoBehaviour
         int layer = other.gameObject.layer;
         if(!(layer == 11 || layer == 13 || layer == 15)) //hit anything but player, other hitboxes, and invisible walls
         {
-            OnHit?.Invoke();
+            if (crit)
+            {
+                OnCriticalHit?.Invoke();
+            }
+            else
+            {
+                OnHit?.Invoke();
+            }
             Destroy(gameObject);
         }
     }

@@ -21,6 +21,7 @@ public class PlayerBase : EntityBase
     public bool AbilityButton { get { return abilityButton; } }
     protected bool interactButton;
     protected bool pauseButton;
+    public bool PauseButton { get { return pauseButton; } }
     protected bool shootButtonKey;
     protected bool dodgeButtonKey;
     public bool DodgeButtonKey { get { return dodgeButtonKey; } }
@@ -149,7 +150,7 @@ public class PlayerBase : EntityBase
                 reloadButton = Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.R);
                 abilityButton = Input.GetKeyDown(KeyCode.JoystickButton4) || Input.GetKeyDown(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
-                pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
+                pauseButton = Input.GetKeyDown(KeyCode.JoystickButton7) || Input.GetKeyDown(KeyCode.Escape);
                 dodgeButtonKey = Input.GetKeyDown(KeyCode.Space);
                 dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
                 shootButtonGamepad = Input.GetAxisRaw("Shoot");
@@ -165,7 +166,7 @@ public class PlayerBase : EntityBase
                 reloadButton = Input.GetKey(KeyCode.R);
                 abilityButton = Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.E);
-                pauseButton = Input.GetKey(KeyCode.Escape);
+                pauseButton = Input.GetKeyDown(KeyCode.Escape);
                 dodgeButtonKey = Input.GetKeyDown(KeyCode.Space);
                 altFireButton = Input.GetMouseButton(1);
                 swapAbilityButton = Input.GetKeyDown(KeyCode.Q);
@@ -267,9 +268,15 @@ public class PlayerBase : EntityBase
                 //Debug.Log("L");
             }
 
+            //shoot
+            if(currentState == PlayerState.Attacking)
+            {
+                _animator.SetInteger("shootAni", 2);
+            }
+
+            //dodging
             if (currentState == PlayerState.Dodging)
             {
-                //dodging
                 if (Mathf.Abs(facing) <= 45) //forward
                 {
                     _animator.SetInteger("dodgeAni", 1);
@@ -300,6 +307,10 @@ public class PlayerBase : EntityBase
         {
             _animator.SetInteger("walkAni", 0);
         }
+        else if (currentState == PlayerState.Attacking)
+        {
+            _animator.SetInteger("shootAni", 1);
+        }
         else if (currentState == PlayerState.Dodging)
         {
             _animator.SetInteger("dodgeAni", 1);
@@ -308,6 +319,10 @@ public class PlayerBase : EntityBase
         else
         {
             _animator.SetInteger("dodgeAni", 0);
+        }
+        if(currentState != PlayerState.Attacking)
+        {
+            _animator.SetInteger("shootAni", 0);
         }
 
         if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
@@ -338,6 +353,8 @@ public class PlayerBase : EntityBase
     protected void Neutral()
     {
         _animator.SetBool("grenadeAni", false);
+        _animator.SetBool("getHyperSeedAni", false);
+        _animator.SetBool("getAmmoAni", false);
         if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
@@ -451,6 +468,14 @@ public class PlayerBase : EntityBase
     protected void Interacting()
     {
         interactTarget?.Interact(this);
+        if(interactTarget.GetComponent<HyperSeed>() != null)
+        {
+            _animator.SetBool("getHyperSeedAni", true);
+        }
+        else if(interactTarget.GetComponent<OreVein>() != null)
+        {
+            _animator.SetBool("getAmmoAni", true);
+        }
         interactTarget = null;
         lastInteract = Time.fixedTime;
         currentState = PlayerState.Neutral;
