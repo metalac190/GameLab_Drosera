@@ -25,10 +25,13 @@ public class Pause : MonoBehaviour
     bool cycleRight;
     bool cycleLeft;
 
+    PauseController pauseController;
+    AudioScript audioScript;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -55,8 +58,8 @@ public class Pause : MonoBehaviour
     {
         if (Input.GetJoystickNames().Length != 0 && isPaused)
         {
-            cycleRight = Input.GetAxisRaw("Horizontal") == 1;
-            cycleLeft = Input.GetAxisRaw("Horizontal") == -1;
+            cycleRight = Input.GetKeyDown(KeyCode.Joystick1Button5);
+            cycleLeft = Input.GetKeyDown(KeyCode.Joystick1Button4);
 
             if (cycleRight && !axisInUse)
             {
@@ -79,7 +82,6 @@ public class Pause : MonoBehaviour
 
     IEnumerator ControllerAxisCooldown()
     {
-
         yield return new WaitForSecondsRealtime(0.1f);
 
         axisInUse = false;
@@ -92,7 +94,11 @@ public class Pause : MonoBehaviour
 
         Time.timeScale = 0;
 
-        pauseHUD.SetActive(isPaused);
+        pauseHUD.SetActive(true);
+
+        pauseController = pauseHUD.GetComponent<PauseController>();
+        audioScript = pauseHUD.GetComponent<AudioScript>();
+
         SwitchToPausePanel(0);
     }
 
@@ -101,6 +107,8 @@ public class Pause : MonoBehaviour
     {
         if (index != currentlySelected)
         {
+            pauseController.CurrentlySelectedElement = 0;
+
             previouslySelected = currentlySelected;
             currentlySelected = index;
 
@@ -122,6 +130,8 @@ public class Pause : MonoBehaviour
             {
                 pauseBackgroundImage.SetActive(true);
             }
+
+            audioScript.PlayOneSound(0);
         }
     }
 
@@ -132,7 +142,7 @@ public class Pause : MonoBehaviour
 
         Time.timeScale = 1;
 
-        pauseHUD.SetActive(isPaused);
+        pauseHUD.SetActive(false);
     }
 
     public void BackToMenu()
