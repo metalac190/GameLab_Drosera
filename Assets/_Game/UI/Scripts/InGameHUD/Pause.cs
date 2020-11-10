@@ -21,6 +21,13 @@ public class Pause : MonoBehaviour
     int currentlySelected = 0;
     int previouslySelected = -1;
 
+    bool axisInUse;
+    bool cycleRight;
+    bool cycleLeft;
+
+    PauseController pauseController;
+    AudioScript audioScript;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,10 +37,54 @@ public class Pause : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.JoystickButton7) || Input.GetKeyDown(KeyCode.Escape))
         {
-            PauseGame();
+            isPaused = !isPaused;
+
+            if (isPaused)
+            {
+                PauseGame();
+            }
+            else
+            {
+                ResumeGame();
+            }
         }
+
+        ControllerSupport();
+    }
+
+    void ControllerSupport()
+    {
+        if (Input.GetJoystickNames().Length != 0 && isPaused)
+        {
+            cycleRight = Input.GetKeyDown(KeyCode.Joystick1Button5);
+            cycleLeft = Input.GetKeyDown(KeyCode.Joystick1Button4);
+
+            if (cycleRight && !axisInUse)
+            {
+                if (currentlySelected + 1 <= 4)
+                    SwitchToPausePanel(currentlySelected + 1);
+
+                axisInUse = true;
+                StartCoroutine(ControllerAxisCooldown());
+            }
+            if (cycleLeft && !axisInUse)
+            {
+                if (currentlySelected - 1 >= 0)
+                    SwitchToPausePanel(currentlySelected - 1);
+
+                axisInUse = true;
+                StartCoroutine(ControllerAxisCooldown());
+            }
+        }
+    }
+
+    IEnumerator ControllerAxisCooldown()
+    {
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        axisInUse = false;
     }
 
     public void PauseGame()
@@ -41,10 +92,13 @@ public class Pause : MonoBehaviour
         playerHUD.SetActive(false);
         inGameHUD.SetActive(false);
 
-        isPaused = true;
         Time.timeScale = 0;
 
-        pauseHUD.SetActive(isPaused);
+        pauseHUD.SetActive(true);
+
+        pauseController = pauseHUD.GetComponent<PauseController>();
+        audioScript = pauseHUD.GetComponent<AudioScript>();
+
         SwitchToPausePanel(0);
     }
 
@@ -53,6 +107,8 @@ public class Pause : MonoBehaviour
     {
         if (index != currentlySelected)
         {
+            pauseController.CurrentlySelectedElement = 0;
+
             previouslySelected = currentlySelected;
             currentlySelected = index;
 
@@ -74,6 +130,8 @@ public class Pause : MonoBehaviour
             {
                 pauseBackgroundImage.SetActive(true);
             }
+
+            audioScript.PlayOneSound(0);
         }
     }
 
@@ -82,10 +140,9 @@ public class Pause : MonoBehaviour
         playerHUD.SetActive(true);
         inGameHUD.SetActive(true);
 
-        isPaused = false;
         Time.timeScale = 1;
 
-        pauseHUD.SetActive(isPaused);
+        pauseHUD.SetActive(false);
     }
 
     public void BackToMenu()

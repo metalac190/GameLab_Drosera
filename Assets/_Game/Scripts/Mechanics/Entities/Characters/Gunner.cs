@@ -46,9 +46,9 @@ public class Gunner : PlayerBase
 
     protected override void Attacking()
     {
-        if (ammo > 0)
+        if (ammo > 0 && !altFireButton)
         {
-            if ((shootButtonKey || shootButtonGamepad == 1) && !altFireButton)
+            if ((shootButtonKey || shootButtonGamepad == 1))
             {
                 _primaryFire.Fire(); 
             }
