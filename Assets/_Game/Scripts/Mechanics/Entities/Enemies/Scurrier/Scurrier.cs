@@ -28,7 +28,7 @@ public class Scurrier : EnemyBase {
     [System.Serializable]
     public class FX {
         [Header("VFX")]
-        public GameObject shockwave; // TODO
+        public GameObject shockwave; // ??? - not used anymore?
         public GameObject goreTrail, goreImpact;
 
         [Header("SFX")]
@@ -198,9 +198,9 @@ public class Scurrier : EnemyBase {
     }
 
     protected override void CheckAggression() {
-        // TODO - check if both scurrier and player are in own
-        if(Vector3.Distance((PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero), transform.position) < aggressiveRange) { // Check distance
-            if(!Physics.Raycast(transform.position, PlayerBase.instance.transform.position, VectorToPlayer().magnitude, LayerMask.GetMask("Terrain"))) // Check wall obstruction
+        if(Vector3.Distance(PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero, transform.position) < aggressiveRange // Check distance
+            && PlayerInRoom() // Check in same room
+            && !Physics.Raycast(transform.position, PlayerBase.instance.transform.position, VectorToPlayer().magnitude, LayerMask.GetMask("Terrain"))) { // Check wall obstruction
                 TurnAggressive.Invoke();
         }
     }
@@ -221,7 +221,7 @@ public class Scurrier : EnemyBase {
         _enemyFX.AlertState.Invoke();
 
         // TODO - random errors in behavior during aggro
-        // TODO - enemies keep aggroing after exiting room, reset after gore (POTENTIAL IMPROVEMENT - ADD ROOM DETECTION TO PLAYER)
+        // TODO - enemies keep aggroing after exiting room, reset after gore
 
         yield return null;
         FindTarget();
@@ -346,13 +346,13 @@ public class Scurrier : EnemyBase {
 
             yield return null;
 
-            // Premature end (player exit room)
-            if(!inGore)
+            // Premature end (player exit room OR scurrier left its parent room)
+            if(!PlayerInRoom() || !EnemyInRoom())
                 break;
 
             // Check timeout
             timeout += Time.deltaTime;
-            if(timeout > 5f) {
+            if(timeout > 3f) {
                 Debug.LogError(gameObject.name + "'s gore attack timed out.");
                 break;
             }
@@ -373,7 +373,7 @@ public class Scurrier : EnemyBase {
 
         // Δx = (v + v_o)t/2 => t = 2(Δx)/(v + v_o) => v = 0, so t = 2(Δx)/v_0
         Vector3 baseVelocity = _agent.velocity;
-        float skidTime = 2 * goreSkidDistance / baseVelocity.magnitude;
+        float skidTime = Mathf.Clamp(2 * goreSkidDistance / baseVelocity.magnitude, 0.5f, _moveSpeed * goreSpeedMultiplier * 1.5f);
 
         _agent.updatePosition = false;
         _agent.ResetPath();
@@ -394,7 +394,7 @@ public class Scurrier : EnemyBase {
         }
         _agent.velocity = Vector3.zero;
         _animator.SetTrigger("Gore Done");
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.5f);
 
         // Set cooldown & return to movement
         inGore = false;
@@ -433,6 +433,7 @@ public class Scurrier : EnemyBase {
         _agent.autoBraking = true;
         _agent.speed = _moveSpeed;
         _agent.updatePosition = true;
+        inGore = false;
     }
 
     // -----
@@ -456,7 +457,6 @@ public class Scurrier : EnemyBase {
 
     public override void ResetEnemy() {
         if(inGore) {
-            inGore = false;
             return;
         }
         GoreReset();
@@ -465,7 +465,6 @@ public class Scurrier : EnemyBase {
 
     public override void ForceIdle() {
         if(inGore) {
-            inGore = false;
             return;
         }
         base.ForceIdle();

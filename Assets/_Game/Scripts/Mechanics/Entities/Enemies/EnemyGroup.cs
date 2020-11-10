@@ -16,29 +16,33 @@ public class EnemyGroup : MonoBehaviour {
         foreach(EnemyBase enemy in enemies) {
             // When hyperseed is grabbed - all enemies turn aggressive
             GrabHyperseed.AddListener(() => {
-                enemy.TurnAggressiveHyperseed.Invoke();
+                if(enemy)
+                    enemy.TurnAggressiveHyperseed.Invoke();
             });
             // Testing - all enemies turn aggressive
             TurnGroupAggressive.AddListener(() => {
-                enemy.TurnAggressive.Invoke();
+                if(enemy)
+                    enemy.TurnAggressive.Invoke();
             });
             // Testing - all enemies turn passive
             TurnGroupPassive.AddListener(() => {
-                enemy.ForceIdle();
+                if(enemy)
+                    enemy.ForceIdle();
             });
 
             // Aggro when enemy is damaged
             OnEnemyDamage.AddListener(() => {
-                enemy.TurnAggressive.Invoke();
+                if(enemy)
+                    enemy.TurnAggressive.Invoke();
             });
 
             // Stop/resume aggro when player exits/enters a room
             OnPlayerExit.AddListener(() => {
-                if(enemy.gameObject.activeSelf)
+                if(enemy)
                     enemy.ForceIdle();
             });
             OnPlayerEnter.AddListener(() => {
-                if(enemy.gameObject.activeSelf)
+                if(enemy)
                     enemy.ResetEnemy();
             });
         }
@@ -47,7 +51,8 @@ public class EnemyGroup : MonoBehaviour {
         enemies = GetComponentsInChildren<Brawler>(true);
         foreach(Brawler enemy in enemies) {
             OnShotFired.AddListener(() => {
-                enemy.TurnAggressive.Invoke();
+                if(enemy)
+                    enemy.TurnAggressive.Invoke();
             });
         }
 
@@ -76,7 +81,12 @@ public class EnemyGroup : MonoBehaviour {
             Debug.Log("Enemy damaged detected in " + transform.parent.parent.name);
         });
 
-        // TODO - add enter/exit debug calls
+        OnPlayerEnter.AddListener(() => {
+            Debug.Log("Player entered " + GetComponentInParent<Room>().name);
+        });
+        OnPlayerExit.AddListener(() => {
+            Debug.Log("Player exited " + GetComponentInParent<Room>().name);
+        });
     }
 
 }

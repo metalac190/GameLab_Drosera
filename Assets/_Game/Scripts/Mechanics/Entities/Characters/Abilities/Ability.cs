@@ -46,6 +46,7 @@ public abstract class Ability : MonoBehaviour
                         _enemyGroup.OnPlayerExit.Invoke();
                     _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
                     _enemyGroup.OnPlayerEnter.Invoke();
+                    GetComponent<PlayerBase>().currentRoom = _currentRoom;
                 }
                 else
                 {
