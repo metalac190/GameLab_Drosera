@@ -75,7 +75,8 @@ public class MenuManager : MonoBehaviour
             DisplayMainMenuPanel();
         }
 
-        ControllerSupport();
+        if (mainMenuPanel.activeInHierarchy)
+            ControllerSupport();
     }
 
     void ControllerSupport()
@@ -87,8 +88,10 @@ public class MenuManager : MonoBehaviour
 
             if (cycleDown && currentlySelectedButton == -1)
             {
-                currentlySelectedButton = 0;
-                OnHoverMenuButton(currentlySelectedButton);
+                OnHoverMenuButton(0);
+
+                axisInUse = true;
+                StartCoroutine(ControllerAxisCooldown());
 
                 return;
             }
@@ -114,11 +117,6 @@ public class MenuManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Joystick1Button2))
             {
                 ControllerConfirm();
-            }
-            // go back
-            if (Input.GetKeyDown(KeyCode.Joystick1Button1))
-            {
-                DisplayMainMenuPanel();
             }
         }
     }
@@ -162,7 +160,7 @@ public class MenuManager : MonoBehaviour
 
     }
 
-    void PlaySound(int clipIndex)
+    public void PlaySound(int clipIndex)
     {
         AudioScript audioScript = buttonImages[currentlySelectedButton].GetComponent<AudioScript>();
         audioScript.PlayOneSound(clipIndex);

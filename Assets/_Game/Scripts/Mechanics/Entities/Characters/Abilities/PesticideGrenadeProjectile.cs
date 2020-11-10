@@ -36,16 +36,22 @@ public class PesticideGrenadeProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.GetComponent<EnemyBase>() != null)
+        {
+            StopAllCoroutines();
+            StartCoroutine(Explode(0));
+            _exploded = true;
+        }
         if (!_exploded)
         {
-            StartCoroutine(Explode());
+            StartCoroutine(Explode(_explosionDelay));
             _exploded = true;
         }
     }
 
-    IEnumerator Explode()
+    IEnumerator Explode(float explosionDelay)
     {
-        yield return new WaitForSeconds(_explosionDelay);
+        yield return new WaitForSeconds(explosionDelay);
         OnExplode?.Invoke();
 
         Vector3 pos = transform.position;
@@ -58,12 +64,12 @@ public class PesticideGrenadeProjectile : MonoBehaviour
 
         _audioScript.PlaySound(0);
 
-       // GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
-        //vfx.GetComponentInChildren<SphereCollider>().enabled = false;
+        GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
+        vfx.GetComponentInChildren<SphereCollider>().enabled = false;
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         gameObject.GetComponent<SphereCollider>().enabled = false;
 
-        //StartCoroutine(ClearVFX(vfx));
+        StartCoroutine(ClearVFX(vfx));
     }
 
     //Not used currently

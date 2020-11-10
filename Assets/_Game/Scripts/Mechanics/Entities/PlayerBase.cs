@@ -268,9 +268,15 @@ public class PlayerBase : EntityBase
                 //Debug.Log("L");
             }
 
+            //shoot
+            if(currentState == PlayerState.Attacking)
+            {
+                _animator.SetInteger("shootAni", 2);
+            }
+
+            //dodging
             if (currentState == PlayerState.Dodging)
             {
-                //dodging
                 if (Mathf.Abs(facing) <= 45) //forward
                 {
                     _animator.SetInteger("dodgeAni", 1);
@@ -300,6 +306,10 @@ public class PlayerBase : EntityBase
         else if (currentState == PlayerState.Neutral) //idle
         {
             _animator.SetInteger("walkAni", 0);
+        }
+        else if (currentState == PlayerState.Attacking)
+        {
+            _animator.SetInteger("shootAni", 1);
         }
         else if (currentState == PlayerState.Dodging)
         {
@@ -338,7 +348,10 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
+        _animator.SetInteger("shootAni", 0);
         _animator.SetBool("grenadeAni", false);
+        _animator.SetBool("getHyperSeedAni", false);
+        _animator.SetBool("getAmmoAni", false);
         if (shootButtonGamepad == 1 || shootButtonKey || altFireButton)
         {
             currentState = PlayerState.Attacking;
@@ -452,6 +465,14 @@ public class PlayerBase : EntityBase
     protected void Interacting()
     {
         interactTarget?.Interact(this);
+        if(interactTarget.GetComponent<HyperSeed>() != null)
+        {
+            _animator.SetBool("getHyperSeedAni", true);
+        }
+        else if(interactTarget.GetComponent<OreVein>() != null)
+        {
+            _animator.SetBool("getAmmoAni", true);
+        }
         interactTarget = null;
         lastInteract = Time.fixedTime;
         currentState = PlayerState.Neutral;
