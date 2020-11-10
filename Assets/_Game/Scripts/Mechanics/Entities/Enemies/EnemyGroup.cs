@@ -16,31 +16,34 @@ public class EnemyGroup : MonoBehaviour {
         foreach(EnemyBase enemy in enemies) {
             // When hyperseed is grabbed - all enemies turn aggressive
             GrabHyperseed.AddListener(() => {
-                enemy.TurnAggressiveHyperseed.Invoke();
+                if(enemy)
+                    enemy.TurnAggressiveHyperseed.Invoke();
             });
             // Testing - all enemies turn aggressive
             TurnGroupAggressive.AddListener(() => {
-                enemy.TurnAggressive.Invoke();
+                if(enemy)
+                    enemy.TurnAggressive.Invoke();
             });
             // Testing - all enemies turn passive
             TurnGroupPassive.AddListener(() => {
-                enemy.ForceIdle();
+                if(enemy)
+                    enemy.ForceIdle();
+            });
+
+            // Aggro when enemy is damaged
+            OnEnemyDamage.AddListener(() => {
+                if(enemy)
+                    enemy.TurnAggressive.Invoke();
             });
 
             // Stop/resume aggro when player exits/enters a room
             OnPlayerExit.AddListener(() => {
-                enemy.ForceIdle();
+                if(enemy)
+                    enemy.ForceIdle();
             });
             OnPlayerEnter.AddListener(() => {
-                enemy.ResetEnemy();
-            });
-        }
-
-        // Scurriers aggro in a group when one is damaged
-        enemies = GetComponentsInChildren<Scurrier>(true);
-        foreach(Scurrier enemy in enemies) {
-            OnEnemyDamage.AddListener(() => {
-                enemy.TurnAggressive.Invoke();
+                if(enemy)
+                    enemy.ResetEnemy();
             });
         }
 
@@ -48,7 +51,8 @@ public class EnemyGroup : MonoBehaviour {
         enemies = GetComponentsInChildren<Brawler>(true);
         foreach(Brawler enemy in enemies) {
             OnShotFired.AddListener(() => {
-                enemy.TurnAggressive.Invoke();
+                if(enemy)
+                    enemy.TurnAggressive.Invoke();
             });
         }
 
@@ -57,6 +61,9 @@ public class EnemyGroup : MonoBehaviour {
         GrabHyperseed.AddListener(() => {
             OnEnemyDamage.RemoveAllListeners();
             OnShotFired.RemoveAllListeners();
+
+            OnPlayerEnter.RemoveAllListeners();
+            OnPlayerExit.RemoveAllListeners();
         });
         OnEnemyDamage.AddListener(() => {
             OnEnemyDamage.RemoveAllListeners();
@@ -72,6 +79,13 @@ public class EnemyGroup : MonoBehaviour {
         });
         OnEnemyDamage.AddListener(() => {
             Debug.Log("Enemy damaged detected in " + transform.parent.parent.name);
+        });
+
+        OnPlayerEnter.AddListener(() => {
+            Debug.Log("Player entered " + GetComponentInParent<Room>().name);
+        });
+        OnPlayerExit.AddListener(() => {
+            Debug.Log("Player exited " + GetComponentInParent<Room>().name);
         });
     }
 
