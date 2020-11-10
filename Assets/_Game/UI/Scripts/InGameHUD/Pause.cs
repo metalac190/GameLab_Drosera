@@ -21,19 +21,68 @@ public class Pause : MonoBehaviour
     int currentlySelected = 0;
     int previouslySelected = -1;
 
+    bool axisInUse;
+    bool cycleRight;
+    bool cycleLeft;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.JoystickButton7) || Input.GetKeyDown(KeyCode.Escape))
         {
-            PauseGame();
+            isPaused = !isPaused;
+
+            if (isPaused)
+            {
+                PauseGame();
+            }
+            else
+            {
+                ResumeGame();
+            }
         }
+
+        ControllerSupport();
+    }
+
+    void ControllerSupport()
+    {
+        if (Input.GetJoystickNames().Length != 0 && isPaused)
+        {
+            cycleRight = Input.GetAxisRaw("Horizontal") == 1;
+            cycleLeft = Input.GetAxisRaw("Horizontal") == -1;
+
+            if (cycleRight && !axisInUse)
+            {
+                if (currentlySelected + 1 <= 4)
+                    SwitchToPausePanel(currentlySelected + 1);
+
+                axisInUse = true;
+                StartCoroutine(ControllerAxisCooldown());
+            }
+            if (cycleLeft && !axisInUse)
+            {
+                if (currentlySelected - 1 >= 0)
+                    SwitchToPausePanel(currentlySelected - 1);
+
+                axisInUse = true;
+                StartCoroutine(ControllerAxisCooldown());
+            }
+        }
+    }
+
+    IEnumerator ControllerAxisCooldown()
+    {
+
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        axisInUse = false;
     }
 
     public void PauseGame()
@@ -41,7 +90,6 @@ public class Pause : MonoBehaviour
         playerHUD.SetActive(false);
         inGameHUD.SetActive(false);
 
-        isPaused = true;
         Time.timeScale = 0;
 
         pauseHUD.SetActive(isPaused);
@@ -82,7 +130,6 @@ public class Pause : MonoBehaviour
         playerHUD.SetActive(true);
         inGameHUD.SetActive(true);
 
-        isPaused = false;
         Time.timeScale = 1;
 
         pauseHUD.SetActive(isPaused);

@@ -232,7 +232,7 @@ public abstract class EnemyBase : EntityBase {
     /// </summary>
     protected virtual IEnumerator Die() {
         _enemyFX.Death.Invoke();
-        VFXSpawner.vfx.SpawnVFX(_enemyFX.deathEffect, 1f, transform.position); //Putting this here for now. Bill feel free to set this up how you want to later.
+        VFXSpawner.vfx.SpawnVFX(_enemyFX.deathEffect, 1f, transform.position, transform.rotation); //Putting this here for now. Bill feel free to set this up how you want to later.
         Destroy(gameObject);
         yield return null;
     }
