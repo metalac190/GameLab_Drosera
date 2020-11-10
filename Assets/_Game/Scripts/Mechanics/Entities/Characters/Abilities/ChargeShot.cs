@@ -10,6 +10,7 @@ public class ChargeShot : MonoBehaviour
     GunnerAltFire _altFire;
     Hitbox _hitbox;
     Rigidbody _rb;
+    Animator animator;
 
     //ParticleSystem _vfx;
     ElectricRoundExpandFire _vfxController;
@@ -34,6 +35,7 @@ public class ChargeShot : MonoBehaviour
 
     private void Awake()
     {
+        animator = FindObjectOfType<PlayerBase>().GetComponent<Animator>();
         _altFire = FindObjectOfType<GunnerAltFire>();
         _hitbox = GetComponent<Hitbox>();
         _rb = GetComponentInChildren<Rigidbody>();
@@ -61,6 +63,7 @@ public class ChargeShot : MonoBehaviour
     {
         if (!_isCharging)
         {
+            animator.SetBool("chargingShotAni", false);
             GetComponent<SphereCollider>().enabled = true;
             if (_charge < .2)
             {
@@ -75,6 +78,8 @@ public class ChargeShot : MonoBehaviour
         }
         else
         {
+            animator.SetBool("chargingShotAni", true);
+
             _charge = _altFire.Charge;
 
             transform.position = _altFire.GunEnd.position;
