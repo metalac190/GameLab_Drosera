@@ -6,7 +6,6 @@ using UnityEngine.Events;
 public class ChargeShot : MonoBehaviour
 {
     public UnityEvent OnHit;
-    public UnityEvent OnCriticalHit;
 
     GunnerAltFire _altFire;
     Hitbox _hitbox;
@@ -17,7 +16,6 @@ public class ChargeShot : MonoBehaviour
     ElectricRoundExpandFire _vfxController;
 
     bool _isCharging = true;
-    bool _crit = false;
     float _charge;
     Vector3 _startScale;
 
@@ -109,13 +107,6 @@ public class ChargeShot : MonoBehaviour
     {
         Destroy(gameObject, _lifespan);
         _isCharging = false;
-        int num = Random.Range(0, 3);
-        if (num == 0)
-        {
-            Debug.Log("Crit!");
-            _crit = true;
-            _hitbox.baseDamage *= 2;
-        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -126,15 +117,9 @@ public class ChargeShot : MonoBehaviour
             Vector3 pos = transform.position + transform.forward;
             ChargeShotAOE aoe = Instantiate(_AOEEffect, pos, Quaternion.identity).GetComponent<ChargeShotAOE>();
             aoe.IgnoreTarget(other.gameObject);
-            if (_crit)
-            {
-                OnCriticalHit?.Invoke();
-                aoe.crit = true;
-            }
-            else
-            {
-                OnHit?.Invoke();
-            }
+
+            OnHit?.Invoke();
+
             Destroy(gameObject);
         }
     }
