@@ -46,9 +46,9 @@ public class Gunner : PlayerBase
 
     protected override void Attacking()
     {
-        if (ammo > 0)
+        if (ammo > 0 && !altFireButton)
         {
-            if ((shootButtonKey || shootButtonGamepad == 1) && !altFireButton)
+            if ((shootButtonKey || shootButtonGamepad == 1))
             {
                 _primaryFire.Fire(); 
             }
@@ -85,7 +85,10 @@ public class Gunner : PlayerBase
         infiniteAmmo = isInfinite;
         if (infiniteAmmo)
         {
-            oldAmmoCost = _primaryFire._ammoCost;
+            print("Set infinite");
+            //Somehow being set twice, so check that we haven't.
+            if(_primaryFire._ammoCost > 0)
+                oldAmmoCost = _primaryFire._ammoCost;
             _primaryFire._ammoCost = 0;
         }
         else

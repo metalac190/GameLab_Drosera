@@ -59,6 +59,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -116,8 +117,8 @@ MonoBehaviour:
   mixerTrack: {fileID: 5805718969178195049, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
     type: 2}
   audioClips:
-  - {fileID: 8300000, guid: 5f86a01f052c0ec42a06dc9614850c66, type: 3}
-  StartVolume: 0.641
+  - {fileID: 8300000, guid: b87142d2d62bc254ebdcf94140ce516e, type: 3}
+  StartVolume: 0.493
   StereoPan: 0
   loop: 0
   useClipsAsPlaylist: 0
@@ -126,6 +127,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -193,6 +195,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 1
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -251,7 +254,7 @@ MonoBehaviour:
     type: 2}
   audioClips:
   - {fileID: 8300000, guid: d37407bae71436f43afbd9192985a4a2, type: 3}
-  StartVolume: 1
+  StartVolume: 0.504
   StereoPan: 0
   loop: 0
   useClipsAsPlaylist: 0
@@ -260,6 +263,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -336,6 +340,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -405,6 +410,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -472,6 +478,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -539,6 +546,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -606,6 +614,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -664,7 +673,7 @@ MonoBehaviour:
     type: 2}
   audioClips:
   - {fileID: 8300000, guid: 33da9d5089227c54a9002cf654062321, type: 3}
-  StartVolume: 1
+  StartVolume: 0.707
   StereoPan: 0
   loop: 0
   useClipsAsPlaylist: 0
@@ -673,6 +682,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -745,7 +755,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9206503905664791299}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.289, z: 0.498}
+  m_LocalPosition: {x: 0.188, y: 0.944, z: 1.298}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 9206503905713905920}
@@ -810,8 +820,7 @@ MonoBehaviour:
   _turnSpeed: 10
   _aimingReticle: {fileID: 6766694818811172613, guid: 9e6f8c39cbf0930428dad7714a5e1b4c,
     type: 3}
-  _targetingReticle: {fileID: 7840920060200204693, guid: 0aeb85bf3e78cb54bba8d9b5df6021f9,
-    type: 3}
+  _targetingVFX: {fileID: 0}
   _currentTarget: {fileID: 0}
   OnTargetLock:
     m_PersistentCalls:
@@ -896,8 +905,8 @@ MonoBehaviour:
   _animator: {fileID: 0}
   playerY: 0
   dodgeCooldownTime: 2
-  dodgeSpeed: 100
-  dodgeTime: 0.2
+  dodgeSpeed: 50
+  dodgeTime: 0.15
   altFireCooldownTime: 6
   interactCooldown: 0.2
   _projectile: {fileID: 7444641546036505424, guid: a876a09242627724fa6d402d41703829,
@@ -905,14 +914,12 @@ MonoBehaviour:
   ammo: 5
   maxAmmo: 24
   heldAmmo: 24
-  ammoPerOre: 1
+  ammoPerOre: 2
   reloadCoolDownTime: 1
   lowHealthPercentage: 0.3
   dodgeVFX: {fileID: 802523609689850116, guid: 53d32b181f47e8f41a677efcc4961212, type: 3}
   lowHealthSoundDelay: 0.6
   iFrameRate: 0.1
-  walkAni: 0
-  dodgeAni: 0
   OnReload:
     m_PersistentCalls:
       m_Calls:
@@ -967,7 +974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8536d9b13bcf2974589cb60c11b8fbf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 5
+  _cooldown: 4
   _ammoCost: 0
   OnCharge:
     m_PersistentCalls:
@@ -1010,7 +1017,7 @@ MonoBehaviour:
         m_CallState: 2
   _projectile: {fileID: 7597496990044121072, guid: 442287ce055f0874da47c2ce9962e611,
     type: 3}
-  _chargeRate: 0.2
+  _chargeRate: 0.25
   _maxCharge: 1
 --- !u!114 &9206503905713905951
 MonoBehaviour:

@@ -36,6 +36,7 @@ public class GunnerAltFire : Ability
 
     IEnumerator ChargeShot()
     {
+        _charge = 0;
         OnCharge?.Invoke();
         Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
         while (_gunner.AltFireButton && _charge < _maxCharge)
@@ -45,6 +46,5 @@ public class GunnerAltFire : Ability
         }
         StartCoroutine(CooldownTimer());
         OnFire?.Invoke();
-        _charge = 0;
     }
 }

@@ -108,7 +108,7 @@ public class InGameHUD : MonoBehaviour
         }
         else if (GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainTwo)
         {
-            ShowPhaseTwoObjectiveText();
+            StartCoroutine(ShowPhaseTwoObjectiveText());
         }
     }
 
@@ -193,17 +193,17 @@ public class InGameHUD : MonoBehaviour
 
         objectiveImage.DOFade(1, 1);
         objectiveText.DOFade(1, 1);
-        biomeText.DOFade(1, 1);
+        // biomeText.DOFade(1, 1);
 
         yield return new WaitForSeconds(10);
 
         objectiveImage.DOFade(0, 2);
         objectiveText.DOFade(0, 2);
-        biomeText.DOFade(0, 2);
+        // biomeText.DOFade(0, 2);
     }
 
     // call when player acquires the Hyperseed
-    public void ShowPhaseTwoObjectiveText()
+    IEnumerator ShowPhaseTwoObjectiveText()
     {
         if (objectiveImage != null)
         {
@@ -212,6 +212,16 @@ public class InGameHUD : MonoBehaviour
         }
 
         objectiveText.text = "ESCAPE TO THE DROPSHIP";
+
+        objectiveImage.DOFade(1, 0);
+        objectiveText.DOFade(1, 0);
+        // biomeText.DOFade(1, 0);
+
+        yield return new WaitForSecondsRealtime(10);
+
+        objectiveImage.DOFade(0, 2);
+        objectiveText.DOFade(0, 2);
+        // biomeText.DOFade(0, 2);
     }
 
     // bottom-right stuff
@@ -372,5 +382,10 @@ public class InGameHUD : MonoBehaviour
 
             dodgeOnCooldown = true;
         }
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnStateChange -= ChangePhaseText;
     }
 }
