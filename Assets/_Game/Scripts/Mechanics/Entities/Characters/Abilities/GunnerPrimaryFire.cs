@@ -13,10 +13,10 @@ public class GunnerPrimaryFire : Ability
     Transform _gunEnd;
     Gunner _gunner;
 
-    void Awake()
+    void Start()
     {
-        _gunEnd = transform.GetChild(0).transform;
         _gunner = GetComponent<Gunner>();
+        _gunEnd = _gunner.gunEnd;
     }
 
     protected override void ActivateAbility()
