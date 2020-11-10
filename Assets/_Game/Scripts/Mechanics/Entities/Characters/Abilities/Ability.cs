@@ -33,12 +33,20 @@ public abstract class Ability : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Door>() != null)
+        if (other.GetComponent<RoomCollision>() != null)
         {
-            _currentRoom = other.GetComponent<Door>().room;
+            _currentRoom = other.GetComponent<RoomCollision>().room;
+            
             if (_currentRoom != null)
             {
-                _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
+                if (_currentRoom.GetComponentInChildren<EnemyGroup>() != null)
+                {
+                    _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
+                }
+                else
+                {
+                    _enemyGroup = null;
+                }
             }
             else
             {
