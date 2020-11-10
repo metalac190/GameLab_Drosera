@@ -21,6 +21,7 @@ public class PlayerBase : EntityBase
     public bool AbilityButton { get { return abilityButton; } }
     protected bool interactButton;
     protected bool pauseButton;
+    public bool PauseButton { get { return pauseButton; } }
     protected bool shootButtonKey;
     protected bool dodgeButtonKey;
     public bool DodgeButtonKey { get { return dodgeButtonKey; } }
@@ -149,7 +150,7 @@ public class PlayerBase : EntityBase
                 reloadButton = Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.R);
                 abilityButton = Input.GetKeyDown(KeyCode.JoystickButton4) || Input.GetKeyDown(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.JoystickButton1) || Input.GetKey(KeyCode.E);
-                pauseButton = Input.GetKey(KeyCode.JoystickButton7) || Input.GetKey(KeyCode.Escape);
+                pauseButton = Input.GetKeyDown(KeyCode.JoystickButton7) || Input.GetKeyDown(KeyCode.Escape);
                 dodgeButtonKey = Input.GetKeyDown(KeyCode.Space);
                 dodgeButtonGamepad = Input.GetAxisRaw("Dodge");
                 shootButtonGamepad = Input.GetAxisRaw("Shoot");
@@ -165,7 +166,7 @@ public class PlayerBase : EntityBase
                 reloadButton = Input.GetKey(KeyCode.R);
                 abilityButton = Input.GetKey(KeyCode.LeftShift);
                 interactButton = Input.GetKey(KeyCode.E);
-                pauseButton = Input.GetKey(KeyCode.Escape);
+                pauseButton = Input.GetKeyDown(KeyCode.Escape);
                 dodgeButtonKey = Input.GetKeyDown(KeyCode.Space);
                 altFireButton = Input.GetMouseButton(1);
                 swapAbilityButton = Input.GetKeyDown(KeyCode.Q);
