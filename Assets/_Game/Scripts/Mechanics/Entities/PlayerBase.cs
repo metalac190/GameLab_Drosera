@@ -319,10 +319,6 @@ public class PlayerBase : EntityBase
         {
             _animator.SetInteger("dodgeAni", 0);
         }
-        if(currentState != PlayerState.Attacking)
-        {
-            _animator.SetInteger("shootAni", 0);
-        }
 
         if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
         {
@@ -351,6 +347,7 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
+        _animator.SetInteger("shootAni", 0);
         _animator.SetBool("grenadeAni", false);
         _animator.SetBool("getHyperSeedAni", false);
         _animator.SetBool("getAmmoAni", false);
