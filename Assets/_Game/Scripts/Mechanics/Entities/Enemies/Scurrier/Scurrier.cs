@@ -28,7 +28,7 @@ public class Scurrier : EnemyBase {
     [System.Serializable]
     public class FX {
         [Header("VFX")]
-        public GameObject shockwave; // TODO
+        public GameObject shockwave; // ??? - not used anymore?
         public GameObject goreTrail, goreImpact;
 
         [Header("SFX")]
@@ -109,6 +109,7 @@ public class Scurrier : EnemyBase {
     protected override IEnumerator Idle(bool regen = false) {
         _agent.stoppingDistance = 0f;
         _agent.SetDestination(transform.position);
+        yield return new WaitForSeconds(0.5f);
 
         if(regen) {
             isHealing = true;
@@ -118,10 +119,12 @@ public class Scurrier : EnemyBase {
 
         GoreReset();
 
+        bool firstIdle = true; // On first time, if away from spawn point, go back to spawn point
         Vector3 forward;
         while(true) {
             // Get target position
-            targetPosition = GetIdleDestination();
+            targetPosition = GetIdleDestination(firstIdle);
+            firstIdle = false;
             forward = targetPosition - transform.position;
             forward.y = 0;
 
@@ -161,19 +164,27 @@ public class Scurrier : EnemyBase {
     /// Determines the Scurrier's idle destination - stops it from attempting to go around walls or staying in the same spot
     /// </summary>
     /// <returns>Scurrier's next idle destination</returns>
-    private Vector3 GetIdleDestination() {
-        Vector3 destination, forward;
-        RaycastHit hit;
-        int i = 0;
+    private Vector3 GetIdleDestination(bool firstIdle) {
+        if(firstIdle)
+            return spawnPosition;
 
-        do {
+        Vector3 destination = spawnPosition, forward;
+        Vector3 heightOffset = new Vector3(0, -0.75f, 0); // Offset for detecting ground-level obstacles
+        RaycastHit hit;
+
+        // If tried too many times, return to spawn
+        for(int i = 0; i < 5; i++) {
             destination = spawnPosition + (new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized * idleWanderRange);
             forward = destination - transform.position;
             forward.y = 0;
             //Debug.DrawRay(transform.position, forward, Color.red, 5f);
 
+            // If point is floating over void, try again
+            if(!Physics.Raycast(destination, Vector3.down, 2f, LayerMask.GetMask("Terrain")))
+                continue;
+
             // Check wall between destination
-            if(Physics.Raycast(transform.position, forward, out hit, forward.magnitude, LayerMask.GetMask("Terrain"))) {
+            if(Physics.Raycast(transform.position + heightOffset, forward, out hit, forward.magnitude, LayerMask.GetMask("Terrain"))) {
                 //Debug.Log(hit.point);
                 destination = hit.point;
             }
@@ -181,18 +192,16 @@ public class Scurrier : EnemyBase {
             // If path is long enough, return (if path too short, try again)
             if((destination - transform.position).magnitude > 1f)
                 break;
-
-            // Tried too many times - return to spawn
-            if(++i == 5)
-                return spawnPosition;
-        } while(true);
+        }
 
         return destination;
     }
 
     protected override void CheckAggression() {
-        if(Vector3.Distance((PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero), transform.position) < aggressiveRange) {
-            TurnAggressive.Invoke();
+        if(Vector3.Distance(PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero, transform.position) < aggressiveRange // Check distance
+            && PlayerInRoom() // Check in same room
+            && !Physics.Raycast(transform.position, PlayerBase.instance.transform.position, VectorToPlayer().magnitude, LayerMask.GetMask("Terrain"))) { // Check wall obstruction
+                TurnAggressive.Invoke();
         }
     }
 
@@ -210,6 +219,9 @@ public class Scurrier : EnemyBase {
         // Play aggro SFX
         // TODO - make looping
         _enemyFX.AlertState.Invoke();
+
+        // TODO - random errors in behavior during aggro
+        // TODO - enemies keep aggroing after exiting room, reset after gore
 
         yield return null;
         FindTarget();
@@ -277,8 +289,6 @@ public class Scurrier : EnemyBase {
     /// Gore (charge) attack
     /// </summary>
     private IEnumerator AttackGore() {
-        inGore = true;
-
         currentState = EnemyState.Attacking;
         _agent.stoppingDistance = 0;
         _agent.autoBraking = false;
@@ -301,7 +311,7 @@ public class Scurrier : EnemyBase {
                 yield break;
             }
 
-            initialTargetPos = targetPlayer.transform.position;
+            initialTargetPos = PlayerBase.instance.transform.position;
             forward = (initialTargetPos - transform.position).normalized;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 360f);
             yield return null;
@@ -314,6 +324,9 @@ public class Scurrier : EnemyBase {
             yield return null;
         //Debug.DrawRay(transform.position, _agent.destination + (forward * goreSkidDistance) - transform.position, Color.red, 2);
         //Debug.DrawRay(transform.position, _agent.destination - transform.position, Color.green, 2);
+
+        // Can no longer interrupt via exiting room
+        inGore = true;
 
         // TODO - begin charge animation
 
@@ -333,9 +346,13 @@ public class Scurrier : EnemyBase {
 
             yield return null;
 
+            // Premature end (player exit room OR scurrier left its parent room)
+            if(!PlayerInRoom() || !EnemyInRoom())
+                break;
+
             // Check timeout
             timeout += Time.deltaTime;
-            if(timeout > 5f) {
+            if(timeout > 3f) {
                 Debug.LogError(gameObject.name + "'s gore attack timed out.");
                 break;
             }
@@ -356,7 +373,7 @@ public class Scurrier : EnemyBase {
 
         // Δx = (v + v_o)t/2 => t = 2(Δx)/(v + v_o) => v = 0, so t = 2(Δx)/v_0
         Vector3 baseVelocity = _agent.velocity;
-        float skidTime = 2 * goreSkidDistance / baseVelocity.magnitude;
+        float skidTime = Mathf.Clamp(2 * goreSkidDistance / baseVelocity.magnitude, 0.5f, _moveSpeed * goreSpeedMultiplier * 1.5f);
 
         _agent.updatePosition = false;
         _agent.ResetPath();
@@ -377,7 +394,7 @@ public class Scurrier : EnemyBase {
         }
         _agent.velocity = Vector3.zero;
         _animator.SetTrigger("Gore Done");
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.5f);
 
         // Set cooldown & return to movement
         inGore = false;
@@ -416,6 +433,7 @@ public class Scurrier : EnemyBase {
         _agent.autoBraking = true;
         _agent.speed = _moveSpeed;
         _agent.updatePosition = true;
+        inGore = false;
     }
 
     // -----
@@ -438,15 +456,17 @@ public class Scurrier : EnemyBase {
     // -------------------------------------------------------------------------------------------
 
     public override void ResetEnemy() {
-        if(inGore)
+        if(inGore) {
             return;
+        }
         GoreReset();
         base.ResetEnemy();
     }
 
     public override void ForceIdle() {
-        if(inGore)
+        if(inGore) {
             return;
+        }
         base.ForceIdle();
     }
 
