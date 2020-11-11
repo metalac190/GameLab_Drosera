@@ -115,6 +115,9 @@ public class PlayerBase : EntityBase
     public UnityEvent OnDodge;
     public UnityEvent OnLowHealth;
 
+    // Room detection/reference for enemies
+    public Room currentRoom;
+
     protected override void Start()
     {
         base.Start();

@@ -36,12 +36,17 @@ public abstract class Ability : MonoBehaviour
         if (other.GetComponent<RoomCollision>() != null)
         {
             _currentRoom = other.GetComponent<RoomCollision>().room;
-            
+
             if (_currentRoom != null)
             {
+
                 if (_currentRoom.GetComponentInChildren<EnemyGroup>() != null)
                 {
+                    if(_enemyGroup)
+                        _enemyGroup.OnPlayerExit.Invoke();
                     _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
+                    _enemyGroup.OnPlayerEnter.Invoke();
+                    GetComponent<PlayerBase>().currentRoom = _currentRoom;
                 }
                 else
                 {
