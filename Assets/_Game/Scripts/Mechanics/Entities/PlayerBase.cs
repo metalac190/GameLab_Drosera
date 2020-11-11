@@ -271,11 +271,13 @@ public class PlayerBase : EntityBase
                 //Debug.Log("L");
             }
 
+            /*
             //shoot
             if(currentState == PlayerState.Attacking)
             {
                 _animator.SetInteger("shootAni", 2);
             }
+            */ 
 
             //dodging
             if (currentState == PlayerState.Dodging)
@@ -306,14 +308,16 @@ public class PlayerBase : EntityBase
                 _animator.SetInteger("dodgeAni", 0);
             }
         }
-        else if (currentState == PlayerState.Neutral) //idle
+        else if (currentState != PlayerState.Dodging) //idle
         {
             _animator.SetInteger("walkAni", 0);
         }
+        /*
         else if (currentState == PlayerState.Attacking)
         {
             _animator.SetInteger("shootAni", 1);
         }
+        */
         else if (currentState == PlayerState.Dodging)
         {
             _animator.SetInteger("dodgeAni", 1);
@@ -351,7 +355,8 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
-        _animator.SetInteger("shootAni", 0);
+        _animator.SetBool("shootAni", false);
+        //_animator.SetInteger("shootAni", 0);
         _animator.SetBool("grenadeAni", false);
         _animator.SetBool("getHyperSeedAni", false);
         _animator.SetBool("getAmmoAni", false);

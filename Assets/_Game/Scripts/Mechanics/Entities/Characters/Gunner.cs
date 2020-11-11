@@ -53,9 +53,13 @@ public class Gunner : PlayerBase
         {
             if ((shootButtonKey || shootButtonGamepad == 1))
             {
-                _primaryFire.Fire(); 
+                _animator.SetBool("shootAni", true);
+                _primaryFire.Fire();
             }
-            currentState = PlayerState.Neutral;
+            else
+            {
+                currentState = PlayerState.Neutral;
+            }
         }
         else
         {
@@ -71,7 +75,6 @@ public class Gunner : PlayerBase
 
     protected override void Ability()
     {
-        _animator.SetBool("grenadeAni", true);
         if (!_altAbility)
         {
             _grenade.Fire();
