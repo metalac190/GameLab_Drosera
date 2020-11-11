@@ -11,6 +11,7 @@ public class InfiniteAmmoTrigger : MonoBehaviour
 
     private static bool firstTime = true;
     private bool hasBeenEnabled = false;
+    private bool closedInPause = false;
 
     private void Start()
     {
@@ -18,6 +19,21 @@ public class InfiniteAmmoTrigger : MonoBehaviour
         {
             tutorialPrompt.SetActive(true);
             firstTime = false;
+        }
+    }
+
+    private void Update()
+    {
+        if(tutorialPrompt.activeInHierarchy && Time.timeScale < 1)
+        {
+            tutorialPrompt.SetActive(false);
+            closedInPause = true;
+        }
+
+        if(closedInPause && Time.timeScale >= 1)
+        {
+            tutorialPrompt.SetActive(true);
+            closedInPause = false;
         }
     }
 
