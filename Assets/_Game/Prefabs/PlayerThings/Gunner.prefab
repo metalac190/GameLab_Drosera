@@ -691,6 +691,36 @@ MonoBehaviour:
   RandomVolumeMin: 1
   RandomPitchMax: 1
   RandomPitchMin: 1
+--- !u!1 &8368836281040131882
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8807131076593763397}
+  m_Layer: 11
+  m_Name: GrenadeSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8807131076593763397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8368836281040131882}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.168, z: 0.886}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9206503905713905920}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8914011848370050536
 GameObject:
   m_ObjectHideFlags: 0
@@ -729,7 +759,7 @@ Transform:
   - {fileID: 2872169356286206199}
   - {fileID: 5644226624733048030}
   m_Father: {fileID: 9206503905713905920}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9206503905664791299
 GameObject:
@@ -798,6 +828,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 9206503905664791296}
+  - {fileID: 8807131076593763397}
   - {fileID: 7904844187923150119}
   - {fileID: 5776893971069627993}
   - {fileID: 5636980632235669500}
@@ -962,6 +993,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  currentRoom: {fileID: 0}
+  gunEnd: {fileID: 0}
+  granadeSpawn: {fileID: 0}
 --- !u!114 &9206503905713905948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1201,7 +1235,7 @@ PrefabInstance:
     - target: {fileID: 6443042960569144073, guid: aa7e2f28a94fa964c9a7f8a088da1faf,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6443042960569144073, guid: aa7e2f28a94fa964c9a7f8a088da1faf,
         type: 3}
@@ -1281,7 +1315,7 @@ PrefabInstance:
     - target: {fileID: 4001563049179087142, guid: 169417aa2fc7a5b4f893e70e4b9aee45,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4001563049179087142, guid: 169417aa2fc7a5b4f893e70e4b9aee45,
         type: 3}
