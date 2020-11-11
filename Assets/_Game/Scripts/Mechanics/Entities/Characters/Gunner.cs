@@ -9,6 +9,9 @@ public class Gunner : PlayerBase
     GunnerGrenade _grenade;
     GunnerDOTGrenade _dotGrenade;
 
+    [SerializeField] public Transform gunEnd;
+    [SerializeField] public Transform granadeSpawn;
+
     bool _altAbility = false;
     bool infiniteAmmo = false;
     int oldAmmoCost;
