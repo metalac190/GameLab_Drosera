@@ -48,6 +48,9 @@ public class Scurrier : EnemyBase {
         crashDetector = GetComponentInChildren<ScurrierCrashDetector>(true);
         crashDetector.gameObject.SetActive(false);
         inGore = false;
+
+        // Random initial cooldown timer for gore
+        cooldownTimerGore = Random.Range(0, 2.5f);
     }
 
     protected override void Start() {
@@ -61,7 +64,7 @@ public class Scurrier : EnemyBase {
         });
     }
 
-    // TEMPORARY - PLACEHOLDER WHILE WAITING ON SCURRIER ANIMATIONS
+    // TEMPORARY - PLACEHOLDER WHILE WAITING ON SCURRIER TURN AGGRO ANIMATIONS
 
     protected override IEnumerator TurnAggressiveFunction(bool hyperseed = false) {
         // First time aggressive
@@ -149,8 +152,8 @@ public class Scurrier : EnemyBase {
                 CheckAggression();
             }
 
-            // Wait at position for 2 to 3.5 sec
-            for(float i = 0; i < Random.Range(2, 3.5f); i += Time.deltaTime) {
+            // Wait at position for 1.5 to 2.5 sec
+            for(float i = 0; i < Random.Range(1.5f, 2.5f); i += Time.deltaTime) {
                 yield return null;
                 CheckAggression();
             }
@@ -213,9 +216,6 @@ public class Scurrier : EnemyBase {
 
         GoreReset();
 
-        // Random timer cooldown for gore
-        cooldownTimerGore = Random.Range(0, 2.5f);
-
         // Play aggro SFX
         // TODO - make looping
         _enemyFX.AlertState.Invoke();
@@ -260,6 +260,7 @@ public class Scurrier : EnemyBase {
                     Mathf.Clamp(VectorToPlayer().magnitude, 0, goreRange.y), LayerMask.GetMask("Terrain")) &&
                     Vector3.Distance(transform.position, _agent.destination) > goreRange.x) { // Check min distance
 
+                    Debug.Log("Do gore, " + cooldownTimerGore);
                     currentBehavior = StartCoroutine(AttackGore());
                     yield break;
                 }
@@ -294,7 +295,7 @@ public class Scurrier : EnemyBase {
         _agent.autoBraking = false;
         _agent.isStopped = true;
 
-        // TODO - windup animation
+        // TODO - windup animation???
 
         // Turn to look towards position over 0.5 sec
         Vector3 forward = Vector3.zero;
@@ -331,10 +332,11 @@ public class Scurrier : EnemyBase {
         // TODO - begin charge animation
 
         // Charge
+        Debug.Log("Gore start");
         _scurrierFX.GoreAttack.Invoke();
         crashDetector.gameObject.SetActive(true);
         _scurrierFX.goreTrail.SetActive(true);
-        _animator.SetTrigger("Gore");
+        _animator.SetBool("Gore", true);
         _agent.isStopped = false;
         float timeout = 0; // Failsafe to prevent infinite gore
         while(_agent.remainingDistance > 1) {
@@ -359,6 +361,8 @@ public class Scurrier : EnemyBase {
         }
 
         // Did not crash - begin skidding
+        Debug.Log("Gore finish");
+        _animator.SetTrigger("Gore Finish");
         currentBehavior = StartCoroutine(GoreSkid());
     }
 
@@ -393,11 +397,11 @@ public class Scurrier : EnemyBase {
             yield return null;
         }
         _agent.velocity = Vector3.zero;
-        _animator.SetTrigger("Gore Done");
         yield return new WaitForSeconds(0.5f);
 
         // Set cooldown & return to movement
         inGore = false;
+        _animator.SetBool("Gore", false);
         cooldownTimer = _cooldown;
         cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
@@ -408,7 +412,6 @@ public class Scurrier : EnemyBase {
     /// </summary>
     private IEnumerator GoreCrash() {
         Debug.Log("Gore crashed into wall");
-        _animator.SetTrigger("Gore Done");
         _agent.isStopped = true;
 
         SpawnGoreHitVFX();
@@ -417,6 +420,7 @@ public class Scurrier : EnemyBase {
 
         // Set cooldown & return to movement
         inGore = false;
+        _animator.SetBool("Gore", false);
         cooldownTimer = _cooldown;
         cooldownTimerGore = cooldownGore;
         currentBehavior = StartCoroutine(AggressiveMove());
@@ -428,6 +432,7 @@ public class Scurrier : EnemyBase {
     private void GoreReset() {
         crashDetector.gameObject.SetActive(false);
         _scurrierFX.goreTrail.SetActive(false);
+        _animator.SetBool("Gore", false);
 
         _agent.isStopped = false;
         _agent.autoBraking = true;

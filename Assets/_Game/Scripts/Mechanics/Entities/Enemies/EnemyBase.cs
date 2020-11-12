@@ -262,7 +262,7 @@ public abstract class EnemyBase : EntityBase {
         while(gameObject.activeSelf) {
             yield return new WaitForSeconds(0.25f);
             if(currentBehavior == null) {
-                Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + " encountered an error in its behavior.");
+                try { Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + " encountered an error in its behavior."); } catch { }
                 ResetEnemy();
             }
         }
