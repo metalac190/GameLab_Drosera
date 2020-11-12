@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] string loseScene;
     [SerializeField] string winScene;
     [SerializeField] GameObject[] Cutscenes;
+    [SerializeField] GameObject DeathOverlay;
     private LevelGeneration levelGen;
     private int currentCutscene;
     private bool gameWon = false;
@@ -85,8 +86,10 @@ public class GameManager : MonoBehaviour
     public void GameLost()
     {
         currentCutscene = 0;
+        //Time.timeScale = 0;
         GameState = DroseraGlobalEnums.GameState.Menu;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(loseScene);
+        FindObjectOfType<EndGameOverlay>().ActivateDeathScreen();
+        //UnityEngine.SceneManagement.SceneManager.LoadScene(loseScene);
     }
 
     public void GameWon()
