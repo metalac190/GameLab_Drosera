@@ -79,6 +79,7 @@ public class LevelGeneration : MonoBehaviour
     {
         Debug.Log("Level Number: " + LevelNumber);
         genTest = false;
+        GameManager.Instance.CurrentBiome = LevelBiomesList[levelNumber];
         if (levelNumber < 6)
         {
             while (genTest == false)
