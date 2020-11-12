@@ -36,6 +36,7 @@ public class GunnerAltFire : Ability
 
     IEnumerator ChargeShot()
     {
+        _gunner.Animator.SetBool("chargingAni", true);
         _charge = 0;
         OnCharge?.Invoke();
         Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
@@ -44,6 +45,8 @@ public class GunnerAltFire : Ability
             _charge += _chargeRate * Time.deltaTime;
             yield return null;
         }
+        _gunner.Animator.SetBool("chargingAni", false);
+        _gunner.Animator.SetBool("altShootAni", true);
         StartCoroutine(CooldownTimer());
         OnFire?.Invoke();
     }
