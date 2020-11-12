@@ -23,10 +23,10 @@ public class GunnerAltFire : Ability
     public float Charge { get { return _charge; } }
     public Transform GunEnd { get { return _gunEnd; } }
 
-    private void Awake()
+    private void Start()
     {
-        _gunEnd = transform.GetChild(0).transform;
         _gunner = GetComponent<Gunner>();
+        _gunEnd = _gunner.gunEnd;
     }
 
     protected override void ActivateAbility()
@@ -36,6 +36,7 @@ public class GunnerAltFire : Ability
 
     IEnumerator ChargeShot()
     {
+        _gunner.Animator.SetBool("chargingAni", true);
         _charge = 0;
         OnCharge?.Invoke();
         Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
@@ -44,6 +45,8 @@ public class GunnerAltFire : Ability
             _charge += _chargeRate * Time.deltaTime;
             yield return null;
         }
+        _gunner.Animator.SetBool("chargingAni", false);
+        _gunner.Animator.SetBool("altShootAni", true);
         StartCoroutine(CooldownTimer());
         OnFire?.Invoke();
     }

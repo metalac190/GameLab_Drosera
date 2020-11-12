@@ -112,7 +112,10 @@ public class TargetLock : MonoBehaviour
         }
 
         //Orient player towards current target
-        LookAtTarget();
+        if (_player.CurrentState != PlayerBase.PlayerState.Dead)
+        {
+            LookAtTarget();
+        }
     }
 
     private void LateUpdate()
