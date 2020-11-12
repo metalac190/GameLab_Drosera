@@ -8,8 +8,10 @@ using UnityEngine.Playables;
 public class PlayerBase : EntityBase
 {
     //states
-    protected enum PlayerState { Neutral, Attacking, Reloading, Ability, Dodging, Interacting, Dead };
+    public enum PlayerState { Neutral, Attacking, Reloading, Ability, Dodging, Interacting, Dead };
     protected PlayerState currentState;
+
+    public PlayerState CurrentState { get { return currentState; } }
 
     //button variable names
     protected bool aimToggle;
@@ -192,22 +194,29 @@ public class PlayerBase : EntityBase
         zMove = Input.GetAxis("Vertical") * cameraForward;
         xMove = Input.GetAxis("Horizontal") * cameraRight;
 
-        if (currentState != PlayerState.Dodging)
+        if (currentState != PlayerState.Dead)
         {
-            movement = (zMove + xMove).normalized * Mathf.Max(zMove.magnitude, xMove.magnitude);
-            controller.Move(movement * Time.deltaTime * _moveSpeed);
-        }
-        else
-        {
-            RaycastHit hit;
-            if (movement != Vector3.zero)
+            if (currentState != PlayerState.Dodging)
             {
-                Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), movement.normalized * Time.deltaTime * dodgeSpeed, Color.cyan);
-                if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), movement, out hit, (movement.normalized * Time.deltaTime * dodgeSpeed).magnitude))
+                movement = (zMove + xMove).normalized * Mathf.Max(zMove.magnitude, xMove.magnitude);
+                controller.Move(movement * Time.deltaTime * _moveSpeed);
+            }
+            else
+            {
+                RaycastHit hit;
+                if (movement != Vector3.zero)
                 {
-                    if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                    Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), movement.normalized * Time.deltaTime * dodgeSpeed, Color.cyan);
+                    if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), movement, out hit, (movement.normalized * Time.deltaTime * dodgeSpeed).magnitude))
                     {
-                        controller.Move(movement.normalized * hit.distance);
+                        if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                        {
+                            controller.Move(movement.normalized * hit.distance);
+                        }
+                        else
+                        {
+                            controller.Move(movement.normalized * Time.deltaTime * dodgeSpeed);
+                        }
                     }
                     else
                     {
@@ -216,26 +225,22 @@ public class PlayerBase : EntityBase
                 }
                 else
                 {
-                    controller.Move(movement.normalized * Time.deltaTime * dodgeSpeed);
-                }
-            }
-            else
-            {
-                Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), transform.forward * Time.deltaTime * dodgeSpeed, Color.cyan);
-                if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), transform.forward, out hit, (transform.forward * Time.deltaTime * dodgeSpeed).magnitude))
-                {
-                    if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                    Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), transform.forward * Time.deltaTime * dodgeSpeed, Color.cyan);
+                    if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), transform.forward, out hit, (transform.forward * Time.deltaTime * dodgeSpeed).magnitude))
                     {
-                        controller.Move(transform.forward * hit.distance);
+                        if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                        {
+                            controller.Move(transform.forward * hit.distance);
+                        }
+                        else
+                        {
+                            controller.Move(transform.forward * Time.deltaTime * dodgeSpeed);
+                        }
                     }
                     else
                     {
                         controller.Move(transform.forward * Time.deltaTime * dodgeSpeed);
                     }
-                }
-                else
-                {
-                    controller.Move(transform.forward * Time.deltaTime * dodgeSpeed);
                 }
             }
         }
@@ -355,8 +360,8 @@ public class PlayerBase : EntityBase
     //states
     protected void Neutral()
     {
-        _animator.SetBool("shootAni", false);
-        //_animator.SetInteger("shootAni", 0);
+        _animator.SetInteger("shootAni", 0);
+        _animator.SetBool("altShootAni", false);
         _animator.SetBool("grenadeAni", false);
         _animator.SetBool("getHyperSeedAni", false);
         _animator.SetBool("getAmmoAni", false);
