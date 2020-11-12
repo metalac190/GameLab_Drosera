@@ -12,6 +12,8 @@ public class Gunner : PlayerBase
     [SerializeField] public Transform gunEnd;
     [SerializeField] public Transform granadeSpawn;
 
+    bool _firstShot = false;
+
     bool _altAbility = false;
     bool infiniteAmmo = false;
     int oldAmmoCost;
@@ -53,9 +55,21 @@ public class Gunner : PlayerBase
         {
             if ((shootButtonKey || shootButtonGamepad == 1))
             {
-                _primaryFire.Fire(); 
+                if (_animator.GetInteger("shootAni") == 0)
+                {
+                    _animator.SetInteger("shootAni", 1);
+                    StartCoroutine(FirstShotDelay());
+                }
+                else if (_firstShot)
+                {
+                    _primaryFire.Fire();
+                }
             }
-            currentState = PlayerState.Neutral;
+            else
+            {
+                _firstShot = false;
+                currentState = PlayerState.Neutral;
+            }
         }
         else
         {
@@ -71,7 +85,6 @@ public class Gunner : PlayerBase
 
     protected override void Ability()
     {
-        _animator.SetBool("grenadeAni", true);
         if (!_altAbility)
         {
             _grenade.Fire();
@@ -81,6 +94,13 @@ public class Gunner : PlayerBase
             _dotGrenade.Fire();
         }
         currentState = PlayerState.Neutral;
+    }
+
+    IEnumerator FirstShotDelay()
+    {
+        yield return new WaitForSeconds(0.1f);
+        _firstShot = true;
+        
     }
 
     public void SetInfiniteAmmo(bool isInfinite)

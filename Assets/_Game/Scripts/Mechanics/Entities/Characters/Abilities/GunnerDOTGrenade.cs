@@ -21,6 +21,7 @@ public class GunnerDOTGrenade : Ability
 
     protected override void ActivateAbility()
     {
+        _gunner.Animator.SetBool("grenadeAni", true);
         StartCoroutine(CooldownTimer());
         Instantiate(_projectile, _grenadeSpawn.position, _grenadeSpawn.rotation);
         _gunner.Ammo -= _ammoCost;
