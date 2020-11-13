@@ -103,7 +103,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
+  m_SelectedEditorRenderState: 2
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -917,7 +917,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2907573061693142228}
-  - component: {fileID: 5550204295287940009}
   - component: {fileID: 5678893103523222859}
   m_Layer: 0
   m_Name: 10a_TrainingGrounds_Collision
@@ -945,27 +944,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5550204295287940009
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1111036728831674635}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e43c95b61713cc142b4bf00b74e4dd7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entrance: {fileID: 6969880378142664324}
-  exit: {fileID: 7175030026488845576}
-  overlapping: 0
-  activeGenerating: 1
-  biomes:
-  - {fileID: 0}
-  - {fileID: 0}
-  data: {fileID: 5678893103523222859}
-  layouts: []
 --- !u!114 &5678893103523222859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -979,7 +957,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   layouts:
-  - name: Layout
+  - name: Training 1
     dropdownInEditor: 1
     difficulty: 10
     hidden: 1
@@ -9478,7 +9456,7 @@ PrefabInstance:
         type: 3}
       propertyPath: room
       value: 
-      objectReference: {fileID: 5550204295287940009}
+      objectReference: {fileID: 0}
     - target: {fileID: 7256358428865077374, guid: e4a9af639c736e3409d85fc08f98ceb2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10584,7 +10562,7 @@ PrefabInstance:
         type: 3}
       propertyPath: room
       value: 
-      objectReference: {fileID: 5550204295287940009}
+      objectReference: {fileID: 0}
     - target: {fileID: 4392189221868813957, guid: 28be8e97ed5b053428f72b373c0135af,
         type: 3}
       propertyPath: m_LocalPosition.x
