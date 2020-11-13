@@ -117,7 +117,7 @@ MonoBehaviour:
   mixerTrack: {fileID: 5805718969178195049, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
     type: 2}
   audioClips:
-  - {fileID: 8300000, guid: b2050a0f39a094a489c6eb626372ce05, type: 3}
+  - {fileID: 8300000, guid: b87142d2d62bc254ebdcf94140ce516e, type: 3}
   StartVolume: 0.493
   StereoPan: 0
   loop: 0
@@ -673,7 +673,7 @@ MonoBehaviour:
     type: 2}
   audioClips:
   - {fileID: 8300000, guid: 33da9d5089227c54a9002cf654062321, type: 3}
-  StartVolume: 1
+  StartVolume: 0.707
   StereoPan: 0
   loop: 0
   useClipsAsPlaylist: 0
@@ -691,6 +691,36 @@ MonoBehaviour:
   RandomVolumeMin: 1
   RandomPitchMax: 1
   RandomPitchMin: 1
+--- !u!1 &8368836281040131882
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8807131076593763397}
+  m_Layer: 11
+  m_Name: GrenadeSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8807131076593763397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8368836281040131882}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.168, z: 0.886}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9206503905713905920}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8914011848370050536
 GameObject:
   m_ObjectHideFlags: 0
@@ -729,7 +759,7 @@ Transform:
   - {fileID: 2872169356286206199}
   - {fileID: 5644226624733048030}
   m_Father: {fileID: 9206503905713905920}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9206503905664791299
 GameObject:
@@ -743,7 +773,7 @@ GameObject:
   m_Layer: 11
   m_Name: GunEnd
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -5938655980376293919, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -754,12 +784,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9206503905664791299}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.289, z: 0.498}
+  m_LocalRotation: {x: -0.0000000018626451, y: -0.000000059604645, z: 0.0000000037252903,
+    w: 1}
+  m_LocalPosition: {x: 0.18799984, y: 0.944, z: 1.2980003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 9206503905713905920}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9206503905713905926
 GameObject:
@@ -797,10 +828,11 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 9206503905664791296}
-  - {fileID: 7904844187923150119}
-  - {fileID: 5776893971069627993}
+  - {fileID: 8807131076593763397}
   - {fileID: 5636980632235669500}
+  - {fileID: 7904844187923150119}
+  - {fileID: 9206503905664791296}
+  - {fileID: 5776893971069627993}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -820,8 +852,7 @@ MonoBehaviour:
   _turnSpeed: 10
   _aimingReticle: {fileID: 6766694818811172613, guid: 9e6f8c39cbf0930428dad7714a5e1b4c,
     type: 3}
-  _targetingReticle: {fileID: 7840920060200204693, guid: 0aeb85bf3e78cb54bba8d9b5df6021f9,
-    type: 3}
+  _targetingVFX: {fileID: 0}
   _currentTarget: {fileID: 0}
   OnTargetLock:
     m_PersistentCalls:
@@ -963,6 +994,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  currentRoom: {fileID: 0}
+  gunEnd: {fileID: 9206503905664791296}
+  granadeSpawn: {fileID: 8807131076593763397}
 --- !u!114 &9206503905713905948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1202,7 +1236,7 @@ PrefabInstance:
     - target: {fileID: 6443042960569144073, guid: aa7e2f28a94fa964c9a7f8a088da1faf,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6443042960569144073, guid: aa7e2f28a94fa964c9a7f8a088da1faf,
         type: 3}
@@ -1282,7 +1316,7 @@ PrefabInstance:
     - target: {fileID: 4001563049179087142, guid: 169417aa2fc7a5b4f893e70e4b9aee45,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4001563049179087142, guid: 169417aa2fc7a5b4f893e70e4b9aee45,
         type: 3}

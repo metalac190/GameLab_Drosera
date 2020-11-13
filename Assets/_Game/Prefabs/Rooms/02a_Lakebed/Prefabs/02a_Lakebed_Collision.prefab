@@ -1830,6 +1830,7 @@ GameObject:
   m_Component:
   - component: {fileID: 636524894229156317}
   - component: {fileID: 6754108220329308718}
+  - component: {fileID: 1573022590204336581}
   m_Layer: 0
   m_Name: 02a_Lakebed_Collision
   m_TagString: Untagged
@@ -1873,9 +1874,30 @@ MonoBehaviour:
   overlapping: 0
   activeGenerating: 1
   biomes:
-  - {fileID: 0}
-  - {fileID: 0}
-  data: {fileID: 0}
+  - {fileID: 636524894229156317}
+  - {fileID: 636524894229156317}
+  data: {fileID: 1573022590204336581}
+  layouts:
+  - name: Layout
+    dropdownInEditor: 1
+    difficulty: 2
+    hidden: 1
+    objects:
+    - {fileID: 8283942888094378848}
+    - {fileID: 8072368356847953390}
+    - {fileID: 8854922527497693577}
+--- !u!114 &1573022590204336581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094418352230653938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c32c4c6172ced44b9bd231db7213461, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   layouts:
   - name: Layout
     dropdownInEditor: 1
@@ -3148,7 +3170,7 @@ MonoBehaviour:
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_UseGeometry: 0
+  m_UseGeometry: 1
   m_DefaultArea: 0
   m_IgnoreNavMeshAgent: 1
   m_IgnoreNavMeshObstacle: 1
@@ -3177,7 +3199,7 @@ MonoBehaviour:
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_UseGeometry: 0
+  m_UseGeometry: 1
   m_DefaultArea: 0
   m_IgnoreNavMeshAgent: 1
   m_IgnoreNavMeshObstacle: 1
