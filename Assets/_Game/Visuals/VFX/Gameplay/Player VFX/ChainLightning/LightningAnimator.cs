@@ -56,7 +56,7 @@ public class LightningAnimator : MonoBehaviour
             {
                 emission.enabled = false;
             }
-            else if (particles.particleCount == 0)
+            if (particles.particleCount == 0)
             {
                 Destroy(gameObject);
             }
