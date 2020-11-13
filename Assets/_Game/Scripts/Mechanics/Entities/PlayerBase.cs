@@ -500,17 +500,20 @@ public class PlayerBase : EntityBase
 
     protected void Interacting()
     {
-        interactTarget?.Interact(this);
-        if(interactTarget.GetComponent<HyperSeed>() != null)
+        if (interactTarget != null)
         {
-            _animator.SetBool("getHyperSeedAni", true);
+            interactTarget?.Interact(this);
+            if (interactTarget.GetComponent<HyperSeed>() != null)
+            {
+                _animator.SetBool("getHyperSeedAni", true);
+            }
+            else if (interactTarget.GetComponent<OreVein>() != null)
+            {
+                _animator.SetBool("getAmmoAni", true);
+            }
+            interactTarget = null;
+            lastInteract = Time.fixedTime;
         }
-        else if(interactTarget.GetComponent<OreVein>() != null)
-        {
-            _animator.SetBool("getAmmoAni", true);
-        }
-        interactTarget = null;
-        lastInteract = Time.fixedTime;
         currentState = PlayerState.Neutral;
     }
 
