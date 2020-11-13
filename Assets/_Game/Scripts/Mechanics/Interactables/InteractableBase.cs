@@ -61,7 +61,7 @@ public abstract class InteractableBase : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        OnApproach?.Invoke();
+        if(_uses > 0) OnApproach?.Invoke();
     }
 
     private void OnTriggerStay(Collider other)
@@ -78,6 +78,6 @@ public abstract class InteractableBase : MonoBehaviour
     {
         if (other.GetComponent<PlayerBase>() == null) return;
         other.GetComponent<PlayerBase>().InteractTarget = null;
-        OnLeave.Invoke();
+        if (_uses > 0) OnLeave.Invoke();
     }
 }
