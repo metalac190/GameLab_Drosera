@@ -365,4 +365,12 @@ public abstract class EnemyBase : EntityBase {
         }//end of biome modifier code
         yield return null;
     }
+
+    // -------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Plays attack SFX - called in the animator
+    /// </summary>
+    public abstract void PlayAttackSound();
+
 }

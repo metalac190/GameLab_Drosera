@@ -217,7 +217,7 @@ public class Brawler : EnemyBase {
     /// <summary>
     /// Plays swat SFX - called in the animator
     /// </summary>
-    public void PlayAttackSound() {
+    public override void PlayAttackSound() {
         _brawlerFX.PummelAttack.Invoke();
     }
 

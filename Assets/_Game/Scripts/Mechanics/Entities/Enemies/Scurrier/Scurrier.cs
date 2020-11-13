@@ -220,8 +220,8 @@ public class Scurrier : EnemyBase {
         // TODO - make looping
         _enemyFX.AlertState.Invoke();
 
-        // TODO - random errors in behavior during aggro
-        // TODO - enemies keep aggroing after exiting room, reset after gore
+        // IMPORTANT TODO - random errors in behavior during aggro
+        // IMPORTANT TODO - enemies keep aggroing after exiting room, reset after gore
 
         yield return null;
         FindTarget();
@@ -260,7 +260,6 @@ public class Scurrier : EnemyBase {
                     Mathf.Clamp(VectorToPlayer().magnitude, 0, goreRange.y), LayerMask.GetMask("Terrain")) &&
                     Vector3.Distance(transform.position, _agent.destination) > goreRange.x) { // Check min distance
 
-                    Debug.Log("Do gore, " + cooldownTimerGore);
                     currentBehavior = StartCoroutine(AttackGore());
                     yield break;
                 }
@@ -294,18 +293,20 @@ public class Scurrier : EnemyBase {
         _agent.stoppingDistance = 0;
         _agent.autoBraking = false;
         _agent.isStopped = true;
+        attackDone = false;
+        _agent.velocity = Vector3.zero;
 
         // TODO - windup animation???
 
         // Turn to look towards position over 0.5 sec
         Vector3 forward = Vector3.zero;
-        Vector3 initialTargetPos = targetPlayer.transform.position;
+        Vector3 initialTargetPos = PlayerBase.instance.transform.position;
         forward.y = 0;
 
         _scurrierFX.GoreWindUp.Invoke();
         for(float i = 0; i < 0.5; i += Time.deltaTime) {
             // Check if player left line of sight or left max range - exit
-            if(Physics.Raycast(transform.position, VectorToPlayer(), goreRange.y, LayerMask.GetMask("Terrain")) || // Raycast
+            if(/*Physics.Raycast(transform.position, VectorToPlayer(), goreRange.y, LayerMask.GetMask("Terrain")) ||*/ // Raycast
                 Vector3.Distance(transform.position, initialTargetPos) >= goreRange.y) { // Check distance
 
                 currentBehavior = StartCoroutine(AggressiveMove());
@@ -319,7 +320,7 @@ public class Scurrier : EnemyBase {
         }
 
         // Set vars
-        _agent.speed *= goreSpeedMultiplier;
+        _agent.speed = _moveSpeed * goreSpeedMultiplier;
         _agent.SetDestination(initialTargetPos);
         while(_agent.pathPending)
             yield return null;
@@ -361,7 +362,6 @@ public class Scurrier : EnemyBase {
         }
 
         // Did not crash - begin skidding
-        Debug.Log("Gore finish");
         _animator.SetTrigger("Gore Finish");
         currentBehavior = StartCoroutine(GoreSkid());
     }
@@ -413,6 +413,7 @@ public class Scurrier : EnemyBase {
     private IEnumerator GoreCrash() {
         Debug.Log("Gore crashed into wall");
         _agent.isStopped = true;
+        _agent.velocity = Vector3.zero;
 
         SpawnGoreHitVFX();
 
@@ -448,11 +449,15 @@ public class Scurrier : EnemyBase {
     /// </summary>
     private IEnumerator AttackSwat() {
         currentState = EnemyState.Attacking;
+        attackDone = false;
         _animator.SetTrigger("Swat");
+        Debug.Log("swat start");
 
         while(!attackDone) {
             yield return null;
         }
+
+        Debug.Log("Swat finish");
 
         cooldownTimer = _cooldown;
         currentBehavior = StartCoroutine(AggressiveMove());
@@ -477,10 +482,7 @@ public class Scurrier : EnemyBase {
 
     // -------------------------------------------------------------------------------------------
 
-    /// <summary>
-    /// Plays swat SFX - called in the animator
-    /// </summary>
-    public void PlaySwatSound() {
+    public override void PlayAttackSound() {
         _scurrierFX.SwatAttack.Invoke();
     }
 
