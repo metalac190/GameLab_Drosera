@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 888397129849391366}
   - component: {fileID: 5773070582660723511}
   m_Layer: 0
-  m_Name: 00b_Ambush_Root 1
+  m_Name: 00b_Ambush_Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,13 +46,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e43c95b61713cc142b4bf00b74e4dd7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entrance: {fileID: 0}
-  exit: {fileID: 0}
+  entrance: {fileID: 7708490914448160954}
+  exit: {fileID: 3656356637197015237}
   overlapping: 0
   activeGenerating: 1
   biomes:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 3602822045462212812}
+  - {fileID: 6724591835130980627}
   data: {fileID: 8702420032113447866}
   layouts: []
 --- !u!1 &3676511225653073508
@@ -463,6 +463,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2a2e61b843d801f4d94a25b6fd782cf4, type: 2}
+    - target: {fileID: 1854392577378630802, guid: 2f77a47dda261bf48b5e8893971e4f43,
+        type: 3}
+      propertyPath: room
+      value: 
+      objectReference: {fileID: 5773070582660723511}
     - target: {fileID: 1865460887683751945, guid: 2f77a47dda261bf48b5e8893971e4f43,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1198,6 +1203,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5806692552609467758, guid: 2f77a47dda261bf48b5e8893971e4f43,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5806692552609467759, guid: 2f77a47dda261bf48b5e8893971e4f43,
         type: 3}
       propertyPath: m_Mesh
@@ -1278,6 +1288,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5806692554240932490, guid: 2f77a47dda261bf48b5e8893971e4f43,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5806692554240932491, guid: 2f77a47dda261bf48b5e8893971e4f43,
         type: 3}
       propertyPath: m_Mesh
@@ -1287,6 +1302,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806692554550665219, guid: 2f77a47dda261bf48b5e8893971e4f43,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5806692554550665277, guid: 2f77a47dda261bf48b5e8893971e4f43,
         type: 3}
@@ -1443,6 +1463,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2a2e61b843d801f4d94a25b6fd782cf4, type: 2}
+    - target: {fileID: 6628628394418591552, guid: 2f77a47dda261bf48b5e8893971e4f43,
+        type: 3}
+      propertyPath: room
+      value: 
+      objectReference: {fileID: 5773070582660723511}
     - target: {fileID: 6628953599581162036, guid: 2f77a47dda261bf48b5e8893971e4f43,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1938,6 +1963,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c32c4c6172ced44b9bd231db7213461, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &3656356637197015237 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3757769653347222337, guid: 2f77a47dda261bf48b5e8893971e4f43,
+    type: 3}
+  m_PrefabInstance: {fileID: 476180250964007812}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7708490914448160954 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7809722031695864638, guid: 2f77a47dda261bf48b5e8893971e4f43,
+    type: 3}
+  m_PrefabInstance: {fileID: 476180250964007812}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4358619755746358505
 PrefabInstance:
   m_ObjectHideFlags: 0
