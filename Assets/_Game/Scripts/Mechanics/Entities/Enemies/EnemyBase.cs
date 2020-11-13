@@ -35,10 +35,19 @@ public abstract class EnemyBase : EntityBase {
     protected float cooldownTimer; // Timer for attack cooldowns
     [HideInInspector] public bool attackDone, aggroAnimDone;
 
+    [Header("Modifiers")]
+    [SerializeField] protected float jungleHealthMultiplier = 1f;
+    [SerializeField] protected float jungleDamageMultiplier = 1f;
+    [SerializeField] protected float jungleSpeedMultiplier = 1f;
+    [SerializeField] protected float desertHealthMultiplier = 1f;
+    [SerializeField] protected float desertDamageMultiplier = 1f;
+    [SerializeField] protected float desertSpeedMultiplier = 1f;
+    [SerializeField] protected string currentBiomeRegistered = "None";
+
     [System.Serializable]
     public class EnemyFX {
         [Header("VFX")]
-        public GameObject burrow; // TODO
+        public GameObject burrow; // No longer used
         public GameObject deathEffect;
 
         [Header("SFX")]
@@ -91,9 +100,13 @@ public abstract class EnemyBase : EntityBase {
         if(currentState == EnemyState.Aggressive) {
             currentBehavior = StartCoroutine(Idle());
             TurnAggressive.Invoke();
-        } else
+        } else {
             currentBehavior = StartCoroutine(Idle());
+        }
+
         StartCoroutine(CheckBehavior());
+        StartCoroutine(EnemyModifications());
+
     }
 
     protected virtual void LateUpdate() {
@@ -172,8 +185,8 @@ public abstract class EnemyBase : EntityBase {
     /// Determines which player the enemy should target
     /// </summary>
     protected virtual void FindTarget() {
-        if(hyperseed || PlayerInRoom())
-            targetPlayer = PlayerBase.instance?.gameObject;
+        if(hyperseed || (PlayerInRoom() && EnemyInRoom()))
+            targetPlayer = PlayerBase.instance.gameObject;
         else
             targetPlayer = null;
     }
@@ -182,16 +195,23 @@ public abstract class EnemyBase : EntityBase {
     /// Checks if the player is in the same room as the enemy
     /// </summary>
     protected virtual bool PlayerInRoom() {
+        return GetComponentInParent<Room>() == PlayerBase.instance.currentRoom;
+    }
+
+    /// <summary>
+    /// Checks if the enemy is in its parent room
+    /// </summary>
+    protected virtual bool EnemyInRoom() {
         Physics.Raycast(PlayerBase.instance.transform.position + Vector3.up, Vector3.down, out RaycastHit hit, 1.5f, LayerMask.GetMask("Terrain"));
-        //Debug.Log(hit.transform.GetComponentInParent<Room>().gameObject.name);
         try {
             if(hit.transform.GetComponentInParent<Room>() == GetComponentInParent<Room>())
                 return true;
         } catch {
-            Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + ": Error in detecting if player is in the same room as player");
+            Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + ": Error in detecting if enemy is in the right room");
         }
         return false;
     }
+
 
     /// <summary>
     /// Returns the vector towards the to targetted player. Returns Vector3.zero if no player is targetted
@@ -241,8 +261,10 @@ public abstract class EnemyBase : EntityBase {
     protected virtual IEnumerator CheckBehavior() {
         while(gameObject.activeSelf) {
             yield return new WaitForSeconds(0.25f);
-            if(currentBehavior == null)
+            if(currentBehavior == null) {
+                try { Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + " encountered an error in its behavior."); } catch { }
                 ResetEnemy();
+            }
         }
     }
 
@@ -294,9 +316,61 @@ public abstract class EnemyBase : EntityBase {
     /// Forces the enemy into its idle state (but stays aggressive if already so)
     /// </summary>
     public virtual void ForceIdle() {
+        if(currentState == EnemyState.Passive) // Don't restart idle behavior
+            return;
+
         if(currentBehavior != null)
             StopCoroutine(currentBehavior);
         currentBehavior = StartCoroutine(Idle(true));
     }
+
+    /// <summary>
+    /// Changes enemy stas depending on current biome
+    /// </summary>
+    protected IEnumerator EnemyModifications() {
+        yield return new WaitForSeconds(0.1f);
+        //Change Enemy Stats based on biome
+        if (GameManager.Instance != null)       //check to be sure instance exists
+        {
+            if (GameManager.Instance.CurrentBiome == DroseraGlobalEnums.Biome.Jungle)
+            {
+                currentBiomeRegistered = "Jungle";
+                Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
+                foreach (Hitbox hitbox in hitboxes)
+                {
+                    hitbox.baseDamage *= jungleDamageMultiplier;
+                    hitbox.damage *= jungleDamageMultiplier;
+                }
+                _health *= jungleHealthMultiplier;
+                _maxHealth *= jungleHealthMultiplier;
+                _moveSpeed *= jungleSpeedMultiplier;
+            }
+            else if (GameManager.Instance.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
+            {
+                currentBiomeRegistered = "Desert";
+                Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
+                foreach (Hitbox hitbox in hitboxes)
+                {
+                    hitbox.baseDamage *= desertDamageMultiplier;
+                    hitbox.damage *= desertDamageMultiplier;
+                }
+                _health *= desertHealthMultiplier;
+                _maxHealth *= desertHealthMultiplier;
+                _moveSpeed *= desertSpeedMultiplier;
+            }
+            else
+            {
+                currentBiomeRegistered = "Nothing Registered";
+            }
+        }//end of biome modifier code
+        yield return null;
+    }
+
+    // -------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Plays attack SFX - called in the animator
+    /// </summary>
+    public abstract void PlayAttackSound();
 
 }

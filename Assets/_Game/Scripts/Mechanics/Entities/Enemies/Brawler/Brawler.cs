@@ -59,6 +59,7 @@ public class Brawler : EnemyBase {
     protected override IEnumerator Idle(bool regen = false) {
         _agent.stoppingDistance = 0f;
         _agent.SetDestination(transform.position);
+        yield return new WaitForSeconds(0.5f);
 
         if(regen) {
             isHealing = true;
@@ -216,7 +217,7 @@ public class Brawler : EnemyBase {
     /// <summary>
     /// Plays swat SFX - called in the animator
     /// </summary>
-    public void PlayAttackSound() {
+    public override void PlayAttackSound() {
         _brawlerFX.PummelAttack.Invoke();
     }
 
