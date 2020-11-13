@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 [RequireComponent(typeof(ConsoleLog))]
+[RequireComponent(typeof(ConsoleLevelEditor))]
 public class CommandConsole : MonoBehaviour
 {
     public static event Action RevertConsole = delegate { };
@@ -25,10 +27,17 @@ public class CommandConsole : MonoBehaviour
 
     [Header("Visuals")]
     [SerializeField] private GameObject consoleWindow = null;
+    [SerializeField] private TextMeshProUGUI roomNamText = null;
+    private Room currentRoom = null;
 
     private ConsoleLog log = null;
+    private ConsoleLevelEditor levelEditor = null;
+    private PlayerBase playerRef = null;
 
+    public bool IsInEditor => isInEditor;
     private bool isInEditor;
+    public bool IsOpen => _isOpen;
+    private bool _isOpen = false;
 
     private float lastTimeScale = 1f;
     private float speedMultiplyer = 1f;
@@ -53,12 +62,16 @@ public class CommandConsole : MonoBehaviour
         }
 
         log = GetComponent<ConsoleLog>();
+        levelEditor = GetComponent<ConsoleLevelEditor>();
+        playerRef = FindObjectOfType<PlayerBase>();
     }
 
     private void Start()
     {
         speedMultiplyerText.text = speedMultiplyer.ToString("F1") + "x";
         consoleWindow?.SetActive(false);
+        _isOpen = false;
+
         if (isInEditor)
             log.CloseLog();
     }
@@ -71,6 +84,18 @@ public class CommandConsole : MonoBehaviour
     /// William Austin
     /// </summary>
 
+    public void SkipCutsceneCommand()
+    {
+        GameManager.Instance?.CutSceneComplete();
+    }
+
+    public void QuitCommand()
+    {
+        if (IsInEditor)
+            UnityEditor.EditorApplication.isPlaying = false;
+        else
+            Application.Quit();
+    }
     public void PauseCommand()
     {
         lastTimeScale = Time.timeScale;
@@ -123,7 +148,16 @@ public class CommandConsole : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
             RevertConsole.Invoke();
-        
+
+        if(playerRef != null)
+        {
+            if (playerRef.currentRoom != null && playerRef.currentRoom != currentRoom)
+            {
+                currentRoom = playerRef.currentRoom;
+                levelEditor?.PlayerChangedRoom(currentRoom);
+                roomNamText.text = currentRoom.name;
+            }
+        }
     }
 
     private void SetConsole(bool toState)
@@ -131,6 +165,7 @@ public class CommandConsole : MonoBehaviour
         if (!ConsoleEnabled())
             return;
 
+        _isOpen = toState;
         consoleWindow.SetActive(toState);
         if (!enableHotkeysWhileClosed)
             ToggleHotkeys.Invoke(toState);
