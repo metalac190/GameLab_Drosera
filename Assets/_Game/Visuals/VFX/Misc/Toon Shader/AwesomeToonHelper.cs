@@ -3,7 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AwesomeToon {
-    struct LightSet {
+
+    [ExecuteInEditMode]
+    public class AwesomeToonHelper : MonoBehaviour
+    {
+        [SerializeField] Material[] materials = null;
+
+        private void Awake()
+        {
+            if (GetComponent<Renderer>() && materials != null)
+            {
+                foreach(Material m in materials)
+                {
+                    if (m == null || m.shader.Equals(Shader.Find("HDRP/Lit"))) continue;
+                    m.shader = Shader.Find("Shader Graphs/SG_Multi_Toon");
+                    Color mainColor = m.GetColor("Color_84686C61");
+                    m.shader = Shader.Find("HDRP/Lit");
+                    m.SetColor("_BaseColor", mainColor);
+                }
+                GetComponent<Renderer>().sharedMaterials = materials;
+            }
+                
+        }
+    }
+
+    /* // Old code
+     * struct LightSet {
         public int id;
         public Light light;
         public Vector3 dir;
@@ -30,7 +55,8 @@ namespace AwesomeToon {
         [SerializeField] bool instanceMaterial = true;
         [SerializeField] bool showRaycasts = true;
         [SerializeField] Vector3 meshCenter = Vector3.zero;
-        [SerializeField] int maxLights = 6;
+        [Range(0,4)]
+        [SerializeField] int maxLights = 4;
 
         [Header("Recieve Shadow Check")]
         [SerializeField] bool raycast = true;
@@ -52,11 +78,13 @@ namespace AwesomeToon {
         void Start() {
             Init();
             GetLights();
+            UpdateMaterial();
         }
+        
 
         void OnValidate() {
             Init();
-            Update();
+            UpdateMaterial();
         }
 
         void Init() {
@@ -132,11 +160,20 @@ namespace AwesomeToon {
                 GetLights();
             }
 
-            UpdateMaterial();
+            if(!gameObject.isStatic)
+                UpdateMaterial();
+        }
+
+        public static void UpdateAllLighting()
+        {
+            foreach(AwesomeToonHelper s in FindObjectsOfType<AwesomeToonHelper>())
+            {
+                s.UpdateMaterial();
+            }
         }
 
         void UpdateMaterial() {
-            if(materialInstances == null) return;
+            if(materialInstances == null || !gameObject.activeSelf) return;
 
             // Refresh light data
             List<LightSet> sortedLights = new List<LightSet>();
@@ -173,7 +210,7 @@ namespace AwesomeToon {
             }
 
             // Turn off the remaining light slots
-            while (i <= 6) {
+            while (i <= 4) {
                 for (int j = 0; j < materialInstances.Count; j++) {
                     if (materialInstances[j] != null) {
                         materialInstances[j].SetVector($"_L{i}_dir", Vector3.up);
@@ -187,8 +224,6 @@ namespace AwesomeToon {
             foreach (LightSet lightSet in sortedLights) {
                 lightSets[lightSet.id] = lightSet;
             }
-
-            
         }
 
         LightSet CalcLight(LightSet lightSet) {
@@ -270,5 +305,5 @@ namespace AwesomeToon {
         private void OnDrawGizmosSelected() {
             Gizmos.DrawWireSphere(posAbs, 0.1f);
         }
-    }
+    }*/
 }

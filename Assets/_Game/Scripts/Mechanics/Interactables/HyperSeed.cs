@@ -14,6 +14,8 @@ public class HyperSeed : InteractableBase
 
         seedModel.SetActive(false);
         Debug.Log(seedModel + " turned off.");
+        FindObjectOfType<CameraShake>().TriggerCameraShake(.5f, .5f);
+        StartCoroutine(FreezeTime());
         VFX();
         // When hyperseed is grabbed - all enemies turn aggressive
         EnemyGroup[] enemies = FindObjectsOfType<EnemyGroup>();
@@ -27,5 +29,14 @@ public class HyperSeed : InteractableBase
         Debug.Log("Game State changed to: " + GameManager.Instance.GameState);
 
         return true;
+    }
+
+    IEnumerator FreezeTime()
+    {
+        Time.timeScale = 0;
+        AudioListener.pause = true;
+        yield return new WaitForSecondsRealtime(4f);
+        AudioListener.pause = false;
+        Time.timeScale = 1;
     }
 }

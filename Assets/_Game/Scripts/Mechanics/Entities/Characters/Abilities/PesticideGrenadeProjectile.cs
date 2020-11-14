@@ -36,25 +36,25 @@ public class PesticideGrenadeProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.GetComponent<EnemyBase>() != null)
+        {
+            StopAllCoroutines();
+            StartCoroutine(Explode(0));
+            _exploded = true;
+        }
         if (!_exploded)
         {
-            StartCoroutine(Explode());
+            StartCoroutine(Explode(_explosionDelay));
             _exploded = true;
         }
     }
 
-    IEnumerator Explode()
+    IEnumerator Explode(float explosionDelay)
     {
-        yield return new WaitForSeconds(_explosionDelay);
+        yield return new WaitForSeconds(explosionDelay);
         OnExplode?.Invoke();
 
-        Vector3 pos = transform.position;
-        pos.y = 0.2f;
-        GameObject hitbox = Instantiate(_pesticideHitbox, pos, Quaternion.identity);
-        Vector3 scale = hitbox.transform.localScale;
-        scale.x = _explosionRadius;
-        scale.z = _explosionRadius;
-        hitbox.transform.localScale = scale;
+        StartCoroutine(SpawnDecal());
 
         _audioScript.PlaySound(0);
 
@@ -66,6 +66,20 @@ public class PesticideGrenadeProjectile : MonoBehaviour
         StartCoroutine(ClearVFX(vfx));
     }
 
+    IEnumerator SpawnDecal()
+    {
+        yield return new WaitForSeconds(0.35f);
+
+        Vector3 pos = transform.position;
+        pos.y = 0.2f;
+        GameObject hitbox = Instantiate(_pesticideHitbox, pos, Quaternion.identity);
+        Vector3 scale = hitbox.transform.localScale;
+        scale.x = _explosionRadius;
+        scale.z = _explosionRadius;
+        hitbox.transform.localScale = scale;
+    }
+
+    //Not used currently
     IEnumerator ClearVFX(GameObject vfx)
     {
         PlayableDirector director = vfx.GetComponentInChildren<PlayableDirector>();

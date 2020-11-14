@@ -9,23 +9,21 @@ public class GunnerDOTGrenade : Ability
 
     [SerializeField] GameObject _projectile;
 
-    Transform _gunEnd;
+    Transform _grenadeSpawn;
     Gunner _gunner;
 
-    AudioScript[] _audioScripts;
 
     private void Awake()
-    {
-        _gunEnd = transform.GetChild(0).transform;
+    {   
         _gunner = GetComponent<Gunner>();
-        _audioScripts = GetComponents<AudioScript>();
+        _grenadeSpawn = _gunner.granadeSpawn;
     }
 
     protected override void ActivateAbility()
     {
+        _gunner.Animator.SetBool("grenadeAni", true);
         StartCoroutine(CooldownTimer());
-        _audioScripts[3].PlaySound(0);
-        Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
+        Instantiate(_projectile, _grenadeSpawn.position, _grenadeSpawn.rotation);
         _gunner.Ammo -= _ammoCost;
         OnFire?.Invoke();
     }

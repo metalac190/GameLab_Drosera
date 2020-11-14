@@ -79,6 +79,7 @@ public class LevelGeneration : MonoBehaviour
     {
         Debug.Log("Level Number: " + LevelNumber);
         genTest = false;
+        GameManager.Instance.CurrentBiome = LevelBiomesList[levelNumber];
         if (levelNumber < 6)
         {
             while (genTest == false)
@@ -139,9 +140,18 @@ public class LevelGeneration : MonoBehaviour
                 testRoom.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber], true);
 
                 //activate layout and add difficulty (get number of avaliable layouts)  Layouts.Count  Random.Range();
-                int randomLayout = Random.Range(0, testRoom.GetComponent<Room>().Layouts.Count);
-                testRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-                currentLevelDifficulty += testRoom.GetComponent<Room>().Layouts[randomLayout].difficulty;
+                if (testRoom.GetComponent<Room>().data != null)
+                {
+                    int randomLayout = Random.Range(0, testRoom.GetComponent<Room>().data.Layouts.Count);
+                    testRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+                    currentLevelDifficulty += testRoom.GetComponent<Room>().data.Layouts[randomLayout].difficulty;
+                }
+                else
+                {
+                    int randomLayout = Random.Range(0, testRoom.GetComponent<Room>().Layouts.Count);
+                    testRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+                    currentLevelDifficulty += testRoom.GetComponent<Room>().Layouts[randomLayout].difficulty;
+                }
                 break;
             }
         }
@@ -165,9 +175,24 @@ public class LevelGeneration : MonoBehaviour
         hyperseedRoom.transform.SetParent(hyperseedRoom.GetComponent<Room>().Entrance, true);
         hyperseedRoom.GetComponent<Room>().Entrance.transform.position = currentExitLocation;
         hyperseedRoom.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber], true);
-        int randomLayout = Random.Range(0, hyperseedRoom.GetComponent<Room>().Layouts.Count);
-        hyperseedRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-        Debug.Log("EndRoom: " + hyperseedRoom.GetComponent<Room>().Layouts[randomLayout].name);
+        if(hyperseedRoom.GetComponent<Room>().data != null)
+        {
+            int randomLayout = Random.Range(0, hyperseedRoom.GetComponent<Room>().data.Layouts.Count);
+            hyperseedRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+            Debug.Log("EndRoom: " + hyperseedRoom.GetComponent<Room>().data.Layouts[randomLayout].name);
+        }
+        else
+        {
+            int randomLayout = Random.Range(0, hyperseedRoom.GetComponent<Room>().Layouts.Count);
+            hyperseedRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+            Debug.Log("EndRoom: " + hyperseedRoom.GetComponent<Room>().Layouts[randomLayout].name);
+        }
+        
+        
+        Physics.autoSimulation = false;
+        Physics.Simulate(0.001f);
+        Physics.autoSimulation = true;
+        
         if (hyperseedRoom.GetComponent<Room>().overlapping == true)
         {
             roomCheck = false;
@@ -228,9 +253,18 @@ public class LevelGeneration : MonoBehaviour
         currentExitLocation = dropShipRoom.GetComponent<Room>().Exit.transform.TransformPoint(Vector3.zero);
         dropShipRoom.GetComponent<Room>().SetBiomeActive(levelBiomesList[levelNumber], true);
         playerObject.transform.position = dropShipRoom.GetComponent<Room>().Entrance.position;
-        int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
-        dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
-        Debug.Log("Dropship: " + dropShipRoom.GetComponent<Room>().Layouts[randomLayout].name);
+        if(dropShipRoom.GetComponent<Room>().data != null)
+        {
+            int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().data.Layouts.Count);
+            dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+            Debug.Log("Dropship: " + dropShipRoom.GetComponent<Room>().data.Layouts[randomLayout].name);
+        }
+        else
+        {
+            int randomLayout = Random.Range(0, dropShipRoom.GetComponent<Room>().Layouts.Count);
+            dropShipRoom.GetComponent<Room>().SetLayoutActive(randomLayout, true);
+            Debug.Log("Dropship: " + dropShipRoom.GetComponent<Room>().Layouts[randomLayout].name);
+        }
         priorRoomRotation = dropShipRoom.GetComponent<Room>().Exit.rotation;
         desiredLevelDifficulty = ScaleDifficulty();
         while (currentLevelDifficulty < desiredLevelDifficulty && whileCheck == true)
@@ -246,11 +280,16 @@ public class LevelGeneration : MonoBehaviour
         {
             genTest = InstantiateEndRoom(endRoom);
         }
-        AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
+        if (genTest == false)   //last check to see if hyperseed overlaps
+        {
+            genTest = false;
+            yield break;
+        }
+        /*AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
         foreach(AwesomeToon.AwesomeToonHelper toon in toons)
         {
             toon.GetLights();
-        }
+        }*/
         yield return null;
     }
 
