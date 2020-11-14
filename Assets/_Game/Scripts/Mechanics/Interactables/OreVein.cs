@@ -35,9 +35,9 @@ public class OreVein : InteractableBase
     {
         if (_uses > 0)
         {
-            if (player.Ammo + player.AmmoPerOre <= player.MaxAmmo)
+            if (isInfinite && player.Ammo + player.AmmoPerOre <= player.MaxAmmo)
                 player.Ammo += player.AmmoPerOre;
-            else if (player.HeldAmmo + player.AmmoPerOre <= player.MaxAmmo && !isInfinite)
+            else if (!isInfinite)
                 player.HeldAmmo += player.AmmoPerOre;
 
             if (!base.Interact(player))

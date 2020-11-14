@@ -43,6 +43,7 @@ public abstract class EnemyBase : EntityBase {
     [SerializeField] protected float desertDamageMultiplier = 1f;
     [SerializeField] protected float desertSpeedMultiplier = 1f;
     [SerializeField] protected string currentBiomeRegistered = "None";
+    [SerializeField] protected bool enemySlowed = false;
 
     [System.Serializable]
     public class EnemyFX {
@@ -262,7 +263,7 @@ public abstract class EnemyBase : EntityBase {
         while(gameObject.activeSelf) {
             yield return new WaitForSeconds(0.25f);
             if(currentBehavior == null) {
-                Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + " encountered an error in its behavior.");
+                try { Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + " encountered an error in its behavior."); } catch { }
                 ResetEnemy();
             }
         }
@@ -364,5 +365,30 @@ public abstract class EnemyBase : EntityBase {
             }
         }//end of biome modifier code
         yield return null;
+    }
+
+    // -------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Plays attack SFX - called in the animator
+    /// </summary>
+    public abstract void PlayAttackSound();
+
+    /// <summary>
+    /// Coroutine that can be called on enemy being hit by player alt fire.
+    /// enemySlowModifier --> should be a number between 0 and 1
+    /// enemySlowDuration--> float duration for enemy slow
+    /// </summary>
+    public IEnumerator AltFireEnemySlowed(float enemySlowModifier, float enemySlowDuration)
+    {
+        if (enemySlowed == false)   //prevents modifiers from stacking
+        {
+            float originalSpeed = _moveSpeed;
+            enemySlowed = true;
+            _moveSpeed *= enemySlowModifier;
+            yield return new WaitForSeconds(enemySlowDuration);
+            _moveSpeed = originalSpeed;
+            enemySlowed = false;
+        }
     }
 }
