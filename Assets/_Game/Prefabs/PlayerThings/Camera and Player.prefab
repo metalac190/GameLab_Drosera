@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 6529347469152794046}
   - component: {fileID: 6529347469152794045}
   - component: {fileID: 6529347469152794032}
-  - component: {fileID: 1549537666734273985}
+  - component: {fileID: 517998230179021812}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraTarget: {fileID: 6529347469281173021}
   rotateSpeed: 30
---- !u!114 &1549537666734273985
+--- !u!114 &517998230179021812
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -250,6 +250,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74826fb7a645bbb4783e843b29e9d159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testShake: 0
+  testDuration: 1
+  testMagnitude: 1
 --- !u!1 &6529347469281173020
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,6 +731,16 @@ PrefabInstance:
         type: 3}
       propertyPath: heldAmmo
       value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 9206503905713905927, guid: a7bfc49f89177c247a9e6439e72a39d4,
+        type: 3}
+      propertyPath: _cooldown
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9206503905713905927, guid: a7bfc49f89177c247a9e6439e72a39d4,
+        type: 3}
+      propertyPath: _moveSpeed
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a7bfc49f89177c247a9e6439e72a39d4, type: 3}

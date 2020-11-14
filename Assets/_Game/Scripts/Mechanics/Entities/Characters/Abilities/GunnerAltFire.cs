@@ -6,12 +6,11 @@ using UnityEditor;
 
 public class GunnerAltFire : Ability
 {
+    public UnityEvent OnCharge;
     public UnityEvent OnFire;
 
     Transform _gunEnd;
     Gunner _gunner;
-
-    AudioScript[] _audioScripts;
 
     [SerializeField] GameObject _projectile;
 
@@ -24,11 +23,10 @@ public class GunnerAltFire : Ability
     public float Charge { get { return _charge; } }
     public Transform GunEnd { get { return _gunEnd; } }
 
-    private void Awake()
+    private void Start()
     {
-        _gunEnd = transform.GetChild(0).transform;
         _gunner = GetComponent<Gunner>();
-        _audioScripts = GetComponents<AudioScript>();
+        _gunEnd = _gunner.gunEnd;
     }
 
     protected override void ActivateAbility()
@@ -38,17 +36,18 @@ public class GunnerAltFire : Ability
 
     IEnumerator ChargeShot()
     {
-        _audioScripts[2].PlaySound(0);
+        _gunner.Animator.SetBool("chargingAni", true);
+        _charge = 0;
+        OnCharge?.Invoke();
         Instantiate(_projectile, _gunEnd.position, _gunEnd.rotation);
         while (_gunner.AltFireButton && _charge < _maxCharge)
         {
             _charge += _chargeRate * Time.deltaTime;
             yield return null;
         }
+        _gunner.Animator.SetBool("chargingAni", false);
+        _gunner.Animator.SetBool("altShootAni", true);
         StartCoroutine(CooldownTimer());
         OnFire?.Invoke();
-        _audioScripts[2].StopSound();
-        _audioScripts[1].PlaySound(0);
-        _charge = 0;
     }
 }

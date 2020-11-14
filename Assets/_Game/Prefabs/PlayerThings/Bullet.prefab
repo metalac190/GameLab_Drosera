@@ -71,10 +71,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnHit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7444641546036505425}
+        m_MethodName: SpawnHitVFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnCriticalHit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7444641546036505425}
+        m_MethodName: SpawnCritVFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   moveSpeed: 50
   lifespan: 5
   effect: {fileID: 5972512543509272906, guid: d2f9efeb8ffd52b41aaa5d3b8b98cc0e, type: 3}
+  critEffect: {fileID: 2232915114826011631, guid: 0b27c78dcd92e374ca61e2d7a25754df,
+    type: 3}
   effectDuration: 0.5
 --- !u!114 &75490375910435921
 MonoBehaviour:
@@ -92,20 +119,11 @@ MonoBehaviour:
   damage: 10
   canDamageWalls: 0
   hitboxTarget: 1
+  hitVFX: {fileID: 0}
+  hitVFXDuration: 0
   OnHit:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7444641546036505425}
-        m_MethodName: SpawnHitVFX
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!54 &2186313018721941652
 Rigidbody:
   m_ObjectHideFlags: 0

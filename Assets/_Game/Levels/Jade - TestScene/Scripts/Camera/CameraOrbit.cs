@@ -9,6 +9,7 @@ public class CameraOrbit : MonoBehaviour
 
     PlayerBase player;
 
+
     private void Start()
     {
         player = PlayerBase.instance;
@@ -22,6 +23,26 @@ public class CameraOrbit : MonoBehaviour
         }
 
         if (player.AdjustCameraLeft)
+        {
+            transform.RotateAround(cameraTarget.position, -Vector3.up, rotateSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetAxisRaw("CameraRotation") != 1)
+        {
+            transform.RotateAround(cameraTarget.position, Vector3.up, rotateSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetAxisRaw("CameraRotation") != - 1)
+        {
+            transform.RotateAround(cameraTarget.position, -Vector3.up, rotateSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetAxisRaw("CameraAdjust") != 1)
+        {
+            transform.RotateAround(cameraTarget.position, Vector3.up, rotateSpeed * Time.deltaTime);
+        }
+
+        if (Input.GetAxisRaw("CameraAdjust") != -1)
         {
             transform.RotateAround(cameraTarget.position, -Vector3.up, rotateSpeed * Time.deltaTime);
         }

@@ -8,6 +8,15 @@ public class OreVein : InteractableBase
     [SerializeField]
     [Tooltip("Make sure these are children of this object, also the sizes are in decending order starting with an empty vein")]
     private GameObject[] _orePrefabSizes;
+    [SerializeField]
+    GameObject mineEffect;
+    [SerializeField]
+    float mineEffectDuration;
+    [SerializeField]
+    Vector3 VFXPlayerCenterOffset;
+
+    [Tooltip("Check only on the starting room ore vein.")]
+    public bool isInfinite;
 
     //private Animator _animator; // Might be useless, keeping for now if it turns out it is needed
 
@@ -26,25 +35,43 @@ public class OreVein : InteractableBase
     {
         if (_uses > 0)
         {
-            if (player.Ammo + player.AmmoPerOre <= player.MaxAmmo)
+            if (isInfinite && player.Ammo + player.AmmoPerOre <= player.MaxAmmo)
                 player.Ammo += player.AmmoPerOre;
-            else if (player.HeldAmmo + player.AmmoPerOre <= player.MaxAmmo)
+            else if (!isInfinite)
                 player.HeldAmmo += player.AmmoPerOre;
 
             if (!base.Interact(player))
                 return false;
+
+            if (effect != null)
+                VFXSpawner.vfx.SpawnVFX(effect, effectDuration, player.transform.position).transform.parent = player.transform;
+            if(mineEffect != null)
+            {
+                RaycastHit hit;
+                Ray ray = new Ray(player.transform.position + VFXPlayerCenterOffset, transform.position - VFXPlayerCenterOffset - player.transform.position);
+                if(Physics.Raycast(ray, out hit, 10f, LayerMask.GetMask("Hitbox"), QueryTriggerInteraction.Ignore))
+                {
+                    VFXSpawner.vfx.SpawnVFX(mineEffect, mineEffectDuration, hit.point).transform.up = -ray.direction.normalized;//hit.normal;
+                }
+            }
+            ChangeState();
         }
 
         //_animator.SetInteger("stage", _uses);
         //VFX();
-        if (effect != null)
-            VFXSpawner.vfx.SpawnVFX(effect, effectDuration, player.transform.position).transform.parent = player.transform;
-        ChangeState();
+        
 
         //player.Ammo = Mathf.Clamp(player.Ammo, 0 , player.MaxAmmo); ????
         if (_uses <= 0)
         {
-            GetComponent<Collider>().enabled = false;
+            if (isInfinite)
+            {
+                _uses = _maxUses;
+            }
+            else
+            {
+                //GetComponent<Collider>().enabled = false;
+            }
         }
 
         return true;

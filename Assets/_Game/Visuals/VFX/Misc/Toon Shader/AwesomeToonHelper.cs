@@ -3,7 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AwesomeToon {
-    struct LightSet {
+
+    [ExecuteInEditMode]
+    public class AwesomeToonHelper : MonoBehaviour
+    {
+        [SerializeField] Material[] materials = null;
+
+        private void Awake()
+        {
+            if (GetComponent<Renderer>() && materials != null)
+            {
+                foreach(Material m in materials)
+                {
+                    if (m == null || m.shader.Equals(Shader.Find("HDRP/Lit"))) continue;
+                    m.shader = Shader.Find("Shader Graphs/SG_Multi_Toon");
+                    Color mainColor = m.GetColor("Color_84686C61");
+                    m.shader = Shader.Find("HDRP/Lit");
+                    m.SetColor("_BaseColor", mainColor);
+                }
+                GetComponent<Renderer>().sharedMaterials = materials;
+            }
+                
+        }
+    }
+
+    /* // Old code
+     * struct LightSet {
         public int id;
         public Light light;
         public Vector3 dir;
@@ -55,6 +80,7 @@ namespace AwesomeToon {
             GetLights();
             UpdateMaterial();
         }
+        
 
         void OnValidate() {
             Init();
@@ -279,5 +305,5 @@ namespace AwesomeToon {
         private void OnDrawGizmosSelected() {
             Gizmos.DrawWireSphere(posAbs, 0.1f);
         }
-    }
+    }*/
 }

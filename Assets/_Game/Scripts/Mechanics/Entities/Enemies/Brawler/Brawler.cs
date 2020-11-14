@@ -28,15 +28,19 @@ public class Brawler : EnemyBase {
 
     // -------------------------------------------------------------------------------------------
 
-    protected override void Awake() {
+    /*protected override void Awake() {
         base.Awake();
+    }*/
+
+    protected override void Start() {
+        base.Start();
 
         GetWaypoints();
         // If no waypoints are set - set temp ones
         if(waypoints.Count == 0) {
             AddWaypoint();
             AddWaypoint();
-            //Debug.LogError(gameObject.name + " in " + transform.parent.parent.name + " has no waypoints.");
+            Debug.LogError(gameObject.name + " in " + transform.parent.parent.parent.name + " has no waypoints.");
 
             int i = 1;
             foreach(GameObject waypoint in waypoints) {
@@ -49,16 +53,13 @@ public class Brawler : EnemyBase {
         currentWaypoint = 1;
     }
 
-    protected override void Start() {
-        base.Start();
-    }
-
     // -------------------------------------------------------------------------------------------
     // Behavior Coroutines - Main
 
     protected override IEnumerator Idle(bool regen = false) {
         _agent.stoppingDistance = 0f;
         _agent.SetDestination(transform.position);
+        yield return new WaitForSeconds(0.5f);
 
         if(regen) {
             isHealing = true;
@@ -68,6 +69,8 @@ public class Brawler : EnemyBase {
 
         Vector3 forward;
         while(true) {
+            yield return null;
+
             // Get next position
             try {
                 if(currentWaypoint >= waypointPositions.Count)
@@ -100,8 +103,8 @@ public class Brawler : EnemyBase {
             while(_agent.remainingDistance > 0.2f)
                 yield return null;
 
-            // Wait at position for 1 to 2 sec
-            for(float i = 0; i < Random.Range(1, 2); i += Time.deltaTime) {
+            // Wait at position for 4 to 5 sec
+            for(float i = 0; i < Random.Range(4, 5); i += Time.deltaTime) {
                 yield return null;
                 CheckAggression();
             }
@@ -122,9 +125,10 @@ public class Brawler : EnemyBase {
         // TODO - make looping
         _enemyFX.AlertState.Invoke();
 
+        yield return null;
+        FindTarget();
         while(true) {
             yield return null;
-            FindTarget();
 
             // No target player available - idle instead
             if(targetPlayer == null) {
@@ -213,7 +217,7 @@ public class Brawler : EnemyBase {
     /// <summary>
     /// Plays swat SFX - called in the animator
     /// </summary>
-    public void PlayAttackSound() {
+    public override void PlayAttackSound() {
         _brawlerFX.PummelAttack.Invoke();
     }
 

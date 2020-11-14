@@ -9,6 +9,7 @@ public abstract class Ability : MonoBehaviour
     public float Cooldown { get { return _cooldown; } }
     [SerializeField] public int _ammoCost;
     protected bool _onCooldown = false;
+    public bool OnCooldown { get { return _onCooldown; } }
 
     Room _currentRoom;
     EnemyGroup _enemyGroup;
@@ -32,10 +33,30 @@ public abstract class Ability : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Door>() != null)
+        if (other.GetComponent<RoomCollision>() != null)
         {
-            _currentRoom = other.GetComponent<Door>().room;
-            _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
+            _currentRoom = other.GetComponent<RoomCollision>().room;
+
+            if (_currentRoom != null)
+            {
+
+                if (_currentRoom.GetComponentInChildren<EnemyGroup>() != null)
+                {
+                    if(_enemyGroup)
+                        _enemyGroup.OnPlayerExit.Invoke();
+                    _enemyGroup = _currentRoom.GetComponentInChildren<EnemyGroup>();
+                    _enemyGroup.OnPlayerEnter.Invoke();
+                    GetComponent<PlayerBase>().currentRoom = _currentRoom;
+                }
+                else
+                {
+                    _enemyGroup = null;
+                }
+            }
+            else
+            {
+                _enemyGroup = null;
+            }
         }
     }
 
