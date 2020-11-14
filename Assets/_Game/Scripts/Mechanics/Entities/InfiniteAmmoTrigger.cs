@@ -20,6 +20,13 @@ public class InfiniteAmmoTrigger : MonoBehaviour
             tutorialPrompt.SetActive(true);
             firstTime = false;
         }
+        else
+        {
+            oreVein.isInfinite = false;
+            oreInteractUI.SetActive(false);
+            tutorialPrompt.SetActive(false);
+            gameObject.SetActive(false);
+        }
     }
 
     private void Update()
@@ -40,7 +47,7 @@ public class InfiniteAmmoTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Gunner player = other.GetComponent<Gunner>();
-        if(player && !hasBeenEnabled)
+        if(firstTime && player && !hasBeenEnabled)
         {
             hasBeenEnabled = true;
             player.SetInfiniteAmmo(true);
