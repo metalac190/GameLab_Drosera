@@ -936,7 +936,7 @@ MonoBehaviour:
   _controller: {fileID: 0}
   _animator: {fileID: 0}
   playerY: 0
-  dodgeCooldownTime: 2
+  dodgeCooldownTime: 2.5
   dodgeSpeed: 50
   dodgeTime: 0.15
   altFireCooldownTime: 6
@@ -946,12 +946,14 @@ MonoBehaviour:
   ammo: 5
   maxAmmo: 24
   heldAmmo: 24
-  ammoPerOre: 2
+  ammoPerOre: 1
   reloadCoolDownTime: 1
   lowHealthPercentage: 0.3
   dodgeVFX: {fileID: 802523609689850116, guid: 53d32b181f47e8f41a677efcc4961212, type: 3}
   lowHealthSoundDelay: 0.6
   iFrameRate: 0.1
+  desertDmgTime: 0.6
+  desertDmgAmt: 1.2
   OnReload:
     m_PersistentCalls:
       m_Calls:
@@ -1009,7 +1011,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8536d9b13bcf2974589cb60c11b8fbf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 4
+  _cooldown: 5.5
   _ammoCost: 0
   OnCharge:
     m_PersistentCalls:
@@ -1066,7 +1068,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a9d472be595902488b5042b137a32d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 60
+  _cooldown: 50
   _ammoCost: 0
   OnFire:
     m_PersistentCalls:
@@ -1096,7 +1098,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eeba33f1e499b63498baf70613a5aac3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 60
+  _cooldown: 50
   _ammoCost: 0
   OnFire:
     m_PersistentCalls:
