@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 
 public class PesticideHitbox : MonoBehaviour
 {
@@ -11,13 +12,11 @@ public class PesticideHitbox : MonoBehaviour
 
     private void Awake()
     {
-        Destroy(gameObject, _lifetime);
-
         Vector3 pos = new Vector3(transform.position.x, 0f, transform.position.z);
         Vector3 rot = new Vector3(90, 0, 0);
         GameObject decal = Instantiate(_decal, pos, Quaternion.Euler(rot));
 
-        Destroy(decal, _lifetime);
+        StartCoroutine(FadeDecal(decal));
     }
 
     private void OnTriggerStay(Collider other)
@@ -27,6 +26,21 @@ public class PesticideHitbox : MonoBehaviour
         {
             enemy.TakeDamage(_damagePerSecond * Time.deltaTime);
         }
+    }
+
+    IEnumerator FadeDecal(GameObject decal)
+    {
+        yield return new WaitForSeconds(_lifetime);
+
+        float fade = decal.GetComponent<DecalProjector>().fadeFactor;
+        while (fade > 0)
+        {
+            fade -= Time.deltaTime * 2;
+            decal.GetComponent<DecalProjector>().fadeFactor = fade;
+            yield return null;
+        }
+        Destroy(decal);
+        Destroy(gameObject);
     }
 
     private void OnDrawGizmos()
