@@ -127,6 +127,7 @@ public class PlayerBase : EntityBase
 
     // Room detection/reference for enemies
     public Room currentRoom;
+    InGameHUD inGameHUD;
 
     protected override void Start()
     {
@@ -135,6 +136,7 @@ public class PlayerBase : EntityBase
         currentState = PlayerState.Neutral;
         gm = FindObjectOfType<GameManager>();
         _isForcedInvincible = _isInvincible;
+        inGameHUD = FindObjectOfType<InGameHUD>();
     }
 
     public static PlayerBase instance;
@@ -458,6 +460,7 @@ public class PlayerBase : EntityBase
                     ammo = tempAmmo;
                     heldAmmo = 0;
                 }
+                inGameHUD.UpdateAmmoText();
             }
         }
         if(reloadCoolDown<reloadCoolDownTime)

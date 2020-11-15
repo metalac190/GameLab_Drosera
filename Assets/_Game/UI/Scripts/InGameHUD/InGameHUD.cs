@@ -99,7 +99,6 @@ public class InGameHUD : MonoBehaviour
         {
             StartCoroutine(ShowPhaseOneObjectiveText());
 
-            // wait for ores to spawn before adding ore vein hookup
             oreVeinHookups = FindObjectsOfType<OreVein>();
             foreach (OreVein ore in oreVeinHookups)
             {
@@ -121,10 +120,12 @@ public class InGameHUD : MonoBehaviour
         }
 
         // key R/X
+        /*
         if (playerHookup.ReloadButton)
         {
             UpdateAmmoText();
         }
+        */
         
         // key Space/LT
         if (playerHookup.DodgeButtonKey)

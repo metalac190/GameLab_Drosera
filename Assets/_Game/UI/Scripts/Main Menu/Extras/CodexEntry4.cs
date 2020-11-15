@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class CodexEntry4 : CodexEntry
 {
-    public Image imageLeft;
+    public Sprite imageLeft;
 
-    public Image imageRight;
+    public Sprite imageRight;
 
     [TextArea]
     public string extraNotesTop;

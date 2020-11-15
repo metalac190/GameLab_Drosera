@@ -16,6 +16,7 @@ public class ExtrasManager : MonoBehaviour
     [SerializeField] GameObject mailParentObj;
     [SerializeField] GameObject mediaParentObj;
 
+    [SerializeField] Image leftPanel;
     [SerializeField] TextMeshProUGUI titleText;
     [SerializeField] TextMeshProUGUI paragraphTextLeft;
     [SerializeField] TextMeshProUGUI paragraphTextRight;
@@ -23,6 +24,12 @@ public class ExtrasManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI extraNotesDown;
     [SerializeField] Image image1;
     [SerializeField] Image image2;
+    [SerializeField] Image image3;   // top right (layout 2)
+
+    [SerializeField] GameObject[] crewHoverLines;
+    [SerializeField] GameObject[] docsHoverLines;
+    [SerializeField] GameObject[] mailHoverLines;
+    [SerializeField] GameObject[] mediaHoverLines;
 
     [Header("Codex Entries Back End")]
     [SerializeField] CodexEntry[] crewEntries;
@@ -30,8 +37,11 @@ public class ExtrasManager : MonoBehaviour
     [SerializeField] CodexEntry[] mailEntries;
     [SerializeField] CodexEntry[] mediaEntries;
 
+    [SerializeField] Sprite[] leftPanelSprites;
+
     public string currentSection;
     public int currentEntry;
+    public int previousEntry;
     public int totalEntries;
 
     MenuManager menuManager;
@@ -85,6 +95,7 @@ public class ExtrasManager : MonoBehaviour
     // get entry index
     public void ShowCurrentEntry(int num)
     {
+        previousEntry = currentEntry;
         currentEntry = num;
 
         ClearLayout();
@@ -94,6 +105,7 @@ public class ExtrasManager : MonoBehaviour
         {
             // show correct layout and information
             case "Crew":
+                crewHoverLines[currentEntry].SetActive(true);
                 if (crewEntries[currentEntry].layout == 1)
                 {
                     ShowEntryLayout1((CodexEntry1)crewEntries[num]);
@@ -112,6 +124,7 @@ public class ExtrasManager : MonoBehaviour
                 }
                 break;
             case "Docs":
+                docsHoverLines[currentEntry].SetActive(true);
                 if (docEntries[currentEntry].layout == 1)
                 {
                     ShowEntryLayout1((CodexEntry1)docEntries[num]);
@@ -130,6 +143,7 @@ public class ExtrasManager : MonoBehaviour
                 }
                 break;
             case "Mail":
+                mailHoverLines[currentEntry].SetActive(true);
                 if (mailEntries[currentEntry].layout == 1)
                 {
                     ShowEntryLayout1((CodexEntry1)mailEntries[num]);
@@ -148,6 +162,7 @@ public class ExtrasManager : MonoBehaviour
                 }
                 break;
             case "Media":
+                mediaHoverLines[currentEntry].SetActive(true);
                 if (mediaEntries[currentEntry].layout == 1)
                 {
                     ShowEntryLayout1((CodexEntry1)mediaEntries[num]);
@@ -166,6 +181,9 @@ public class ExtrasManager : MonoBehaviour
                 }
                 break;
         }
+
+        if (menuManager != null)
+            menuManager.PlaySound(1);
     }
 
     void ShowEntryLayout1(CodexEntry1 entry)
@@ -184,13 +202,18 @@ public class ExtrasManager : MonoBehaviour
             paragraphTextLeft.text = entry.paragraphTextLeft;
         if (entry.extraNotesBottom != null)
             extraNotesDown.text = entry.extraNotesBottom;
+
+        if (entry.imageTopRight != null)
+            image3.sprite = entry.imageTopRight;
+
+        image3.CrossFadeAlpha(1, 0, false);
     }
 
     void ShowEntryLayout3(CodexEntry3 entry)
     {
         titleText.text = entry.codexTitle;
         if (entry.image != null)
-            image1 = entry.image;
+            image1.sprite = entry.image;
         if (entry.extraNotesTop != null)
             extraNotesTop.text = entry.extraNotesTop;
 
@@ -202,9 +225,9 @@ public class ExtrasManager : MonoBehaviour
         titleText.text = entry.codexTitle;
 
         if (entry.imageLeft != null)
-            image1 = entry.imageLeft;
+            image1.sprite = entry.imageLeft;
         if (entry.imageRight != null)
-            image2 = entry.imageRight;
+            image2.sprite = entry.imageRight;
         if (entry.extraNotesTop != null)
             extraNotesTop.text = entry.extraNotesTop;
 
@@ -221,6 +244,24 @@ public class ExtrasManager : MonoBehaviour
         extraNotesDown.text = "";
         image1.CrossFadeAlpha(0, 0, false);
         image2.CrossFadeAlpha(0, 0, false);
+        image3.CrossFadeAlpha(0, 0, false);
+
+        foreach (GameObject obj in crewHoverLines)
+        {
+            obj.SetActive(false);
+        }
+        foreach (GameObject obj in docsHoverLines)
+        {
+            obj.SetActive(false);
+        }
+        foreach (GameObject obj in mailHoverLines)
+        {
+            obj.SetActive(false);
+        }
+        foreach (GameObject obj in mediaHoverLines)
+        {
+            obj.SetActive(false);
+        }
     }
 
     public void RightArrow()
@@ -245,6 +286,9 @@ public class ExtrasManager : MonoBehaviour
         {
             currentEntry++;
         }
+
+        if (menuManager != null)
+            menuManager.PlaySound(1);
 
         ShowCurrentEntry(currentEntry);
     }
@@ -272,6 +316,9 @@ public class ExtrasManager : MonoBehaviour
             currentEntry--;
         }
 
+        if (menuManager != null)
+            menuManager.PlaySound(1);
+
         ShowCurrentEntry(currentEntry);
     }
 
@@ -289,6 +336,14 @@ public class ExtrasManager : MonoBehaviour
         crewParentObj.SetActive(true);
         currentSection = "Crew";
 
+        leftPanel.sprite = leftPanelSprites[0];
+        leftPanel.SetNativeSize();
+
+        totalEntries = crewParentObj.transform.childCount;
+
+        if (menuManager != null && this.gameObject.activeInHierarchy)
+            menuManager.PlaySound(1);
+
         ShowCurrentEntry(0);
     }
 
@@ -297,6 +352,14 @@ public class ExtrasManager : MonoBehaviour
         TurnOffEntryList();
         docsParentObj.SetActive(true);
         currentSection = "Docs";
+
+        leftPanel.sprite = leftPanelSprites[1];
+        leftPanel.SetNativeSize();
+
+        totalEntries = docsParentObj.transform.childCount;
+
+        if (menuManager != null)
+            menuManager.PlaySound(1);
 
         ShowCurrentEntry(0);
     }
@@ -307,6 +370,14 @@ public class ExtrasManager : MonoBehaviour
         mailParentObj.SetActive(true);
         currentSection = "Mail";
 
+        leftPanel.sprite = leftPanelSprites[2];
+        leftPanel.SetNativeSize();
+
+        totalEntries = mailParentObj.transform.childCount;
+
+        if (menuManager != null)
+            menuManager.PlaySound(1);
+
         ShowCurrentEntry(0);
     }
 
@@ -315,6 +386,14 @@ public class ExtrasManager : MonoBehaviour
         TurnOffEntryList();
         mediaParentObj.SetActive(true);
         currentSection = "Media";
+
+        leftPanel.sprite = leftPanelSprites[3];
+        leftPanel.SetNativeSize();
+
+        totalEntries = mailParentObj.transform.childCount;
+
+        if (menuManager != null)
+            menuManager.PlaySound(1);
 
         ShowCurrentEntry(0);
     }
