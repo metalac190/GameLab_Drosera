@@ -54,13 +54,7 @@ public class PesticideGrenadeProjectile : MonoBehaviour
         yield return new WaitForSeconds(explosionDelay);
         OnExplode?.Invoke();
 
-        Vector3 pos = transform.position;
-        pos.y = 0.2f;
-        GameObject hitbox = Instantiate(_pesticideHitbox, pos, Quaternion.identity);
-        Vector3 scale = hitbox.transform.localScale;
-        scale.x = _explosionRadius;
-        scale.z = _explosionRadius;
-        hitbox.transform.localScale = scale;
+        StartCoroutine(SpawnDecal());
 
         _audioScript.PlaySound(0);
 
@@ -70,6 +64,19 @@ public class PesticideGrenadeProjectile : MonoBehaviour
         gameObject.GetComponent<SphereCollider>().enabled = false;
 
         StartCoroutine(ClearVFX(vfx));
+    }
+
+    IEnumerator SpawnDecal()
+    {
+        yield return new WaitForSeconds(0.35f);
+
+        Vector3 pos = transform.position;
+        pos.y = 0.2f;
+        GameObject hitbox = Instantiate(_pesticideHitbox, pos, Quaternion.identity);
+        Vector3 scale = hitbox.transform.localScale;
+        scale.x = _explosionRadius;
+        scale.z = _explosionRadius;
+        hitbox.transform.localScale = scale;
     }
 
     //Not used currently

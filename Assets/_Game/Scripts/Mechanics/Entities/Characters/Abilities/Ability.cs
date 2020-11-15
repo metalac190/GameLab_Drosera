@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.Events;
 
 public abstract class Ability : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public abstract class Ability : MonoBehaviour
     [SerializeField] public int _ammoCost;
     protected bool _onCooldown = false;
     public bool OnCooldown { get { return _onCooldown; } }
+
+    public UnityEvent OnCooldownFinished;
 
     Room _currentRoom;
     EnemyGroup _enemyGroup;
@@ -28,6 +31,7 @@ public abstract class Ability : MonoBehaviour
     {
         _enemyGroup?.OnShotFired?.Invoke();
         yield return new WaitForSeconds(_cooldown);
+        OnCooldownFinished?.Invoke();
         _onCooldown = false;
     }
 
