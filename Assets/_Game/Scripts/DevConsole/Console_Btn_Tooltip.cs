@@ -8,7 +8,7 @@ public class Console_Btn_Tooltip : MonoBehaviour
 {
     [Header("Button Settings")]
     [SerializeField] bool hasTooltip = true;
-    [SerializeField] string toolTip = "";
+    [SerializeField] string toolTip = " ";
     [SerializeField] float popUpDelay = 0.5f;
     [Header("Visuals")]
     [SerializeField] GameObject toolTipPanel = null;
@@ -32,9 +32,10 @@ public class Console_Btn_Tooltip : MonoBehaviour
         if (button.hotkey != KeyCode.None)
             toolTip += " (" + button.hotkeyNickName + ")";
 
-        Text text = toolTipPanel.GetComponentInChildren<Text>();
-        text.text = toolTip;
+        Text _text = toolTipPanel.GetComponentInChildren<Text>();
+        _text.text = toolTip;
     }
+
     private void OnEnable()
     {
         if(!hasTooltip)
@@ -82,6 +83,7 @@ public class Console_Btn_Tooltip : MonoBehaviour
     {
         if (runningRoutine != null)
             StopCoroutine(runningRoutine);
+
         toolTipPanel.SetActive(false);
     }
 }
