@@ -19,7 +19,8 @@ public abstract class EntityBase : MonoBehaviour
     [SerializeField] protected float _cooldown;
     [SerializeField] protected float _moveSpeed;
 
-    [SerializeField] protected bool _isInvincible = false;
+    protected bool _isInvincible = false;
+    [SerializeField] protected bool _forceInvincible = false;
 
     [SerializeField] protected CharacterController _controller;
     [SerializeField] protected Animator _animator;
@@ -33,6 +34,7 @@ public abstract class EntityBase : MonoBehaviour
 
     protected virtual void Start() {
         _health = _maxHealth;
+        _forceInvincible = _isInvincible;
     }
 
     public virtual IEnumerator Knockback(float force, Vector3 direction)

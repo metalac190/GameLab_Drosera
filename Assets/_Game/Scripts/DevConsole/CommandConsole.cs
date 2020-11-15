@@ -16,11 +16,7 @@ public class CommandConsole : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private bool enableInBuild = true;
     [SerializeField] private bool enableConsole = true;
-    [SerializeField] private bool enableHotkeysWhileClosed = true;
-
-    [Header("Scene Settings")]
-    [SerializeField] bool generateLevel = true;
-    [SerializeField] GameObject generateRoom = null;
+    //[SerializeField] private bool enableHotkeysWhileClosed = true;
 
     [Header("Button References")]//as needed
     [SerializeField] Text speedMultiplyerText = null;
@@ -36,13 +32,14 @@ public class CommandConsole : MonoBehaviour
 
     public bool IsInEditor => isInEditor;
     private bool isInEditor;
+    public GameObject ConsoleCanvas => consoleWindow;
     public bool IsOpen => _isOpen;
     private bool _isOpen = false;
 
     private float lastTimeScale = 1f;
     private float speedMultiplyer = 1f;
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     #region Init
     private void Awake()
     {
@@ -77,16 +74,129 @@ public class CommandConsole : MonoBehaviour
     }
     #endregion
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     #region Respond to input events
     /// <summary>
     /// Public functions to react to input and run a command.
     /// Hook these up to the Unity Events provided on the Console_Button game object
     /// William Austin
     /// </summary>
+    /// 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    #region Enemy Commands
 
+    public void AgroEnemiesCommand()
+    {
+        EnemyGroup roomEnemies = GetRoomEnemies();
+        if(roomEnemies == null)
+        {
+            Debug.Log("Argo enemies command failed. Could not find EnemyGroup");
+            return;
+        }
+
+        Debug.Log("Commanded enemies to be aggro");
+        roomEnemies.TurnGroupAggressive.Invoke();
+    }
+
+    public void IdleEnemiesCommand()
+    {
+        EnemyGroup roomEnemies = GetRoomEnemies();
+        if (roomEnemies == null)
+        {
+            Debug.Log("Idle enemies command failed. Could not find EnemyGroup");
+            return;
+        }
+
+        Debug.Log("Commanded enemies to be idle");
+        roomEnemies.TurnGroupPassive.Invoke();
+    }
+
+    public void ActivateHyperseedCommand()
+    {
+        HyperSeed seed = FindObjectOfType<HyperSeed>();
+        if (seed != null)
+            seed.Activate();
+    }
+
+
+    #endregion
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    #region Player Commands
+
+    private bool invisToggleState = false;
+    public void TogglePlayerInvincibilityCommand()
+    {
+        invisToggleState = !invisToggleState;
+        playerRef.SetInvincibilityMode(invisToggleState);
+    }
+
+    public void SetPlayerInvincible()
+    {
+        invisToggleState = true;
+        playerRef.SetInvincibilityMode(true);
+    }
+
+    public void RemovePlayerInvincibility()
+    {
+        invisToggleState = false;
+        playerRef.SetInvincibilityMode(false);
+    }
+
+
+    private bool ammoToggle = false;
+    public void ToggleInfiniteAmmoCommand()
+    {
+        ammoToggle = !ammoToggle;
+        Gunner gunner = playerRef as Gunner;
+        if (gunner != null)
+            gunner.SetInfiniteAmmo(ammoToggle);
+    }
+
+    public void SetAmmoInfinite()
+    {
+        ammoToggle = true;
+        Gunner gunner = playerRef as Gunner;
+        if (gunner != null)
+            gunner.SetInfiniteAmmo(true);
+    }
+
+    public void RemoveInfiniteAmmo()
+    {
+        ammoToggle = false;
+        Gunner gunner = playerRef as Gunner;
+        if (gunner != null)
+            gunner.SetInfiniteAmmo(false);
+    }
+
+    public void KillPlayerCommand()
+    {
+        RemovePlayerInvincibility();
+        playerRef.TakeDamage(playerRef.Health);
+    }
+
+
+    #endregion
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     public void SkipCutsceneCommand()
     {
-        GameManager.Instance?.CutSceneComplete();
+        //GameManager.Instance?.CutSceneComplete();
+        if (GameManager.Instance == null)
+            return;
+        GameObject cutscene = GameManager.Instance.CurrentCustscene;
+        if (cutscene == null || !cutscene.activeInHierarchy)
+            return;
+
+        DialogueManager cutManager = cutscene.GetComponentInChildren<DialogueManager>();
+        if(cutManager == null)
+        {
+            Debug.Log("Could not find the cutscene manager");
+            return;
+        }
+
+        cutManager.DeactiveCutscene();
+
     }
 
     public void QuitCommand()
@@ -114,13 +224,9 @@ public class CommandConsole : MonoBehaviour
     }
 
 
-
-
-
-
-
     #endregion
 
+    /// ////////////////////////////////////////////////////////////////////////////////////////////////
     #region Command Helper Methods
 
     void IncrementSpeedMultiplyer()
@@ -132,12 +238,24 @@ public class CommandConsole : MonoBehaviour
         speedMultiplyerText.text = speedMultiplyer.ToString("F1") + "x";
     }
 
+    private EnemyGroup GetRoomEnemies()
+    {
+        return currentRoom.GetComponentInChildren<EnemyGroup>();
 
-
+        //EnemyGroup[] allGroups = FindObjectsOfType<EnemyGroup>();
+        /*
+        foreach (EnemyGroup eachGroup in allGroups)
+            if (eachGroup.GetComponentInParent<Room>() == currentRoom)
+                return eachGroup;
+        */
+        //return FindObjectsOfType<EnemyGroup>();
+        return null;
+    }
 
 
     #endregion
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     private void Update()
     {
         if (!ConsoleEnabled())
@@ -167,8 +285,7 @@ public class CommandConsole : MonoBehaviour
 
         _isOpen = toState;
         consoleWindow.SetActive(toState);
-        if (!enableHotkeysWhileClosed)
-            ToggleHotkeys.Invoke(toState);
+
         if(!toState)
             RevertConsole();
     }

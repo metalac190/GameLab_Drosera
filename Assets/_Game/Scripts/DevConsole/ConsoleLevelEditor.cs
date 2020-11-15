@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
+using UnityEngine.EventSystems;
 
 public enum eEditablePrefabs { Noone, HealthFruit, OreVein, Brawler, Scurrier }
 
@@ -10,13 +11,17 @@ public enum eEditablePrefabs { Noone, HealthFruit, OreVein, Brawler, Scurrier }
 public class ConsoleLevelEditor : MonoBehaviour
 {
     Dictionary<Room, RoomEditData> RoomEdits = new Dictionary<Room, RoomEditData>();
+
     [SerializeField] Texture2D mouseTexture = null;
-    [SerializeField] Texture2D nullTexture = null;
-    [SerializeField] Camera cam = null;
     [SerializeField] LayerMask addMask;
     [SerializeField] LayerMask subtractMask;
+    [SerializeField] GameObject AdditionReferecne = null;
+    [SerializeField] GameObject SubtractReference = null;
     [SerializeField] PrefabType[] PrefabSets = null;
 
+    GraphicRaycaster consoleRaycaster;
+    EventSystem consoleEvent;
+    Camera cam = null;
     CommandConsole Console = null;
     Vector3 roomOffset = Vector3.zero;
     Room currentRoom = null;
@@ -31,27 +36,29 @@ public class ConsoleLevelEditor : MonoBehaviour
     private void Awake()
     {
         Console = GetComponent<CommandConsole>();
+        consoleRaycaster = Console.ConsoleCanvas.GetComponent<GraphicRaycaster>();
+        consoleEvent = Console.ConsoleCanvas.GetComponent<EventSystem>();
     }
     public void OnRevertConsole()
     {
         DeactivateEditor();
     }
 
+    private void OnEnable()
+    {
+        CommandConsole.RevertConsole += OnRevertConsole;
+    }
+    private void OnDisable()
+    {
+        CommandConsole.RevertConsole -= OnRevertConsole;
+    }
+
     #endregion
 
 
-
-    public void PlayerChangedRoom(Room newRoom)
-    {
-        if (!Console.IsInEditor || newRoom == null || newRoom == currentRoom)
-            return;
-
-        currentRoom = newRoom;
-    }
-
     public void EditLevel()
     {
-        if (!Console.IsInEditor || !Console.IsOpen || currentRoom == null)
+        if (!Console.IsInEditor || !Console.IsOpen || currentRoom == null || !isAcitve)
             return;
 
         RaycastHit hit;
@@ -61,12 +68,16 @@ public class ConsoleLevelEditor : MonoBehaviour
         Vector3 targetPos = -Vector3.zero;//= GetTargetPosition;
         eEditablePrefabs hitType = eEditablePrefabs.Noone;
 
-        if (placeMode == 1)
-            targetPos = hit.transform.position;
-        else
+        if (placeMode == 1)//placing an object
+            targetPos = hit.point;
+        else //Removing object
         {
             if (IsOfType<Scurrier>(hit) || IsOfType<Brawler>(hit))
+            {
+                //Deactivate the enemy only. Not adde to data
+                hit.transform.gameObject.SetActive(false);
                 return;
+            }
             else if (IsOfType<HealthFruit>(hit))
                 hitType = eEditablePrefabs.HealthFruit;
             else if (IsOfType<OreVein>(hit))
@@ -77,13 +88,14 @@ public class ConsoleLevelEditor : MonoBehaviour
             targetPos = hit.transform.position;
         }
 
-        if (targetPos == -Vector3.zero)
+        if (targetPos == -Vector3.one)
             return;
 
+        //Is this the first time to edit this room?
         if (RoomEdits == null || !RoomEdits.ContainsKey(currentRoom))
         {
-            RoomEditData data = new RoomEditData(currentRoom.gameObject.name, basePath);
-            data.RootRoatation = currentRoom.transform.rotation;
+            RoomEditData data = new RoomEditData(currentRoom.gameObject.name, basePath, AdditionReferecne, SubtractReference, PrefabSets);
+            data.RootRoatation = currentRoom.transform.rotation; 
             RoomEdits.Add(currentRoom, data);
         }
 
@@ -94,7 +106,7 @@ public class ConsoleLevelEditor : MonoBehaviour
             RemoveHitFromScene(hit);
     }
 
-    #region Helpers
+    #region Click Functionality
     private bool GetRayHit(out RaycastHit thisHit)
     {
         if (cam == null)
@@ -134,7 +146,8 @@ public class ConsoleLevelEditor : MonoBehaviour
         }
 
         Debug.Log("Instantiating new object");
-        Instantiate(targetObj, parent);
+        GameObject newObj = Instantiate(targetObj, parent);
+        newObj.transform.position = atPos;
     }
 
     private void RemoveHitFromScene(RaycastHit target)
@@ -142,13 +155,17 @@ public class ConsoleLevelEditor : MonoBehaviour
         target.transform.gameObject.SetActive(false);
     }
     #endregion
-
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void Update()
     {
         if (!isAcitve)
             return;
+
         if (Input.GetMouseButtonDown(0))
-            EditLevel();
+        {
+            if(!ClickedOnConsole())
+                EditLevel();
+        }
     }
 
     public void ActivateEditor()
@@ -162,11 +179,19 @@ public class ConsoleLevelEditor : MonoBehaviour
     }
     public void DeactivateEditor()
     {
+        if (!isAcitve)
+            return;
+
         isAcitve = false;
-        if (mouseTexture != null)
-        {
-            Cursor.SetCursor(nullTexture, Vector2.zero, CursorMode.Auto);
-        }
+        GameManager.Instance?.RevertCursor();
+
+    }
+    public void PlayerChangedRoom(Room newRoom)
+    {
+        if (!Console.IsInEditor || newRoom == null || newRoom == currentRoom)
+            return;
+
+        currentRoom = newRoom;
     }
 
     private void OnApplicationQuit()
@@ -177,8 +202,8 @@ public class ConsoleLevelEditor : MonoBehaviour
         }
     }
 
-    /// ///////////////////////////////////////////////////////////////////////
-    #region Select Prefab to place
+    /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    #region Public Setters
     public void SetTargetPrefab(eEditablePrefabs target)
     {
         if (!Console.IsInEditor || !Console.IsOpen)
@@ -215,7 +240,8 @@ public class ConsoleLevelEditor : MonoBehaviour
     }
     #endregion 
 
-
+    /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    #region Edit Data
     public struct RoomEditData
     {
         string AssetName;
@@ -228,6 +254,10 @@ public class ConsoleLevelEditor : MonoBehaviour
         public Dictionary<eEditablePrefabs, List<Vector3>> Additions;
         public Dictionary<eEditablePrefabs, List<Vector3>> Subtractions;
 
+        private GameObject AddPrefab;
+        private GameObject SubPrefab;
+        private PrefabType[] Prefabs;
+
         public void MakeAddition(eEditablePrefabs obj, Vector3 atPos)
         {
             Additions[obj].Add(atPos);
@@ -237,7 +267,8 @@ public class ConsoleLevelEditor : MonoBehaviour
             Subtractions[obj].Add(atPos);
         }
 
-        public RoomEditData(string assetName, string assetPath)
+        #region Init
+        public RoomEditData(string assetName, string assetPath, GameObject addPref, GameObject subPref, PrefabType[] prefabs)
         {
             AssetName = assetName;
             AssetPath = assetPath;
@@ -248,6 +279,11 @@ public class ConsoleLevelEditor : MonoBehaviour
             Additions = new Dictionary<eEditablePrefabs, List<Vector3>>(4);
             Subtractions = new Dictionary<eEditablePrefabs, List<Vector3>>(4);
             RootRoatation = Quaternion.identity;
+
+            AddPrefab = addPref;
+            SubPrefab = subPref;
+            Prefabs = prefabs;
+
             InitDicts();
         }
 
@@ -264,16 +300,17 @@ public class ConsoleLevelEditor : MonoBehaviour
                 Subtractions.Add(eEditablePrefabs.OreVein, new List<Vector3>());
         }
 
+        #endregion
+
         public GameObject GenerateEditObject()
         {
             if (masterGenerated) return null;
             masterGenerated = true;
 
             MasterObject = new GameObject("EDITED_" + AssetName);
-            MasterObject.transform.position = Vector3.zero;
-            //MasterObject.transform.rotation = RootRoatation;
+            MasterObject.transform.SetPositionAndRotation(Vector3.zero, Quaternion.Inverse(RootRoatation));
 
-            #region Create Addtions group
+            #region Create Addtions
             GameObject addObj = new GameObject("Additions");
             addObj.transform.position = Vector3.zero;
             int totalAdditions = 0;
@@ -292,17 +329,25 @@ public class ConsoleLevelEditor : MonoBehaviour
                     innerAdditions[j + totalJ] = (new GameObject(eachType.ToString() + j.ToString()));
                     innerAdditions[j + totalJ].transform.position = typeValues[j];
                     innerAdditions[j + totalJ].transform.parent = addTypeObjects[i].transform;
+
+                    GameObject visRep = Instantiate(AddPrefab);
+                    visRep.transform.position = Vector3.zero;
+                    visRep.transform.SetParent(innerAdditions[j + totalJ].transform, false);
+
+                    GameObject objectPref = Instantiate(GetPrefabByType(eachType));
+                    objectPref.transform.position = Vector3.zero;
+                    objectPref.transform.SetParent(innerAdditions[j + totalJ].transform, false);
                 }
-                addTypeObjects[i].transform.parent = addObj.transform;
+                addTypeObjects[i].transform.SetParent(addObj.transform, false);
                 i++; totalJ += count;
             }
-                addObj.transform.parent = MasterObject.transform;
+                addObj.transform.SetParent(MasterObject.transform, false);
             #endregion
 
             #region Create Subtractions group
             GameObject subObj = new GameObject("Subtractions");
             subObj.transform.position = Vector3.zero;
-            subObj.transform.parent = MasterObject.transform;
+            subObj.transform.SetParent(MasterObject.transform, false);
             int totalSubs = 0;
             foreach (List<Vector3> each in Subtractions.Values) totalSubs += each.Count;
 
@@ -318,9 +363,13 @@ public class ConsoleLevelEditor : MonoBehaviour
                 {
                     innerSubs[j + totalJJ] = (new GameObject(eachType.ToString() + j.ToString()));
                     innerSubs[j + totalJJ].transform.position = typeValuesS[j];
-                    innerSubs[j + totalJJ].transform.parent = subTypeObjects[ii].transform;
+                    innerSubs[j + totalJJ].transform.SetParent(subTypeObjects[ii].transform, false);
+                    GameObject visRep = Instantiate(SubPrefab);
+                    visRep.transform.position = Vector3.zero;
+                    visRep.transform.SetParent(innerSubs[j + totalJJ].transform, false);
+
                 }
-                subTypeObjects[ii].transform.parent = subObj.transform;
+                subTypeObjects[ii].transform.SetParent(subObj.transform, false);
                 ii++; totalJJ += count;
             }
             #endregion
@@ -328,6 +377,14 @@ public class ConsoleLevelEditor : MonoBehaviour
             return MasterObject;
         }
 
+        private GameObject GetPrefabByType(eEditablePrefabs target)
+        {
+            foreach (PrefabType type in Prefabs)
+                if (type.Type == target)
+                    return type.Prefab;
+
+            return null;
+        }
         public void SaveEditObject()
         {
             if (masterCommited)
@@ -343,6 +400,10 @@ public class ConsoleLevelEditor : MonoBehaviour
         }
     }
 
+    #endregion
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    #region Helpers
     private Transform GetParentTransform(eEditablePrefabs forType)
     {
         if(forType == eEditablePrefabs.Brawler || forType == eEditablePrefabs.Scurrier)
@@ -369,6 +430,17 @@ public class ConsoleLevelEditor : MonoBehaviour
         }
     }
 
+    private bool ClickedOnConsole()
+    {
+        PointerEventData eventData = new PointerEventData(consoleEvent);
+        eventData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+
+        consoleRaycaster.Raycast(eventData, results);
+        if (results.Count <= 0)
+            return false;
+        else return true;
+    }
 
     private GameObject GetPrefabByType(eEditablePrefabs target)
     {
@@ -378,6 +450,7 @@ public class ConsoleLevelEditor : MonoBehaviour
 
         return null;
     }
+    #endregion 
 
     [System.Serializable]
     public class PrefabType
@@ -387,7 +460,6 @@ public class ConsoleLevelEditor : MonoBehaviour
 
         public GameObject Prefab => _prefab;
         [SerializeField] GameObject _prefab = null;
-
     }
 }
 
