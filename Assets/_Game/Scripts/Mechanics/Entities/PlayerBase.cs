@@ -13,6 +13,8 @@ public class PlayerBase : EntityBase
 
     public PlayerState CurrentState { get { return currentState; } }
 
+    protected GameManager gm;
+
     //button variable names
     protected bool aimToggle;
     protected bool cycleTargetRight;
@@ -46,6 +48,7 @@ public class PlayerBase : EntityBase
     public bool AdjustCameraLeft { get { return adjustCameraLeftKey; } }
 
     private CharacterController controller;
+    protected bool _isForcedInvincible;
 
     protected Vector3 xMove;
     protected Vector3 zMove;
@@ -113,6 +116,11 @@ public class PlayerBase : EntityBase
     [SerializeField]
     protected float iFrameRate = .1f;
 
+    [SerializeField]
+    protected float desertDmgTime = .6f;
+    [SerializeField]
+    protected float desertDmgAmt = 1.2f;
+
     public UnityEvent OnReload;
     public UnityEvent OnDodge;
     public UnityEvent OnLowHealth;
@@ -125,6 +133,8 @@ public class PlayerBase : EntityBase
         base.Start();
         controller = gameObject.GetComponent<CharacterController>();
         currentState = PlayerState.Neutral;
+        gm = FindObjectOfType<GameManager>();
+        _isForcedInvincible = _isInvincible;
     }
 
     public static PlayerBase instance;
@@ -316,6 +326,20 @@ public class PlayerBase : EntityBase
         else if (currentState != PlayerState.Dodging) //idle
         {
             _animator.SetInteger("walkAni", 0);
+
+            if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
+            {
+                float t = desertDmgTime;
+                if (t < 0)
+                {
+                    _health -= desertDmgAmt;
+                    t = desertDmgTime;
+                }
+                else
+                {
+                    t -= Time.deltaTime;
+                }
+            }
         }
         /*
         else if (currentState == PlayerState.Attacking)
@@ -331,6 +355,7 @@ public class PlayerBase : EntityBase
         else
         {
             _animator.SetInteger("dodgeAni", 0);
+            
         }
 
         if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
@@ -461,13 +486,13 @@ public class PlayerBase : EntityBase
         if (dodgeTimer < dodgeTime)
         {
             GetComponentInChildren<TrailRenderer>().emitting = true;
-            _isInvincible = true;
+            SetInvincible();
             dodgeTimer += Time.deltaTime;
         }
         else
         {
             GetComponentInChildren<TrailRenderer>().emitting = false;
-            _isInvincible = false;
+            SetInvincible(false);
             Destroy(tempDVFX, dodgeCooldownTime);
             dodgeCooldown = dodgeCooldownTime;
             currentState = PlayerState.Neutral;
@@ -477,23 +502,25 @@ public class PlayerBase : EntityBase
 
     protected void Interacting()
     {
-        interactTarget?.Interact(this);
-        if(interactTarget.GetComponent<HyperSeed>() != null)
+        if (interactTarget != null)
         {
-            _animator.SetBool("getHyperSeedAni", true);
+            interactTarget?.Interact(this);
+            if (interactTarget.GetComponent<HyperSeed>() != null)
+            {
+                _animator.SetBool("getHyperSeedAni", true);
+            }
+            else if (interactTarget.GetComponent<OreVein>() != null)
+            {
+                _animator.SetBool("getAmmoAni", true);
+            }
+            interactTarget = null;
+            lastInteract = Time.fixedTime;
         }
-        else if(interactTarget.GetComponent<OreVein>() != null)
-        {
-            _animator.SetBool("getAmmoAni", true);
-        }
-        interactTarget = null;
-        lastInteract = Time.fixedTime;
         currentState = PlayerState.Neutral;
     }
 
     protected void Dead()
     {
-        //dead sound
         _animator.SetBool("deathAni", true);
         GameManager.Instance.GameLost();
         Debug.Log("You are dead.");
@@ -501,6 +528,9 @@ public class PlayerBase : EntityBase
 
     public override void TakeDamage(float value)
     {
+        if (_isInvincible)
+            return;
+
         _health -= value;
         OnTakeDamage?.Invoke();
         if (_health <= 0)
@@ -528,9 +558,24 @@ public class PlayerBase : EntityBase
 
     IEnumerator InvincibleAfterDmg()
     {
-        _isInvincible = true;
+        SetInvincible();
         yield return new WaitForSeconds(iFrameRate);
         _animator.SetBool("damageAni", false);
-        _isInvincible = false;
+        SetInvincible(false);
     }
+
+    public void SetInvincibilityMode(bool isForcedInvincible)
+    {
+       _isInvincible = isForcedInvincible;
+       _isForcedInvincible = isForcedInvincible;
+    }
+
+    protected void SetInvincible(bool toState = true)
+    {
+        if (_isForcedInvincible || _isInvincible == toState)
+            return;
+
+        _isInvincible = toState;
+    }
+
 }

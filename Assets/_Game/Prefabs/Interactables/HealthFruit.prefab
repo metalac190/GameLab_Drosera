@@ -87,10 +87,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnApproach:
+    m_PersistentCalls:
+      m_Calls: []
+  OnLeave:
+    m_PersistentCalls:
+      m_Calls: []
   _maxUses: 1
   effect: {fileID: 8406461867865417842, guid: b2363c1d5e8fbac47b30b9db5034b67a, type: 3}
   effectDuration: 4
-  _healingAmount: 10
+  _healingAmounts:
+  - biome: 1
+    _healingAmount: 10
+  - biome: 0
+    _healingAmount: 12
   disableOnPickup: 0
   effectHeight: 0.1
 --- !u!114 &-7082738326970467367
@@ -158,12 +168,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6881307995701223417}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.33, y: 2.11, z: 0.21}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6.0155725, y: 2.0890439, z: 0.24993482}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1607485807080694731}
-  m_RootOrder: 4
+  m_Father: {fileID: 4201942975637441152}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &2554416365030237158
 Light:
@@ -251,7 +261,7 @@ MonoBehaviour:
   m_LuxAtDistance: 1
   m_InnerSpotPercent: 0
   m_LightDimmer: 1
-  m_VolumetricDimmer: 2.69
+  m_VolumetricDimmer: 1.61
   m_LightUnit: 4
   m_FadeDistance: 10000
   m_AffectDiffuse: 1
@@ -443,6 +453,12 @@ PrefabInstance:
 --- !u!4 &1607485807080694731 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4792380377588206697, guid: 85038178a095f324f85b0975d8b4e255,
+    type: 3}
+  m_PrefabInstance: {fileID: 6111133304842645410}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4201942975637441152 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7971186086953428258, guid: 85038178a095f324f85b0975d8b4e255,
     type: 3}
   m_PrefabInstance: {fileID: 6111133304842645410}
   m_PrefabAsset: {fileID: 0}

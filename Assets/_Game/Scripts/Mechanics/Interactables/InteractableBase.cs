@@ -9,6 +9,8 @@ public abstract class InteractableBase : MonoBehaviour
     [Header("Generic Interactable")]
     [Tooltip("For additional triggers to happen when this is interacted with")]
     public UnityEvent OnInteract;
+    public UnityEvent OnApproach;
+    public UnityEvent OnLeave;
 
     [SerializeField]
     protected int _maxUses = 1;
@@ -57,6 +59,11 @@ public abstract class InteractableBase : MonoBehaviour
             VFXSpawner.vfx.SpawnVFX(effect, effectDuration, transform.position);
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(_uses > 0) OnApproach?.Invoke();
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.GetComponent<PlayerBase>() == null) return;
@@ -71,5 +78,6 @@ public abstract class InteractableBase : MonoBehaviour
     {
         if (other.GetComponent<PlayerBase>() == null) return;
         other.GetComponent<PlayerBase>().InteractTarget = null;
+        if (_uses > 0) OnLeave.Invoke();
     }
 }

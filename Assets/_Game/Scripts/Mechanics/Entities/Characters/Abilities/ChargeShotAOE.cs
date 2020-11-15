@@ -10,6 +10,8 @@ public class ChargeShotAOE : Hitbox
     [SerializeField] float _damageMultiplier = 15;
     [SerializeField] float _scaleMultiplier = 4;
     [SerializeField] float _lightningDuration = 1;
+    [SerializeField] float _slowModifier = .4f;
+    [SerializeField] float _slowDuration = 3f;
     
 
     private void Start()
@@ -18,6 +20,7 @@ public class ChargeShotAOE : Hitbox
         charge = _altFire.Charge;
         damage = 5 + charge * _damageMultiplier;
         transform.localScale = Vector3.one * (1 + charge * _scaleMultiplier);
+        StartCoroutine(Hide());
         Destroy(gameObject, _lightningDuration);
     }
 
@@ -30,7 +33,10 @@ public class ChargeShotAOE : Hitbox
     {
         base.OnTriggerEnter(other);
 
-        StartCoroutine(Hide());
+        foreach (var enemy in hitTargets)
+        {
+            StartCoroutine(enemy.GetComponent<EnemyBase>().AltFireEnemySlowed(_slowModifier, _slowDuration));
+        }
 
         LightningAnimator animator = Instantiate(_chainLightning, transform.position, transform.rotation).GetComponent<LightningAnimator>();
         animator.SetTargets(hitTargets);

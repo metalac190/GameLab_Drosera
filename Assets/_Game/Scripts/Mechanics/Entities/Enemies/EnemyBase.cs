@@ -386,8 +386,10 @@ public abstract class EnemyBase : EntityBase {
             float originalSpeed = _moveSpeed;
             enemySlowed = true;
             _moveSpeed *= enemySlowModifier;
+            _agent.speed = _moveSpeed;
             yield return new WaitForSeconds(enemySlowDuration);
             _moveSpeed = originalSpeed;
+            _agent.speed = _moveSpeed;
             enemySlowed = false;
         }
     }

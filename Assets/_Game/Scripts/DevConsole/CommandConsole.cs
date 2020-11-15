@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 [RequireComponent(typeof(ConsoleLog))]
+[RequireComponent(typeof(ConsoleLevelEditor))]
 public class CommandConsole : MonoBehaviour
 {
     public static event Action RevertConsole = delegate { };
@@ -14,26 +17,31 @@ public class CommandConsole : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private bool enableInBuild = true;
     [SerializeField] private bool enableConsole = true;
-    [SerializeField] private bool enableHotkeysWhileClosed = true;
-
-    [Header("Scene Settings")]
-    [SerializeField] bool generateLevel = true;
-    [SerializeField] GameObject generateRoom = null;
+    //[SerializeField] private bool enableHotkeysWhileClosed = true;
 
     [Header("Button References")]//as needed
     [SerializeField] Text speedMultiplyerText = null;
 
     [Header("Visuals")]
     [SerializeField] private GameObject consoleWindow = null;
+    [SerializeField] private TextMeshProUGUI roomNamText = null;
+    private Room currentRoom = null;
 
     private ConsoleLog log = null;
+    private ConsoleLevelEditor levelEditor = null;
+    private PlayerBase playerRef = null;
 
+    public bool IsInEditor => isInEditor;
     private bool isInEditor;
+    public GameObject ConsoleCanvas => consoleWindow;
+    public bool IsOpen => _isOpen;
+    private bool _isOpen = false;
 
-    private float lastTimeScale = 1f;
+    private bool isPaused = false;
     private float speedMultiplyer = 1f;
+    private bool hotkeyMode;
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     #region Init
     private void Awake()
     {
@@ -53,49 +61,175 @@ public class CommandConsole : MonoBehaviour
         }
 
         log = GetComponent<ConsoleLog>();
+        levelEditor = GetComponent<ConsoleLevelEditor>();
+        playerRef = FindObjectOfType<PlayerBase>();
     }
 
     private void Start()
     {
         speedMultiplyerText.text = speedMultiplyer.ToString("F1") + "x";
         consoleWindow?.SetActive(false);
+        _isOpen = false;
+
         if (isInEditor)
             log.CloseLog();
     }
     #endregion
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     #region Respond to input events
     /// <summary>
     /// Public functions to react to input and run a command.
     /// Hook these up to the Unity Events provided on the Console_Button game object
     /// William Austin
     /// </summary>
+    /// 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    #region Enemy Commands
 
+    public void AgroEnemiesCommand()
+    {
+        EnemyGroup roomEnemies = GetRoomEnemies();
+        if(roomEnemies == null)
+        {
+            Debug.Log("Argo enemies command failed. Could not find EnemyGroup");
+            return;
+        }
+
+        Debug.Log("Commanded enemies to be aggro");
+        roomEnemies.TurnGroupAggressive.Invoke();
+    }
+
+    public void IdleEnemiesCommand()
+    {
+        EnemyGroup roomEnemies = GetRoomEnemies();
+        if (roomEnemies == null)
+        {
+            Debug.Log("Idle enemies command failed. Could not find EnemyGroup");
+            return;
+        }
+
+        Debug.Log("Commanded enemies to be idle");
+        roomEnemies.TurnGroupPassive.Invoke();
+    }
+
+    public void ActivateHyperseedCommand()
+    {
+        HyperSeed seed = FindObjectOfType<HyperSeed>();
+        if (seed != null)
+            seed.Activate();
+    }
+
+
+    #endregion
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    #region Player Commands
+
+    private bool invisToggleState = false;
+    public void TogglePlayerInvincibilityCommand()
+    {
+        invisToggleState = !invisToggleState;
+        playerRef.SetInvincibilityMode(invisToggleState);
+    }
+
+    public void SetPlayerInvincible()
+    {
+        invisToggleState = true;
+        playerRef.SetInvincibilityMode(true);
+    }
+
+    public void RemovePlayerInvincibility()
+    {
+        invisToggleState = false;
+        playerRef.SetInvincibilityMode(false);
+    }
+
+
+    private bool ammoToggle = false;
+    public void ToggleInfiniteAmmoCommand()
+    {
+        ammoToggle = !ammoToggle;
+        Gunner gunner = playerRef as Gunner;
+        if (gunner != null)
+            gunner.SetInfiniteAmmo(ammoToggle);
+    }
+
+    public void SetAmmoInfinite()
+    {
+        ammoToggle = true;
+        Gunner gunner = playerRef as Gunner;
+        if (gunner != null)
+            gunner.SetInfiniteAmmo(true);
+    }
+
+    public void RemoveInfiniteAmmo()
+    {
+        ammoToggle = false;
+        Gunner gunner = playerRef as Gunner;
+        if (gunner != null)
+            gunner.SetInfiniteAmmo(false);
+    }
+
+    public void KillPlayerCommand()
+    {
+        RemovePlayerInvincibility();
+        playerRef.TakeDamage(playerRef.Health);
+    }
+
+
+    #endregion
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    public void SkipCutsceneCommand()
+    {
+        //GameManager.Instance?.CutSceneComplete();
+        if (GameManager.Instance == null)
+            return;
+        GameObject cutscene = GameManager.Instance.CurrentCustscene;
+        if (cutscene == null || !cutscene.activeInHierarchy)
+            return;
+
+        DialogueManager cutManager = cutscene.GetComponentInChildren<DialogueManager>();
+        if(cutManager == null)
+        {
+            Debug.Log("Could not find the cutscene manager");
+            return;
+        }
+
+        cutManager.DeactiveCutscene();
+
+    }
+
+    public void QuitCommand()
+    {
+        if (IsInEditor)
+            UnityEditor.EditorApplication.isPlaying = false;
+        else
+            Application.Quit();
+    }
     public void PauseCommand()
     {
-        lastTimeScale = Time.timeScale;
         Time.timeScale = 0f;
+        isPaused = true;
     }
 
     public void PlayCommand()
     {
-        Time.timeScale = lastTimeScale;
+        Time.timeScale = speedMultiplyer;
+        isPaused = false;
     }
 
     public void FastForwardCommand()
     {
         IncrementSpeedMultiplyer();
-        Time.timeScale = speedMultiplyer;
+        if(!isPaused)
+            Time.timeScale = speedMultiplyer;
     }
-
-
-
-
-
-
 
     #endregion
 
+    /// ////////////////////////////////////////////////////////////////////////////////////////////////
     #region Command Helper Methods
 
     void IncrementSpeedMultiplyer()
@@ -107,12 +241,15 @@ public class CommandConsole : MonoBehaviour
         speedMultiplyerText.text = speedMultiplyer.ToString("F1") + "x";
     }
 
-
-
+    private EnemyGroup GetRoomEnemies()
+    {
+        return currentRoom.GetComponentInChildren<EnemyGroup>();
+    }
 
 
     #endregion
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     private void Update()
     {
         if (!ConsoleEnabled())
@@ -123,7 +260,16 @@ public class CommandConsole : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
             RevertConsole.Invoke();
-        
+
+        if(playerRef != null)
+        {
+            if (playerRef.currentRoom != null && playerRef.currentRoom != currentRoom)
+            {
+                currentRoom = playerRef.currentRoom;
+                levelEditor?.PlayerChangedRoom(currentRoom);
+                roomNamText.text = currentRoom.name;
+            }
+        }
     }
 
     private void SetConsole(bool toState)
@@ -131,9 +277,9 @@ public class CommandConsole : MonoBehaviour
         if (!ConsoleEnabled())
             return;
 
+        _isOpen = toState;
         consoleWindow.SetActive(toState);
-        if (!enableHotkeysWhileClosed)
-            ToggleHotkeys.Invoke(toState);
+
         if(!toState)
             RevertConsole();
     }
