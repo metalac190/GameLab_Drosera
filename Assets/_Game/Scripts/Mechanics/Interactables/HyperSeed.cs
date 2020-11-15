@@ -12,6 +12,13 @@ public class HyperSeed : InteractableBase
         if (!base.Interact(player))
             return false;
 
+        Activate();
+
+        return true;
+    }
+
+    public void Activate()
+    {
         seedModel.SetActive(false);
         Debug.Log(seedModel + " turned off.");
         FindObjectOfType<CameraShake>().TriggerCameraShake(.5f, .5f);
@@ -19,7 +26,7 @@ public class HyperSeed : InteractableBase
         VFX();
         // When hyperseed is grabbed - all enemies turn aggressive
         EnemyGroup[] enemies = FindObjectsOfType<EnemyGroup>();
-        foreach(EnemyGroup group in enemies)
+        foreach (EnemyGroup group in enemies)
         {
             group.GrabHyperseed.Invoke();
         }
@@ -27,8 +34,6 @@ public class HyperSeed : InteractableBase
         //Go to Main stage two game state
         GameManager.Instance.GameState = DroseraGlobalEnums.GameState.MainTwo;
         Debug.Log("Game State changed to: " + GameManager.Instance.GameState);
-
-        return true;
     }
 
     IEnumerator FreezeTime()
