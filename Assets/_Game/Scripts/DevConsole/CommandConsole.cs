@@ -227,14 +227,6 @@ public class CommandConsole : MonoBehaviour
             Time.timeScale = speedMultiplyer;
     }
 
-    public void QuitCommand()
-    {
-        if (isInEditor)
-            UnityEditor.EditorApplication.isPlaying = false;
-        else
-            Application.Quit();
-    }
-
     #endregion
 
     /// ////////////////////////////////////////////////////////////////////////////////////////////////
