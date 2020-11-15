@@ -32,6 +32,7 @@ public abstract class EnemyBase : EntityBase {
     protected bool isHealing;
     protected float hyperseedHealthMultiplier = 0.7f;
     protected float hyperseedDamageMultiplier = 1.2f;
+    protected float hyperseedSpeedMultiplier = 1.4f;
     protected float cooldownTimer; // Timer for attack cooldowns
     [HideInInspector] public bool attackDone, aggroAnimDone;
 
@@ -158,6 +159,9 @@ public abstract class EnemyBase : EntityBase {
             this.hyperseed = true;
             _health *= hyperseedHealthMultiplier;
             _maxHealth *= hyperseedHealthMultiplier;
+
+            _moveSpeed *= hyperseedSpeedMultiplier;
+            _agent.speed *= hyperseedSpeedMultiplier;
 
             Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
             foreach(Hitbox hitbox in hitboxes) {
