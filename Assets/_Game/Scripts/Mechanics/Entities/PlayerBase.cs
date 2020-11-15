@@ -134,6 +134,7 @@ public class PlayerBase : EntityBase
         controller = gameObject.GetComponent<CharacterController>();
         currentState = PlayerState.Neutral;
         gm = FindObjectOfType<GameManager>();
+        _isForcedInvincible = _isInvincible;
     }
 
     public static PlayerBase instance;

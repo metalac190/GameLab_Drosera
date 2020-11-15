@@ -241,15 +241,6 @@ public class CommandConsole : MonoBehaviour
     private EnemyGroup GetRoomEnemies()
     {
         return currentRoom.GetComponentInChildren<EnemyGroup>();
-
-        //EnemyGroup[] allGroups = FindObjectsOfType<EnemyGroup>();
-        /*
-        foreach (EnemyGroup eachGroup in allGroups)
-            if (eachGroup.GetComponentInParent<Room>() == currentRoom)
-                return eachGroup;
-        */
-        //return FindObjectsOfType<EnemyGroup>();
-        return null;
     }
 
 
