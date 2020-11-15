@@ -36,17 +36,39 @@ public class PesticideGrenadeProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.GetComponent<EnemyBase>() != null)
+        {
+            StopAllCoroutines();
+            StartCoroutine(Explode(0));
+            _exploded = true;
+        }
         if (!_exploded)
         {
-            StartCoroutine(Explode());
+            StartCoroutine(Explode(_explosionDelay));
             _exploded = true;
         }
     }
 
-    IEnumerator Explode()
+    IEnumerator Explode(float explosionDelay)
     {
-        yield return new WaitForSeconds(_explosionDelay);
+        yield return new WaitForSeconds(explosionDelay);
         OnExplode?.Invoke();
+
+        StartCoroutine(SpawnDecal());
+
+        _audioScript.PlaySound(0);
+
+        GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
+        vfx.GetComponentInChildren<SphereCollider>().enabled = false;
+        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        gameObject.GetComponent<SphereCollider>().enabled = false;
+
+        StartCoroutine(ClearVFX(vfx));
+    }
+
+    IEnumerator SpawnDecal()
+    {
+        yield return new WaitForSeconds(0.35f);
 
         Vector3 pos = transform.position;
         pos.y = 0.2f;
@@ -55,15 +77,6 @@ public class PesticideGrenadeProjectile : MonoBehaviour
         scale.x = _explosionRadius;
         scale.z = _explosionRadius;
         hitbox.transform.localScale = scale;
-
-        _audioScript.PlaySound(0);
-
-       // GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
-        //vfx.GetComponentInChildren<SphereCollider>().enabled = false;
-        gameObject.GetComponent<MeshRenderer>().enabled = false;
-        gameObject.GetComponent<SphereCollider>().enabled = false;
-
-        //StartCoroutine(ClearVFX(vfx));
     }
 
     //Not used currently

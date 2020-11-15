@@ -1187,8 +1187,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1522,6 +1522,7 @@ GameObject:
   - component: {fileID: 7363952317847329179}
   - component: {fileID: 7363952317847329176}
   - component: {fileID: 2023939179}
+  - component: {fileID: 1691548641}
   m_Layer: 5
   m_Name: Quit Button
   m_TagString: Untagged
@@ -1664,6 +1665,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -1672,6 +1674,34 @@ MonoBehaviour:
   RandomVolumeMin: 1
   RandomPitchMax: 1
   RandomPitchMin: 1
+--- !u!114 &1691548641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952317847329158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 574423392}
+          m_MethodName: ChangeQuitTextColor
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &7363952317874600462
 GameObject:
   m_ObjectHideFlags: 0
@@ -2333,17 +2363,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 2023814816}
-          m_MethodName: PlayOneSound
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!114 &2023814816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2372,6 +2391,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -2530,17 +2550,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 1249480546}
-          m_MethodName: PlayOneSound
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!114 &1249480546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2569,6 +2578,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -2743,6 +2753,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7363952318770051218}
   - component: {fileID: 7363952318770051221}
+  - component: {fileID: 574423392}
+  - component: {fileID: 574423394}
   m_Layer: 5
   m_Name: Pause HUD
   m_TagString: Untagged
@@ -2784,6 +2796,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7363952318770051219}
   m_CullTransparentMesh: 0
+--- !u!114 &574423392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952318770051219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ec7f698e2417c64b8c57bc062389d4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resumeHUD: {fileID: 7363952318148867842}
+  extrasHUD: {fileID: 7363952318133416374}
+  settingsHUD: {fileID: 7363952318309725259}
+  quitHUD: {fileID: 7363952319339703376}
+  volumeSlider: {fileID: 7245531183865423006}
+  volumeText: {fileID: 2481103233310962195}
+  menuText: {fileID: 7363952319250203902}
+  quitText: {fileID: 7363952317847329179}
+--- !u!114 &574423394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952318770051219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 1388270348251091532, guid: 2ccdb6555f0aeef46a9893e6864a675e,
+    type: 3}
+  audioPrefabParent: {fileID: 0}
+  mixerTrack: {fileID: 512455774179500660, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
+    type: 2}
+  audioClips:
+  - {fileID: 8300000, guid: 29dccde97aadc5b4197b29d9b3b65b03, type: 3}
+  StartVolume: 0.25
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  letClipPlayInPause: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &7363952318830979523
 GameObject:
   m_ObjectHideFlags: 0
@@ -3074,8 +3143,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5372549, g: 0.5372549, b: 0.5372549, a: 1}
-  m_RaycastTarget: 0
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3118,17 +3187,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 1876057211}
-          m_MethodName: PlayOneSound
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!114 &1876057211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3157,6 +3215,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -3258,6 +3317,7 @@ GameObject:
   - component: {fileID: 7363952319250203902}
   - component: {fileID: 7363952319250203903}
   - component: {fileID: 279035142}
+  - component: {fileID: 751034134}
   m_Layer: 5
   m_Name: Menu Button
   m_TagString: Untagged
@@ -3305,7 +3365,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.8564266, b: 0, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3400,6 +3460,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -3408,6 +3469,34 @@ MonoBehaviour:
   RandomVolumeMin: 1
   RandomPitchMax: 1
   RandomPitchMin: 1
+--- !u!114 &751034134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363952319250203901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 574423392}
+          m_MethodName: ChangeQuitTextColor
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
 --- !u!1 &7363952319339703376
 GameObject:
   m_ObjectHideFlags: 0
@@ -3554,7 +3643,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 128.5, y: 31}
+  m_AnchoredPosition: {x: 128.5, y: 13}
   m_SizeDelta: {x: 685.98, y: 73.677246}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7363952319480839970
@@ -3974,17 +4063,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 1052264967}
-          m_MethodName: PlayOneSound
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!114 &1052264967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4013,6 +4091,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -4038,7 +4117,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7363952319723168442
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4356,17 +4435,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 132396870}
-          m_MethodName: PlayOneSound
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!114 &132396870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4395,6 +4463,7 @@ MonoBehaviour:
   smartRandomize: 0
   stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
+  letClipPlayInPause: 0
   FadeInSpeed: 0
   FadeInEndVolume: 1
   FadeOutSpeed: 0
@@ -4739,6 +4808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mixer: {fileID: 24100000, guid: dc17abd1a9b329f45b5fef1467fc8a0a, type: 2}
+  volumeSlider: {fileID: 7245531183865423006}
   volumeText: {fileID: 2481103233310962195}
 --- !u!1 &8889907181475016733
 GameObject:

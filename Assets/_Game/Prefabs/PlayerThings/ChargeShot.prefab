@@ -111,11 +111,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnHit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3448350425163702830}
+        m_MethodName: SpawnHitVFX
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _moveSpeed: 1
-  _damageMultiplier: 50
-  _scaleMultiplier: 1.25
+  _damageMultiplier: 35
   _lifespan: 5
+  _AOEEffect: {fileID: 3117750753337946311, guid: ad75876847294c541b0ca3d01775cbb7,
+    type: 3}
   effect: {fileID: 8431555378304536850, guid: f86c59579f9ef494db2c9517b23a20e3, type: 3}
   effectDuration: 0.5
 --- !u!114 &2484289614610776760
@@ -134,20 +146,11 @@ MonoBehaviour:
   damage: 0
   canDamageWalls: 0
   hitboxTarget: 1
+  hitVFX: {fileID: 0}
+  hitVFXDuration: 0
   OnHit:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3448350425163702830}
-        m_MethodName: SpawnHitVFX
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!54 &-6415110067165424354
 Rigidbody:
   m_ObjectHideFlags: 0

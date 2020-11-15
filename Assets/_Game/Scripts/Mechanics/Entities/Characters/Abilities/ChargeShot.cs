@@ -10,6 +10,7 @@ public class ChargeShot : MonoBehaviour
     GunnerAltFire _altFire;
     Hitbox _hitbox;
     Rigidbody _rb;
+    Animator animator;
 
     //ParticleSystem _vfx;
     ElectricRoundExpandFire _vfxController;
@@ -18,11 +19,13 @@ public class ChargeShot : MonoBehaviour
     float _charge;
     Vector3 _startScale;
 
+    public float Charge { get { return _charge; } }
+
     [Header("Shot Properties")]
     [SerializeField] float _moveSpeed;
     [SerializeField] float _damageMultiplier = 1f;
-    [SerializeField] float _scaleMultiplier = 1f;
     [SerializeField] float _lifespan = 5f;
+    [SerializeField] GameObject _AOEEffect;
 
     [Header("VFX")]
     [SerializeField]
@@ -32,6 +35,7 @@ public class ChargeShot : MonoBehaviour
 
     private void Awake()
     {
+        animator = FindObjectOfType<PlayerBase>().GetComponent<Animator>();
         _altFire = FindObjectOfType<GunnerAltFire>();
         _hitbox = GetComponent<Hitbox>();
         _rb = GetComponentInChildren<Rigidbody>();
@@ -59,6 +63,7 @@ public class ChargeShot : MonoBehaviour
     {
         if (!_isCharging)
         {
+            animator.SetBool("chargingShotAni", false);
             GetComponent<SphereCollider>().enabled = true;
             if (_charge < .2)
             {
@@ -73,15 +78,15 @@ public class ChargeShot : MonoBehaviour
         }
         else
         {
+            animator.SetBool("chargingShotAni", true);
+
             _charge = _altFire.Charge;
 
             transform.position = _altFire.GunEnd.position;
             transform.rotation = _altFire.GunEnd.rotation;
             //transform.localScale = _startScale + Vector3.one * _charge * _scaleMultiplier;
-            if (_charge >= .2)
-            {
-                _hitbox.baseDamage = _charge * _damageMultiplier;
-            }
+            
+            _hitbox.baseDamage = 5 + _charge * _damageMultiplier;
 
             _vfxController.Charge((1/_altFire.ChargeRate));
 
@@ -102,11 +107,6 @@ public class ChargeShot : MonoBehaviour
     {
         Destroy(gameObject, _lifespan);
         _isCharging = false;
-        int num = Random.Range(0, 3);
-        if (num == 0)
-        {
-            _hitbox.baseDamage *= 2;
-        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -114,7 +114,12 @@ public class ChargeShot : MonoBehaviour
         int layer = other.gameObject.layer;
         if (!(layer == 11 || layer == 13 || layer == 15)) //hit anything but player, other hitboxes, and invisible walls
         {
+            Vector3 pos = transform.position + transform.forward;
+            ChargeShotAOE aoe = Instantiate(_AOEEffect, pos, Quaternion.identity).GetComponent<ChargeShotAOE>();
+            aoe.IgnoreTarget(other.gameObject);
+
             OnHit?.Invoke();
+
             Destroy(gameObject);
         }
     }

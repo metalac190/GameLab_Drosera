@@ -94,7 +94,7 @@ MonoBehaviour:
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_UseGeometry: 0
+  m_UseGeometry: 1
   m_DefaultArea: 0
   m_IgnoreNavMeshAgent: 1
   m_IgnoreNavMeshObstacle: 1
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_UseGeometry: 0
+  m_UseGeometry: 1
   m_DefaultArea: 0
   m_IgnoreNavMeshAgent: 1
   m_IgnoreNavMeshObstacle: 1
@@ -2845,6 +2845,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4790953044430396184}
+  - component: {fileID: 3523593946091647879}
+  - component: {fileID: 2039654934806378277}
   m_Layer: 0
   m_Name: N2a_Oasis_Collision
   m_TagString: Untagged
@@ -2871,6 +2873,51 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3523593946091647879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2841566233326725492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e43c95b61713cc142b4bf00b74e4dd7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entrance: {fileID: 653163058030779917}
+  exit: {fileID: 1353203730206823516}
+  overlapping: 0
+  activeGenerating: 1
+  biomes:
+  - {fileID: 0}
+  - {fileID: 0}
+  data: {fileID: 2039654934806378277}
+  layouts: []
+--- !u!114 &2039654934806378277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2841566233326725492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c32c4c6172ced44b9bd231db7213461, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layouts:
+  - name: Layout
+    dropdownInEditor: 0
+    difficulty: 0
+    hidden: 1
+    objects:
+    - {fileID: 6098786671004779260}
+    - {fileID: 4434709818369748488}
+    - {fileID: 2260106977092723361}
+    - {fileID: 6939689744645379877}
+    - {fileID: 7884753234529184789}
+    - {fileID: 4801436359229936189}
 --- !u!1 &4296465352170129541
 GameObject:
   m_ObjectHideFlags: 0
@@ -6933,7 +6980,7 @@ PrefabInstance:
         type: 3}
       propertyPath: room
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 3523593946091647879}
     - target: {fileID: 4392189221868813957, guid: 28be8e97ed5b053428f72b373c0135af,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7423,7 +7470,7 @@ PrefabInstance:
         type: 3}
       propertyPath: room
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 3523593946091647879}
     - target: {fileID: 7256358428865077374, guid: e4a9af639c736e3409d85fc08f98ceb2,
         type: 3}
       propertyPath: m_LocalPosition.x
