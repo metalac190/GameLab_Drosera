@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] public Texture2D mouseIcon;
     [SerializeField] string mainMenuScene;
     [SerializeField] string loseScene;
     [SerializeField] string winScene;
@@ -15,6 +16,7 @@ public class GameManager : MonoBehaviour
     private bool gameWon = false;
     private GameObject cutsceneInstance;
 
+    public GameObject CurrentCustscene => cutsceneInstance;
     public delegate void OnGameStateChangeHandler();
     public event OnGameStateChangeHandler OnStateChange;
     public UnityEvent LevelStart;
@@ -47,6 +49,8 @@ public class GameManager : MonoBehaviour
             _instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
+
+        RevertCursor();
     }
 
     public void LevelComplete()
@@ -97,5 +101,16 @@ public class GameManager : MonoBehaviour
         currentCutscene = 0;
         gameWon = true;
         LevelComplete();
+    }
+
+
+    public void RevertCursor()
+    {
+        Cursor.SetCursor(mouseIcon, GetCursorHotspot(), CursorMode.Auto);
+    }
+    private Vector2 GetCursorHotspot()
+    {
+        //return new Vector2( 3f, 3f );
+        return Vector2.zero;
     }
 }

@@ -254,7 +254,7 @@ MonoBehaviour:
     type: 2}
   audioClips:
   - {fileID: 8300000, guid: d37407bae71436f43afbd9192985a4a2, type: 3}
-  StartVolume: 0.504
+  StartVolume: 0.377
   StereoPan: 0
   loop: 0
   useClipsAsPlaylist: 0
@@ -419,6 +419,74 @@ MonoBehaviour:
   RandomVolumeMin: 1
   RandomPitchMax: 1
   RandomPitchMin: 1
+--- !u!1 &7759428567651233874
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7929317528700621699}
+  - component: {fileID: 7097467233824945381}
+  m_Layer: 11
+  m_Name: Grenade Reload
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7929317528700621699
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7759428567651233874}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5636980632235669500}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7097467233824945381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7759428567651233874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioPrefab: {fileID: 1388270348251091532, guid: 2ccdb6555f0aeef46a9893e6864a675e,
+    type: 3}
+  audioPrefabParent: {fileID: 9206503905713905926}
+  mixerTrack: {fileID: 5805718969178195049, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
+    type: 2}
+  audioClips:
+  - {fileID: 8300000, guid: cbe6ba48f033ec04d9c1ee30985e2260, type: 3}
+  StartVolume: 0.606
+  StereoPan: 0
+  loop: 0
+  useClipsAsPlaylist: 0
+  playlistClipDelay: 0
+  randomize: 0
+  smartRandomize: 0
+  stopSoundOnFadeOut: 0
+  letClipFinishOnStop: 0
+  letClipPlayInPause: 0
+  FadeInSpeed: 0
+  FadeInEndVolume: 1
+  FadeOutSpeed: 0
+  FadeOutEndVolume: 0
+  RandomVolumeMax: 1
+  RandomVolumeMin: 1
+  RandomPitchMax: 1
+  RandomPitchMin: 1
 --- !u!1 &7890093818494370682
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,7 +496,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5644226624733048030}
-  - component: {fileID: 379703163901969191}
   m_Layer: 11
   m_Name: Lock On Sound
   m_TagString: Untagged
@@ -450,43 +517,6 @@ Transform:
   m_Father: {fileID: 5636980632235669500}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &379703163901969191
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7890093818494370682}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4b4806052e61734fa0d54eb5e9202e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioPrefab: {fileID: 1388270348251091532, guid: 2ccdb6555f0aeef46a9893e6864a675e,
-    type: 3}
-  audioPrefabParent: {fileID: 9206503905713905926}
-  mixerTrack: {fileID: 5805718969178195049, guid: dc17abd1a9b329f45b5fef1467fc8a0a,
-    type: 2}
-  audioClips:
-  - {fileID: 8300000, guid: 404e7323d35496d46a849aef453cd1ea, type: 3}
-  StartVolume: 1
-  StereoPan: 0
-  loop: 0
-  useClipsAsPlaylist: 0
-  playlistClipDelay: 0
-  randomize: 0
-  smartRandomize: 0
-  stopSoundOnFadeOut: 0
-  letClipFinishOnStop: 0
-  letClipPlayInPause: 0
-  FadeInSpeed: 0
-  FadeInEndVolume: 1
-  FadeOutSpeed: 0
-  FadeOutEndVolume: 0
-  RandomVolumeMax: 1
-  RandomVolumeMin: 1
-  RandomPitchMax: 1
-  RandomPitchMin: 1
 --- !u!1 &8082277082690344700
 GameObject:
   m_ObjectHideFlags: 0
@@ -758,6 +788,7 @@ Transform:
   - {fileID: 1075303743893553855}
   - {fileID: 2872169356286206199}
   - {fileID: 5644226624733048030}
+  - {fileID: 7929317528700621699}
   m_Father: {fileID: 9206503905713905920}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -857,7 +888,7 @@ MonoBehaviour:
   OnTargetLock:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 379703163901969191}
+      - m_Target: {fileID: 0}
         m_MethodName: PlaySound
         m_Mode: 3
         m_Arguments:
@@ -936,7 +967,7 @@ MonoBehaviour:
   _controller: {fileID: 0}
   _animator: {fileID: 0}
   playerY: 0
-  dodgeCooldownTime: 2
+  dodgeCooldownTime: 2.5
   dodgeSpeed: 50
   dodgeTime: 0.15
   altFireCooldownTime: 6
@@ -946,12 +977,14 @@ MonoBehaviour:
   ammo: 5
   maxAmmo: 24
   heldAmmo: 24
-  ammoPerOre: 2
+  ammoPerOre: 1
   reloadCoolDownTime: 1
   lowHealthPercentage: 0.3
   dodgeVFX: {fileID: 802523609689850116, guid: 53d32b181f47e8f41a677efcc4961212, type: 3}
   lowHealthSoundDelay: 0.6
   iFrameRate: 0.1
+  desertDmgTime: 0.6
+  desertDmgAmt: 1.2
   OnReload:
     m_PersistentCalls:
       m_Calls:
@@ -1009,8 +1042,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8536d9b13bcf2974589cb60c11b8fbf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 4
+  _cooldown: 5.5
   _ammoCost: 0
+  OnCooldownFinished:
+    m_PersistentCalls:
+      m_Calls: []
   OnCharge:
     m_PersistentCalls:
       m_Calls:
@@ -1066,8 +1102,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a9d472be595902488b5042b137a32d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 60
+  _cooldown: 50
   _ammoCost: 0
+  OnCooldownFinished:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7097467233824945381}
+        m_MethodName: PlayOneSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnFire:
     m_PersistentCalls:
       m_Calls:
@@ -1096,8 +1146,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eeba33f1e499b63498baf70613a5aac3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cooldown: 60
+  _cooldown: 50
   _ammoCost: 0
+  OnCooldownFinished:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7097467233824945381}
+        m_MethodName: PlaySound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnFire:
     m_PersistentCalls:
       m_Calls:
@@ -1128,6 +1192,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cooldown: 0.133
   _ammoCost: 1
+  OnCooldownFinished:
+    m_PersistentCalls:
+      m_Calls: []
   OnFire:
     m_PersistentCalls:
       m_Calls:
