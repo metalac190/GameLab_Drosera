@@ -535,7 +535,8 @@ public class PlayerBase : EntityBase
             return;
 
         _health -= value;
-        OnTakeDamage?.Invoke();
+        if (currentState != PlayerState.Dead)
+            OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
             currentState = PlayerState.Dead;

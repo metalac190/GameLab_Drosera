@@ -21,7 +21,11 @@ public class ChargeShotAOE : Hitbox
         damage = 5 + charge * _damageMultiplier;
         transform.localScale = Vector3.one * (1 + charge * _scaleMultiplier);
         StartCoroutine(Hide());
-        Destroy(gameObject, _lightningDuration);
+
+        if (_slowDuration > _lightningDuration)
+            Destroy(gameObject, _slowDuration + 0.5f);
+        else
+            Destroy(gameObject, _lightningDuration + 0.5f);
     }
 
     public void IgnoreTarget(GameObject target)
@@ -47,7 +51,7 @@ public class ChargeShotAOE : Hitbox
     {
         yield return new WaitForSeconds(.1f);
         GetComponent<SphereCollider>().enabled = false;
-        GetComponent<MeshRenderer>().enabled = false;
+        //GetComponent<MeshRenderer>().enabled = false;
     }
 
     IEnumerator DestroyLightning(LightningAnimator animator)
