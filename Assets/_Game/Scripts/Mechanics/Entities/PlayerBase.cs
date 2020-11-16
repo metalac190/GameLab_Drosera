@@ -120,6 +120,7 @@ public class PlayerBase : EntityBase
     protected float desertDmgTime = .6f;
     [SerializeField]
     protected float desertDmgAmt = 1.2f;
+    private float desertT = 0;
 
     public UnityEvent OnReload;
     public UnityEvent OnDodge;
@@ -150,6 +151,8 @@ public class PlayerBase : EntityBase
 
         Physics.IgnoreLayerCollision(11, 16);
         Physics.IgnoreLayerCollision(16, 15);
+
+        desertT = desertDmgTime;
     }
 
     // Update is called once per frame
@@ -360,22 +363,19 @@ public class PlayerBase : EntityBase
         else //this never gets called?
         {
             _animator.SetInteger("dodgeAni", 0);
-
-            Debug.Log("Idle");
-            Debug.Log(gm.CurrentBiome);
             _animator.SetInteger("walkAni", 0);
 
             if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
             {
-                float t = desertDmgTime;
-                if (t < 0)
+                
+                if (desertT < 0)
                 {
                     _health -= desertDmgAmt;
-                    t = desertDmgTime;
+                    desertT = desertDmgTime;
                 }
                 else
                 {
-                    t -= Time.deltaTime;
+                    desertT -= Time.deltaTime;
                 }
             }
         }
