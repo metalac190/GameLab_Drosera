@@ -9,15 +9,19 @@ public class InGameHUD : MonoBehaviour
 {
     [Header("Top Left UI")]
     [SerializeField] Image objectiveImage;
+    //[SerializeField] Image objectiveImageText;
     [SerializeField] Sprite hyperSeedSprite;
     [SerializeField] Sprite dropshipSprite;
-    [SerializeField] TextMeshProUGUI objectiveText;
+    [SerializeField] Sprite[] objectiveSprites;
+    // [SerializeField] TextMeshProUGUI objectiveText;
     [SerializeField] TextMeshProUGUI biomeText;
 
     [Header("Bottom Right UI")]
     [Header("Ammo")]
+    [SerializeField] Image lowAmmoImage;
     [SerializeField] TextMeshProUGUI currentAmmoText;
     [SerializeField] TextMeshProUGUI maxAmmoText;
+    bool showingAmmoFlash;
 
     [Header("Ability")]
     [SerializeField] Image selectedAbilityImage;
@@ -44,6 +48,12 @@ public class InGameHUD : MonoBehaviour
     public bool dodgeOnCooldown = false;
     public float dodgeCooldown = 2;
     public float dodgeTimer = 0;
+
+    [Header("Reload")]
+    [SerializeField] Image reloadImage;
+    public bool reloadOnCooldown = false;
+    public float reloadCooldown = 2;
+    public float reloadTimer = 0;
 
     // references
     PlayerBase playerHookup;
@@ -99,7 +109,6 @@ public class InGameHUD : MonoBehaviour
         {
             StartCoroutine(ShowPhaseOneObjectiveText());
 
-            // wait for ores to spawn before adding ore vein hookup
             oreVeinHookups = FindObjectsOfType<OreVein>();
             foreach (OreVein ore in oreVeinHookups)
             {
@@ -121,10 +130,12 @@ public class InGameHUD : MonoBehaviour
         }
 
         // key R/X
+        /*
         if (playerHookup.ReloadButton)
         {
             UpdateAmmoText();
         }
+        */
         
         // key Space/LT
         if (playerHookup.DodgeButtonKey)
@@ -167,14 +178,35 @@ public class InGameHUD : MonoBehaviour
                 dodgeTimer += Time.deltaTime;
 
                 dodgeImage.fillAmount = dodgeTimer / dodgeCooldown;
+
+                if (dodgeImage.fillAmount > 0.825f)
+                    dodgeImage.fillAmount = 0.825f;
             }
             else
             {
                 dodgeOnCooldown = false;
 
-                dodgeImage.fillAmount = 1;
+                dodgeImage.fillAmount = 0.825f;
 
                 dodgeImage.DOFade(0, 0.5f);
+            }
+        }
+
+        if (reloadOnCooldown)
+        {
+            if (reloadTimer < reloadCooldown)
+            {
+                reloadTimer += Time.deltaTime;
+
+                reloadImage.fillAmount = reloadTimer / reloadCooldown;
+            }
+            else
+            {
+                reloadOnCooldown = false;
+
+                reloadImage.fillAmount = 1;
+
+                reloadImage.DOFade(0, 0.5f);
             }
         }
     }
@@ -186,19 +218,19 @@ public class InGameHUD : MonoBehaviour
         if (objectiveImage != null)
         {
             objectiveImage.sprite = hyperSeedSprite;
-            objectiveImage.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
+            // objectiveImage.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
         }
 
-        objectiveText.text = "LOCATE THE HYPERSEED";
+        // objectiveImageText.sprite = objectiveSprites[0];
 
         objectiveImage.DOFade(1, 1);
-        objectiveText.DOFade(1, 1);
+        // objectiveImageText.DOFade(1, 1);
         // biomeText.DOFade(1, 1);
 
         yield return new WaitForSeconds(10);
 
         objectiveImage.DOFade(0, 2);
-        objectiveText.DOFade(0, 2);
+        // objectiveImageText.DOFade(0, 2);
         // biomeText.DOFade(0, 2);
     }
 
@@ -208,19 +240,19 @@ public class InGameHUD : MonoBehaviour
         if (objectiveImage != null)
         {
             objectiveImage.sprite = dropshipSprite;
-            objectiveImage.transform.localScale = new Vector3(1, 1, 1);
+            // objectiveImage.transform.localScale = new Vector3(1, 1, 1);
         }
 
-        objectiveText.text = "ESCAPE TO THE DROPSHIP";
+        // objectiveImageText.sprite = objectiveSprites[1];
 
         objectiveImage.DOFade(1, 0);
-        objectiveText.DOFade(1, 0);
+        // objectiveImageText.DOFade(1, 0);
         // biomeText.DOFade(1, 0);
 
         yield return new WaitForSecondsRealtime(10);
 
         objectiveImage.DOFade(0, 2);
-        objectiveText.DOFade(0, 2);
+        // objectiveImageText.DOFade(0, 2);
         // biomeText.DOFade(0, 2);
     }
 
@@ -230,6 +262,56 @@ public class InGameHUD : MonoBehaviour
     {
         currentAmmoText.text = playerHookup.Ammo.ToString();
         maxAmmoText.text = playerHookup.HeldAmmo.ToString();
+
+        if (playerHookup.Ammo + playerHookup.HeldAmmo < 10)
+        {
+            if (!showingAmmoFlash)
+            {
+                showingAmmoFlash = true;
+                lowAmmoImage.gameObject.SetActive(true);
+                lowAmmoImage.DOFade(0.65f, 0f);
+
+                StartCoroutine(LowAmmoFlash());
+            }
+        }
+        else
+        {
+            showingAmmoFlash = false;
+            StopCoroutine(LowAmmoFlash());
+
+            lowAmmoImage.gameObject.SetActive(false);
+        }
+    }
+
+    // call when dodge is used (Space/LT)
+    public void DisplayReloadCooldown()
+    {
+        if (!reloadOnCooldown)
+        {
+            reloadTimer = 0;
+            reloadCooldown = 1;
+
+            reloadImage.fillAmount = 0;
+
+            reloadImage.DOComplete();
+            reloadImage.DOFade(1, 0);
+
+            reloadOnCooldown = true;
+        }
+    }
+
+    IEnumerator LowAmmoFlash()
+    {
+        while (showingAmmoFlash)
+        {
+            lowAmmoImage.DOFade(0.15f, 0.5f);
+
+            yield return new WaitForSeconds(0.5f);
+
+            lowAmmoImage.DOFade(0.65f, 0.5f);
+
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     void SetupAbilityImage()

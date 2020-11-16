@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class CodexEntry3 : CodexEntry
 {
-    public Image image;
+    public Sprite image;
 
     [TextArea(0, 100)]
     public string extraNotesTop;

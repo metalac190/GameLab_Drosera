@@ -124,9 +124,11 @@ public class PlayerBase : EntityBase
     public UnityEvent OnReload;
     public UnityEvent OnDodge;
     public UnityEvent OnLowHealth;
+    public UnityEvent OnEmptyClip;
 
     // Room detection/reference for enemies
     public Room currentRoom;
+    InGameHUD inGameHUD;
 
     protected override void Start()
     {
@@ -135,6 +137,7 @@ public class PlayerBase : EntityBase
         currentState = PlayerState.Neutral;
         gm = FindObjectOfType<GameManager>();
         _isForcedInvincible = _isInvincible;
+        inGameHUD = FindObjectOfType<InGameHUD>();
     }
 
     public static PlayerBase instance;
@@ -323,8 +326,10 @@ public class PlayerBase : EntityBase
                 _animator.SetInteger("dodgeAni", 0);
             }
         }
-        else if (currentState != PlayerState.Dodging) //idle
+        /*else if (currentState != PlayerState.Dodging) //idle
         {
+            Debug.Log("Idle");
+            Debug.Log(gm.CurrentBiome);
             _animator.SetInteger("walkAni", 0);
 
             if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
@@ -340,7 +345,7 @@ public class PlayerBase : EntityBase
                     t -= Time.deltaTime;
                 }
             }
-        }
+        }*/
         /*
         else if (currentState == PlayerState.Attacking)
         {
@@ -352,10 +357,27 @@ public class PlayerBase : EntityBase
             _animator.SetInteger("dodgeAni", 1);
             //Debug.Log("F");
         }
-        else
+        else //this never gets called?
         {
             _animator.SetInteger("dodgeAni", 0);
-            
+
+            Debug.Log("Idle");
+            Debug.Log(gm.CurrentBiome);
+            _animator.SetInteger("walkAni", 0);
+
+            if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
+            {
+                float t = desertDmgTime;
+                if (t < 0)
+                {
+                    _health -= desertDmgAmt;
+                    t = desertDmgTime;
+                }
+                else
+                {
+                    t -= Time.deltaTime;
+                }
+            }
         }
 
         if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
@@ -458,6 +480,8 @@ public class PlayerBase : EntityBase
                     ammo = tempAmmo;
                     heldAmmo = 0;
                 }
+                inGameHUD.UpdateAmmoText();
+                inGameHUD.DisplayReloadCooldown();
             }
         }
         if(reloadCoolDown<reloadCoolDownTime)
@@ -532,7 +556,8 @@ public class PlayerBase : EntityBase
             return;
 
         _health -= value;
-        OnTakeDamage?.Invoke();
+        if (currentState != PlayerState.Dead)
+            OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
             currentState = PlayerState.Dead;
