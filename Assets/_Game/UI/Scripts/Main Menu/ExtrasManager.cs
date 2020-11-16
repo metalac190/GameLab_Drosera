@@ -337,7 +337,7 @@ public class ExtrasManager : MonoBehaviour
         currentSection = "Crew";
 
         leftPanel.sprite = leftPanelSprites[0];
-        leftPanel.SetNativeSize();
+        // leftPanel.SetNativeSize();
 
         totalEntries = crewParentObj.transform.childCount;
 
@@ -354,7 +354,7 @@ public class ExtrasManager : MonoBehaviour
         currentSection = "Docs";
 
         leftPanel.sprite = leftPanelSprites[1];
-        leftPanel.SetNativeSize();
+        // leftPanel.SetNativeSize();
 
         totalEntries = docsParentObj.transform.childCount;
 
@@ -371,7 +371,7 @@ public class ExtrasManager : MonoBehaviour
         currentSection = "Mail";
 
         leftPanel.sprite = leftPanelSprites[2];
-        leftPanel.SetNativeSize();
+        // leftPanel.SetNativeSize();
 
         totalEntries = mailParentObj.transform.childCount;
 
@@ -388,7 +388,7 @@ public class ExtrasManager : MonoBehaviour
         currentSection = "Media";
 
         leftPanel.sprite = leftPanelSprites[3];
-        leftPanel.SetNativeSize();
+        // leftPanel.SetNativeSize();
 
         totalEntries = mailParentObj.transform.childCount;
 
