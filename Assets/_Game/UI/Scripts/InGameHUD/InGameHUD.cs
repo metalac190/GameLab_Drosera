@@ -9,7 +9,7 @@ public class InGameHUD : MonoBehaviour
 {
     [Header("Top Left UI")]
     [SerializeField] Image objectiveImage;
-    [SerializeField] Image objectiveImageText;
+    //[SerializeField] Image objectiveImageText;
     [SerializeField] Sprite hyperSeedSprite;
     [SerializeField] Sprite dropshipSprite;
     [SerializeField] Sprite[] objectiveSprites;
@@ -48,6 +48,12 @@ public class InGameHUD : MonoBehaviour
     public bool dodgeOnCooldown = false;
     public float dodgeCooldown = 2;
     public float dodgeTimer = 0;
+
+    [Header("Reload")]
+    [SerializeField] Image reloadImage;
+    public bool reloadOnCooldown = false;
+    public float reloadCooldown = 2;
+    public float reloadTimer = 0;
 
     // references
     PlayerBase playerHookup;
@@ -172,14 +178,35 @@ public class InGameHUD : MonoBehaviour
                 dodgeTimer += Time.deltaTime;
 
                 dodgeImage.fillAmount = dodgeTimer / dodgeCooldown;
+
+                if (dodgeImage.fillAmount > 0.825f)
+                    dodgeImage.fillAmount = 0.825f;
             }
             else
             {
                 dodgeOnCooldown = false;
 
-                dodgeImage.fillAmount = 1;
+                dodgeImage.fillAmount = 0.825f;
 
                 dodgeImage.DOFade(0, 0.5f);
+            }
+        }
+
+        if (reloadOnCooldown)
+        {
+            if (reloadTimer < reloadCooldown)
+            {
+                reloadTimer += Time.deltaTime;
+
+                reloadImage.fillAmount = reloadTimer / reloadCooldown;
+            }
+            else
+            {
+                reloadOnCooldown = false;
+
+                reloadImage.fillAmount = 1;
+
+                reloadImage.DOFade(0, 0.5f);
             }
         }
     }
@@ -194,16 +221,16 @@ public class InGameHUD : MonoBehaviour
             // objectiveImage.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
         }
 
-        objectiveImageText.sprite = objectiveSprites[0];
+        // objectiveImageText.sprite = objectiveSprites[0];
 
         objectiveImage.DOFade(1, 1);
-        objectiveImageText.DOFade(1, 1);
+        // objectiveImageText.DOFade(1, 1);
         // biomeText.DOFade(1, 1);
 
         yield return new WaitForSeconds(10);
 
         objectiveImage.DOFade(0, 2);
-        objectiveImageText.DOFade(0, 2);
+        // objectiveImageText.DOFade(0, 2);
         // biomeText.DOFade(0, 2);
     }
 
@@ -216,16 +243,16 @@ public class InGameHUD : MonoBehaviour
             // objectiveImage.transform.localScale = new Vector3(1, 1, 1);
         }
 
-        objectiveImageText.sprite = objectiveSprites[1];
+        // objectiveImageText.sprite = objectiveSprites[1];
 
         objectiveImage.DOFade(1, 0);
-        objectiveImageText.DOFade(1, 0);
+        // objectiveImageText.DOFade(1, 0);
         // biomeText.DOFade(1, 0);
 
         yield return new WaitForSecondsRealtime(10);
 
         objectiveImage.DOFade(0, 2);
-        objectiveImageText.DOFade(0, 2);
+        // objectiveImageText.DOFade(0, 2);
         // biomeText.DOFade(0, 2);
     }
 
@@ -253,6 +280,23 @@ public class InGameHUD : MonoBehaviour
             StopCoroutine(LowAmmoFlash());
 
             lowAmmoImage.gameObject.SetActive(false);
+        }
+    }
+
+    // call when dodge is used (Space/LT)
+    public void DisplayReloadCooldown()
+    {
+        if (!reloadOnCooldown)
+        {
+            reloadTimer = 0;
+            reloadCooldown = 1;
+
+            reloadImage.fillAmount = 0;
+
+            reloadImage.DOComplete();
+            reloadImage.DOFade(1, 0);
+
+            reloadOnCooldown = true;
         }
     }
 

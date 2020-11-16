@@ -885,6 +885,7 @@ MonoBehaviour:
   docsParentObj: {fileID: 2960814775002742234}
   mailParentObj: {fileID: 2960814774570034009}
   mediaParentObj: {fileID: 2960814775785091979}
+  leftPanel: {fileID: 0}
   titleText: {fileID: 2960814774815523006}
   paragraphTextLeft: {fileID: 2960814774344112372}
   paragraphTextRight: {fileID: 2960814774785884820}
@@ -892,6 +893,11 @@ MonoBehaviour:
   extraNotesDown: {fileID: 2960814774992882989}
   image1: {fileID: 2960814774107054191}
   image2: {fileID: 2960814773714262972}
+  image3: {fileID: 0}
+  crewHoverLines: []
+  docsHoverLines: []
+  mailHoverLines: []
+  mediaHoverLines: []
   crewEntries:
   - {fileID: 2960814774855684394}
   - {fileID: 2960814775577283396}
@@ -916,8 +922,10 @@ MonoBehaviour:
   - {fileID: 2960814774582372626}
   - {fileID: 2960814773848121914}
   - {fileID: 2960814775453014555}
+  leftPanelSprites: []
   currentSection: Crew
   currentEntry: 0
+  previousEntry: 0
   totalEntries: 0
 --- !u!114 &2211706680520997292
 MonoBehaviour:
@@ -1732,6 +1740,7 @@ MonoBehaviour:
   codexTitle: 
   paragraphTextLeft: 
   extraNotesBottom: 
+  imageTopRight: {fileID: 0}
 --- !u!224 &2960814773881488255
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1774,7 +1783,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -333.80005, y: 9.099976}
+  m_AnchoredPosition: {x: -333.80005, y: 9.0998535}
   m_SizeDelta: {x: -867.2163, y: -190.69684}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2960814773887261529
@@ -4024,6 +4033,7 @@ MonoBehaviour:
   codexTitle: 
   paragraphTextLeft: 
   extraNotesBottom: 
+  imageTopRight: {fileID: 0}
 --- !u!224 &2960814774582372627
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4456,6 +4466,7 @@ MonoBehaviour:
   codexTitle: 
   paragraphTextLeft: 
   extraNotesBottom: 
+  imageTopRight: {fileID: 0}
 --- !u!114 &2960814774752791408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7031,6 +7042,7 @@ MonoBehaviour:
   codexTitle: Crew
   paragraphTextLeft: 
   extraNotesBottom: 
+  imageTopRight: {fileID: 0}
 --- !u!224 &2960814775597816387
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11148,7 +11160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_Maskable: 1
   m_OnCullStateChanged:

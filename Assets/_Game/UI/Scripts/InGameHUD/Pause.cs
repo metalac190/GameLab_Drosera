@@ -27,11 +27,12 @@ public class Pause : MonoBehaviour
 
     PauseController pauseController;
     AudioScript audioScript;
+    [SerializeField] ExtrasManager extrasManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -124,6 +125,7 @@ public class Pause : MonoBehaviour
             // extras
             if (currentlySelected == 2)
             {
+                extrasManager.CrewButton();
                 pauseBackgroundImage.SetActive(false);
             }
             else
