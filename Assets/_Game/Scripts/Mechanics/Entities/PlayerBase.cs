@@ -124,6 +124,7 @@ public class PlayerBase : EntityBase
     public UnityEvent OnReload;
     public UnityEvent OnDodge;
     public UnityEvent OnLowHealth;
+    public UnityEvent OnEmptyClip;
 
     // Room detection/reference for enemies
     public Room currentRoom;
@@ -325,8 +326,10 @@ public class PlayerBase : EntityBase
                 _animator.SetInteger("dodgeAni", 0);
             }
         }
-        else if (currentState != PlayerState.Dodging) //idle
+        /*else if (currentState != PlayerState.Dodging) //idle
         {
+            Debug.Log("Idle");
+            Debug.Log(gm.CurrentBiome);
             _animator.SetInteger("walkAni", 0);
 
             if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
@@ -342,7 +345,7 @@ public class PlayerBase : EntityBase
                     t -= Time.deltaTime;
                 }
             }
-        }
+        }*/
         /*
         else if (currentState == PlayerState.Attacking)
         {
@@ -354,10 +357,27 @@ public class PlayerBase : EntityBase
             _animator.SetInteger("dodgeAni", 1);
             //Debug.Log("F");
         }
-        else
+        else //this never gets called?
         {
             _animator.SetInteger("dodgeAni", 0);
-            
+
+            Debug.Log("Idle");
+            Debug.Log(gm.CurrentBiome);
+            _animator.SetInteger("walkAni", 0);
+
+            if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
+            {
+                float t = desertDmgTime;
+                if (t < 0)
+                {
+                    _health -= desertDmgAmt;
+                    t = desertDmgTime;
+                }
+                else
+                {
+                    t -= Time.deltaTime;
+                }
+            }
         }
 
         if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
