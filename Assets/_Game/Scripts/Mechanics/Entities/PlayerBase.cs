@@ -461,6 +461,7 @@ public class PlayerBase : EntityBase
                     heldAmmo = 0;
                 }
                 inGameHUD.UpdateAmmoText();
+                inGameHUD.DisplayReloadCooldown();
             }
         }
         if(reloadCoolDown<reloadCoolDownTime)

@@ -31,6 +31,8 @@ public class ExtrasManager : MonoBehaviour
     [SerializeField] GameObject[] mailHoverLines;
     [SerializeField] GameObject[] mediaHoverLines;
 
+    [SerializeField] Scrollbar scrollBar;
+
     [Header("Codex Entries Back End")]
     [SerializeField] CodexEntry[] crewEntries;
     [SerializeField] CodexEntry[] docEntries;
@@ -89,7 +91,7 @@ public class ExtrasManager : MonoBehaviour
         previouslySelected = currentlySelected;
         currentlySelected = index;
 
-        selectedStuff[index].SetActive(true);
+        // selectedStuff[index].SetActive(true);
     }
 
     // get entry index
@@ -344,6 +346,7 @@ public class ExtrasManager : MonoBehaviour
         if (menuManager != null && this.gameObject.activeInHierarchy)
             menuManager.PlaySound(1);
 
+        scrollBar.value = 1;
         ShowCurrentEntry(0);
     }
 
@@ -361,6 +364,7 @@ public class ExtrasManager : MonoBehaviour
         if (menuManager != null)
             menuManager.PlaySound(1);
 
+        scrollBar.value = 1;
         ShowCurrentEntry(0);
     }
 
@@ -378,6 +382,7 @@ public class ExtrasManager : MonoBehaviour
         if (menuManager != null)
             menuManager.PlaySound(1);
 
+        scrollBar.value = 1;
         ShowCurrentEntry(0);
     }
 
@@ -395,6 +400,7 @@ public class ExtrasManager : MonoBehaviour
         if (menuManager != null)
             menuManager.PlaySound(1);
 
+        scrollBar.value = 1;
         ShowCurrentEntry(0);
     }
 }
