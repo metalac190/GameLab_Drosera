@@ -73,6 +73,10 @@ public class Gunner : PlayerBase
         }
         else
         {
+            if(ammo < 1 && !altFireButton)
+            {
+                OnEmptyClip?.Invoke();
+            }
             currentState = PlayerState.Reloading;
         }
 
