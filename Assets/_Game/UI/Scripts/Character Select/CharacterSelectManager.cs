@@ -121,6 +121,8 @@ public class CharacterSelectManager : MonoBehaviour
             backgroundImage.SetNativeSize();
             backgroundImage.transform.localPosition = new Vector3(60, backgroundImage.transform.localPosition.y, backgroundImage.transform.localPosition.z);
 
+            confirmGlow.gameObject.SetActive(true);
+
             // character info
             healthText.text = characterList[currentlySelectedCharacter].Health.ToString() + " HP";
             damageText.text = characterList[currentlySelectedCharacter].Damage.ToString();
@@ -134,6 +136,8 @@ public class CharacterSelectManager : MonoBehaviour
             {
                 o.SetActive(false);
             }
+
+            confirmGlow.gameObject.SetActive(false);
 
             backgroundImage.sprite = characterList[currentlySelectedCharacter].LockedImage;
             backgroundImage.SetNativeSize();
@@ -189,11 +193,11 @@ public class CharacterSelectManager : MonoBehaviour
     {
         while(true)
         {
-            confirmGlow.DOFade(0.25f, 0.5f);
+            confirmGlow.DOFade(0.15f, 0.5f);
 
             yield return new WaitForSeconds(0.5f);
 
-            confirmGlow.DOFade(1, 0.5f);
+            confirmGlow.DOFade(0.65f, 0.5f);
 
             yield return new WaitForSeconds(0.5f);
         }

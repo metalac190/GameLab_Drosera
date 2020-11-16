@@ -284,6 +284,7 @@ public class LevelGeneration : MonoBehaviour
             genTest = false;
             yield break;
         }
+        GameManager.Instance.CurrentBiome = LevelBiomesList[levelNumber];
         /*AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
         foreach(AwesomeToon.AwesomeToonHelper toon in toons)
         {

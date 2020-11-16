@@ -8,8 +8,12 @@ using UnityEngine.Playables;
 public class PlayerBase : EntityBase
 {
     //states
-    protected enum PlayerState { Neutral, Attacking, Reloading, Ability, Dodging, Interacting, Dead };
+    public enum PlayerState { Neutral, Attacking, Reloading, Ability, Dodging, Interacting, Dead };
     protected PlayerState currentState;
+
+    public PlayerState CurrentState { get { return currentState; } }
+
+    protected GameManager gm;
 
     //button variable names
     protected bool aimToggle;
@@ -44,6 +48,7 @@ public class PlayerBase : EntityBase
     public bool AdjustCameraLeft { get { return adjustCameraLeftKey; } }
 
     private CharacterController controller;
+    protected bool _isForcedInvincible;
 
     protected Vector3 xMove;
     protected Vector3 zMove;
@@ -111,18 +116,27 @@ public class PlayerBase : EntityBase
     [SerializeField]
     protected float iFrameRate = .1f;
 
+    [SerializeField]
+    protected float desertDmgTime = .6f;
+    [SerializeField]
+    protected float desertDmgAmt = 1.2f;
+
     public UnityEvent OnReload;
     public UnityEvent OnDodge;
     public UnityEvent OnLowHealth;
 
     // Room detection/reference for enemies
     public Room currentRoom;
+    InGameHUD inGameHUD;
 
     protected override void Start()
     {
         base.Start();
         controller = gameObject.GetComponent<CharacterController>();
         currentState = PlayerState.Neutral;
+        gm = FindObjectOfType<GameManager>();
+        _isForcedInvincible = _isInvincible;
+        inGameHUD = FindObjectOfType<InGameHUD>();
     }
 
     public static PlayerBase instance;
@@ -192,22 +206,29 @@ public class PlayerBase : EntityBase
         zMove = Input.GetAxis("Vertical") * cameraForward;
         xMove = Input.GetAxis("Horizontal") * cameraRight;
 
-        if (currentState != PlayerState.Dodging)
+        if (currentState != PlayerState.Dead)
         {
-            movement = (zMove + xMove).normalized * Mathf.Max(zMove.magnitude, xMove.magnitude);
-            controller.Move(movement * Time.deltaTime * _moveSpeed);
-        }
-        else
-        {
-            RaycastHit hit;
-            if (movement != Vector3.zero)
+            if (currentState != PlayerState.Dodging)
             {
-                Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), movement.normalized * Time.deltaTime * dodgeSpeed, Color.cyan);
-                if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), movement, out hit, (movement.normalized * Time.deltaTime * dodgeSpeed).magnitude))
+                movement = (zMove + xMove).normalized * Mathf.Max(zMove.magnitude, xMove.magnitude);
+                controller.Move(movement * Time.deltaTime * _moveSpeed);
+            }
+            else
+            {
+                RaycastHit hit;
+                if (movement != Vector3.zero)
                 {
-                    if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                    Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), movement.normalized * Time.deltaTime * dodgeSpeed, Color.cyan);
+                    if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), movement, out hit, (movement.normalized * Time.deltaTime * dodgeSpeed).magnitude))
                     {
-                        controller.Move(movement.normalized * hit.distance);
+                        if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                        {
+                            controller.Move(movement.normalized * hit.distance);
+                        }
+                        else
+                        {
+                            controller.Move(movement.normalized * Time.deltaTime * dodgeSpeed);
+                        }
                     }
                     else
                     {
@@ -216,26 +237,22 @@ public class PlayerBase : EntityBase
                 }
                 else
                 {
-                    controller.Move(movement.normalized * Time.deltaTime * dodgeSpeed);
-                }
-            }
-            else
-            {
-                Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), transform.forward * Time.deltaTime * dodgeSpeed, Color.cyan);
-                if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), transform.forward, out hit, (transform.forward * Time.deltaTime * dodgeSpeed).magnitude))
-                {
-                    if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                    Debug.DrawRay(transform.position + new Vector3(0, 0.4f, 0), transform.forward * Time.deltaTime * dodgeSpeed, Color.cyan);
+                    if (Physics.Raycast(transform.position + new Vector3(0, 0.4f, 0), transform.forward, out hit, (transform.forward * Time.deltaTime * dodgeSpeed).magnitude))
                     {
-                        controller.Move(transform.forward * hit.distance);
+                        if (hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 0)
+                        {
+                            controller.Move(transform.forward * hit.distance);
+                        }
+                        else
+                        {
+                            controller.Move(transform.forward * Time.deltaTime * dodgeSpeed);
+                        }
                     }
                     else
                     {
                         controller.Move(transform.forward * Time.deltaTime * dodgeSpeed);
                     }
-                }
-                else
-                {
-                    controller.Move(transform.forward * Time.deltaTime * dodgeSpeed);
                 }
             }
         }
@@ -271,11 +288,13 @@ public class PlayerBase : EntityBase
                 //Debug.Log("L");
             }
 
+            /*
             //shoot
             if(currentState == PlayerState.Attacking)
             {
                 _animator.SetInteger("shootAni", 2);
             }
+            */ 
 
             //dodging
             if (currentState == PlayerState.Dodging)
@@ -306,14 +325,30 @@ public class PlayerBase : EntityBase
                 _animator.SetInteger("dodgeAni", 0);
             }
         }
-        else if (currentState == PlayerState.Neutral) //idle
+        else if (currentState != PlayerState.Dodging) //idle
         {
             _animator.SetInteger("walkAni", 0);
+
+            if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
+            {
+                float t = desertDmgTime;
+                if (t < 0)
+                {
+                    _health -= desertDmgAmt;
+                    t = desertDmgTime;
+                }
+                else
+                {
+                    t -= Time.deltaTime;
+                }
+            }
         }
+        /*
         else if (currentState == PlayerState.Attacking)
         {
             _animator.SetInteger("shootAni", 1);
         }
+        */
         else if (currentState == PlayerState.Dodging)
         {
             _animator.SetInteger("dodgeAni", 1);
@@ -322,6 +357,7 @@ public class PlayerBase : EntityBase
         else
         {
             _animator.SetInteger("dodgeAni", 0);
+            
         }
 
         if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
@@ -352,6 +388,7 @@ public class PlayerBase : EntityBase
     protected void Neutral()
     {
         _animator.SetInteger("shootAni", 0);
+        _animator.SetBool("altShootAni", false);
         _animator.SetBool("grenadeAni", false);
         _animator.SetBool("getHyperSeedAni", false);
         _animator.SetBool("getAmmoAni", false);
@@ -423,6 +460,7 @@ public class PlayerBase : EntityBase
                     ammo = tempAmmo;
                     heldAmmo = 0;
                 }
+                inGameHUD.UpdateAmmoText();
             }
         }
         if(reloadCoolDown<reloadCoolDownTime)
@@ -451,13 +489,13 @@ public class PlayerBase : EntityBase
         if (dodgeTimer < dodgeTime)
         {
             GetComponentInChildren<TrailRenderer>().emitting = true;
-            _isInvincible = true;
+            SetInvincible();
             dodgeTimer += Time.deltaTime;
         }
         else
         {
             GetComponentInChildren<TrailRenderer>().emitting = false;
-            _isInvincible = false;
+            SetInvincible(false);
             Destroy(tempDVFX, dodgeCooldownTime);
             dodgeCooldown = dodgeCooldownTime;
             currentState = PlayerState.Neutral;
@@ -467,23 +505,25 @@ public class PlayerBase : EntityBase
 
     protected void Interacting()
     {
-        interactTarget?.Interact(this);
-        if(interactTarget.GetComponent<HyperSeed>() != null)
+        if (interactTarget != null)
         {
-            _animator.SetBool("getHyperSeedAni", true);
+            interactTarget?.Interact(this);
+            if (interactTarget.GetComponent<HyperSeed>() != null)
+            {
+                _animator.SetBool("getHyperSeedAni", true);
+            }
+            else if (interactTarget.GetComponent<OreVein>() != null)
+            {
+                _animator.SetBool("getAmmoAni", true);
+            }
+            interactTarget = null;
+            lastInteract = Time.fixedTime;
         }
-        else if(interactTarget.GetComponent<OreVein>() != null)
-        {
-            _animator.SetBool("getAmmoAni", true);
-        }
-        interactTarget = null;
-        lastInteract = Time.fixedTime;
         currentState = PlayerState.Neutral;
     }
 
     protected void Dead()
     {
-        //dead sound
         _animator.SetBool("deathAni", true);
         GameManager.Instance.GameLost();
         Debug.Log("You are dead.");
@@ -491,8 +531,12 @@ public class PlayerBase : EntityBase
 
     public override void TakeDamage(float value)
     {
+        if (_isInvincible)
+            return;
+
         _health -= value;
-        OnTakeDamage?.Invoke();
+        if (currentState != PlayerState.Dead)
+            OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
             currentState = PlayerState.Dead;
@@ -518,9 +562,24 @@ public class PlayerBase : EntityBase
 
     IEnumerator InvincibleAfterDmg()
     {
-        _isInvincible = true;
+        SetInvincible();
         yield return new WaitForSeconds(iFrameRate);
         _animator.SetBool("damageAni", false);
-        _isInvincible = false;
+        SetInvincible(false);
     }
+
+    public void SetInvincibilityMode(bool isForcedInvincible)
+    {
+       _isInvincible = isForcedInvincible;
+       _isForcedInvincible = isForcedInvincible;
+    }
+
+    protected void SetInvincible(bool toState = true)
+    {
+        if (_isForcedInvincible || _isInvincible == toState)
+            return;
+
+        _isInvincible = toState;
+    }
+
 }

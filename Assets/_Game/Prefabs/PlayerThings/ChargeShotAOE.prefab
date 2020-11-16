@@ -68,7 +68,13 @@ MonoBehaviour:
   OnHit:
     m_PersistentCalls:
       m_Calls: []
-  _damageMultiplier: 15
+  _chainLightning: {fileID: 6433277434977907900, guid: 44f6a0e6c71beb3499037440f0a25f83,
+    type: 3}
+  _damageMultiplier: 5
+  _scaleMultiplier: 7
+  _lightningDuration: 2.5
+  _slowModifier: 0.5
+  _slowDuration: 2.5
 --- !u!33 &-6292251155315615254
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -84,7 +90,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3117750753337946311}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

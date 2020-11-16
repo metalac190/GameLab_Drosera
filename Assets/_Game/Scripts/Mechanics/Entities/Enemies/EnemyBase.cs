@@ -32,8 +32,19 @@ public abstract class EnemyBase : EntityBase {
     protected bool isHealing;
     protected float hyperseedHealthMultiplier = 0.7f;
     protected float hyperseedDamageMultiplier = 1.2f;
+    protected float hyperseedSpeedMultiplier = 1.4f;
     protected float cooldownTimer; // Timer for attack cooldowns
     [HideInInspector] public bool attackDone, aggroAnimDone;
+
+    [Header("Modifiers")]
+    [SerializeField] protected float jungleHealthMultiplier = 1f;
+    [SerializeField] protected float jungleDamageMultiplier = 1f;
+    [SerializeField] protected float jungleSpeedMultiplier = 1f;
+    [SerializeField] protected float desertHealthMultiplier = 1f;
+    [SerializeField] protected float desertDamageMultiplier = 1f;
+    [SerializeField] protected float desertSpeedMultiplier = 1f;
+    [SerializeField] protected string currentBiomeRegistered = "None";
+    [SerializeField] protected bool enemySlowed = false;
 
     [System.Serializable]
     public class EnemyFX {
@@ -96,6 +107,8 @@ public abstract class EnemyBase : EntityBase {
         }
 
         StartCoroutine(CheckBehavior());
+        StartCoroutine(EnemyModifications());
+
     }
 
     protected virtual void LateUpdate() {
@@ -146,6 +159,9 @@ public abstract class EnemyBase : EntityBase {
             this.hyperseed = true;
             _health *= hyperseedHealthMultiplier;
             _maxHealth *= hyperseedHealthMultiplier;
+
+            _moveSpeed *= hyperseedSpeedMultiplier;
+            _agent.speed *= hyperseedSpeedMultiplier;
 
             Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
             foreach(Hitbox hitbox in hitboxes) {
@@ -251,7 +267,7 @@ public abstract class EnemyBase : EntityBase {
         while(gameObject.activeSelf) {
             yield return new WaitForSeconds(0.25f);
             if(currentBehavior == null) {
-                Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + " encountered an error in its behavior.");
+                try { Debug.Log(gameObject.name + " in " + GetComponentInParent<Room>().name + " encountered an error in its behavior."); } catch { }
                 ResetEnemy();
             }
         }
@@ -313,4 +329,72 @@ public abstract class EnemyBase : EntityBase {
         currentBehavior = StartCoroutine(Idle(true));
     }
 
+    /// <summary>
+    /// Changes enemy stas depending on current biome
+    /// </summary>
+    protected IEnumerator EnemyModifications() {
+        yield return new WaitForSeconds(0.1f);
+        //Change Enemy Stats based on biome
+        if (GameManager.Instance != null)       //check to be sure instance exists
+        {
+            if (GameManager.Instance.CurrentBiome == DroseraGlobalEnums.Biome.Jungle)
+            {
+                currentBiomeRegistered = "Jungle";
+                Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
+                foreach (Hitbox hitbox in hitboxes)
+                {
+                    hitbox.baseDamage *= jungleDamageMultiplier;
+                    hitbox.damage *= jungleDamageMultiplier;
+                }
+                _health *= jungleHealthMultiplier;
+                _maxHealth *= jungleHealthMultiplier;
+                _moveSpeed *= jungleSpeedMultiplier;
+            }
+            else if (GameManager.Instance.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
+            {
+                currentBiomeRegistered = "Desert";
+                Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
+                foreach (Hitbox hitbox in hitboxes)
+                {
+                    hitbox.baseDamage *= desertDamageMultiplier;
+                    hitbox.damage *= desertDamageMultiplier;
+                }
+                _health *= desertHealthMultiplier;
+                _maxHealth *= desertHealthMultiplier;
+                _moveSpeed *= desertSpeedMultiplier;
+            }
+            else
+            {
+                currentBiomeRegistered = "Nothing Registered";
+            }
+        }//end of biome modifier code
+        yield return null;
+    }
+
+    // -------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Plays attack SFX - called in the animator
+    /// </summary>
+    public abstract void PlayAttackSound();
+
+    /// <summary>
+    /// Coroutine that can be called on enemy being hit by player alt fire.
+    /// enemySlowModifier --> should be a number between 0 and 1
+    /// enemySlowDuration--> float duration for enemy slow
+    /// </summary>
+    public IEnumerator AltFireEnemySlowed(float enemySlowModifier, float enemySlowDuration)
+    {
+        if (enemySlowed == false)   //prevents modifiers from stacking
+        {
+            float originalSpeed = _moveSpeed;
+            enemySlowed = true;
+            _moveSpeed *= enemySlowModifier;
+            _agent.speed = _moveSpeed;
+            yield return new WaitForSeconds(enemySlowDuration);
+            _moveSpeed = originalSpeed;
+            _agent.speed = _moveSpeed;
+            enemySlowed = false;
+        }
+    }
 }

@@ -31,6 +31,8 @@ public class MenuManager : MonoBehaviour
     bool cycleDown;
     bool cycleUp;
 
+    ExtrasManager extrasManager;
+
     private void Awake()
     {
         foreach (Image h in hoverlineImages)
@@ -41,6 +43,8 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
+        extrasManager = FindObjectOfType<ExtrasManager>();
+
         FadeInMainMenuPanel();
         DisplayMainMenuPanel();
     }
@@ -228,6 +232,8 @@ public class MenuManager : MonoBehaviour
         PlaySound(0);
 
         CloseAllPanels();
+
+        extrasManager.CrewButton();
         extrasPanel.SetActive(true);
     }
 
