@@ -284,11 +284,12 @@ public class LevelGeneration : MonoBehaviour
             genTest = false;
             yield break;
         }
-        AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
+        GameManager.Instance.CurrentBiome = LevelBiomesList[levelNumber];
+        /*AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
         foreach(AwesomeToon.AwesomeToonHelper toon in toons)
         {
             toon.GetLights();
-        }
+        }*/
         yield return null;
     }
 

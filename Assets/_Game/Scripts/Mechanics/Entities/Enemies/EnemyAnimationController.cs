@@ -17,6 +17,10 @@ public class EnemyAnimationController : MonoBehaviour {
         enemyBase.attackDone = true;
     }
 
+    public void SetAttackStarting() {
+        enemyBase.attackDone = false;
+    }
+
     public void FinishAggroAnim() {
         enemyBase.aggroAnimDone = true;
     }
@@ -35,6 +39,10 @@ public class EnemyAnimationController : MonoBehaviour {
 
     public void DisableTrail(int index) {
         trails[index].emitting = false;
+    }
+
+    public void PlayAttackSound() {
+        enemyBase.PlayAttackSound();
     }
 
 }

@@ -11,6 +11,7 @@ public class InfiniteAmmoTrigger : MonoBehaviour
 
     private static bool firstTime = true;
     private bool hasBeenEnabled = false;
+    private bool closedInPause = false;
 
     private void Start()
     {
@@ -19,12 +20,34 @@ public class InfiniteAmmoTrigger : MonoBehaviour
             tutorialPrompt.SetActive(true);
             firstTime = false;
         }
+        else
+        {
+            oreVein.isInfinite = false;
+            oreInteractUI.SetActive(false);
+            tutorialPrompt.SetActive(false);
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void Update()
+    {
+        if(tutorialPrompt.activeInHierarchy && Time.timeScale < 1)
+        {
+            tutorialPrompt.SetActive(false);
+            closedInPause = true;
+        }
+
+        if(closedInPause && Time.timeScale >= 1)
+        {
+            tutorialPrompt.SetActive(true);
+            closedInPause = false;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         Gunner player = other.GetComponent<Gunner>();
-        if(player && !hasBeenEnabled)
+        if(firstTime && player && !hasBeenEnabled)
         {
             hasBeenEnabled = true;
             player.SetInfiniteAmmo(true);

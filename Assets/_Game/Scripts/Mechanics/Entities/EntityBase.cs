@@ -24,12 +24,15 @@ public abstract class EntityBase : MonoBehaviour
     [SerializeField] protected CharacterController _controller;
     [SerializeField] protected Animator _animator;
 
+    public Animator Animator { get { return _animator; } }
+
     protected virtual void Awake() {
         _controller = GetComponent<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
     }
 
-    protected virtual void Start() {
+    protected virtual void Start() 
+    {
         _health = _maxHealth;
     }
 

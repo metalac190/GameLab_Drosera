@@ -40,7 +40,7 @@ public class Brawler : EnemyBase {
         if(waypoints.Count == 0) {
             AddWaypoint();
             AddWaypoint();
-            //Debug.LogError(gameObject.name + " in " + transform.parent.parent.name + " has no waypoints.");
+            Debug.LogError(gameObject.name + " in " + transform.parent.parent.parent.name + " has no waypoints.");
 
             int i = 1;
             foreach(GameObject waypoint in waypoints) {
@@ -59,6 +59,7 @@ public class Brawler : EnemyBase {
     protected override IEnumerator Idle(bool regen = false) {
         _agent.stoppingDistance = 0f;
         _agent.SetDestination(transform.position);
+        yield return new WaitForSeconds(0.5f);
 
         if(regen) {
             isHealing = true;
@@ -124,9 +125,10 @@ public class Brawler : EnemyBase {
         // TODO - make looping
         _enemyFX.AlertState.Invoke();
 
+        yield return null;
+        FindTarget();
         while(true) {
             yield return null;
-            FindTarget();
 
             // No target player available - idle instead
             if(targetPlayer == null) {
@@ -215,7 +217,7 @@ public class Brawler : EnemyBase {
     /// <summary>
     /// Plays swat SFX - called in the animator
     /// </summary>
-    public void PlayAttackSound() {
+    public override void PlayAttackSound() {
         _brawlerFX.PummelAttack.Invoke();
     }
 

@@ -34,6 +34,10 @@ public class CharacterSelectManager : MonoBehaviour
     int currentlySelectedWeapon = 0;
     int previouslySelectedWeapon = 0;
 
+    [SerializeField] Image confirmGlow;
+
+    AudioScript audioScript;
+
     private void Awake()
     {
         // animate first character border out
@@ -42,11 +46,31 @@ public class CharacterSelectManager : MonoBehaviour
         UpdateCharacterInfo();
     }
 
+    private void Start()
+    {
+        audioScript = GetComponent<AudioScript>();
+
+        ConfirmGlow();  
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             SceneManager.LoadScene(0);
+        }
+
+        ControllerSupport();
+    }
+
+    void ControllerSupport()
+    {
+        if (Input.GetJoystickNames().Length != 0)
+        {
+            if (Input.GetKeyDown(KeyCode.Joystick1Button2))
+            {
+                ConfirmCharacter("Main");
+            }
         }
     }
 
@@ -97,6 +121,8 @@ public class CharacterSelectManager : MonoBehaviour
             backgroundImage.SetNativeSize();
             backgroundImage.transform.localPosition = new Vector3(60, backgroundImage.transform.localPosition.y, backgroundImage.transform.localPosition.z);
 
+            confirmGlow.gameObject.SetActive(true);
+
             // character info
             healthText.text = characterList[currentlySelectedCharacter].Health.ToString() + " HP";
             damageText.text = characterList[currentlySelectedCharacter].Damage.ToString();
@@ -110,6 +136,8 @@ public class CharacterSelectManager : MonoBehaviour
             {
                 o.SetActive(false);
             }
+
+            confirmGlow.gameObject.SetActive(false);
 
             backgroundImage.sprite = characterList[currentlySelectedCharacter].LockedImage;
             backgroundImage.SetNativeSize();
@@ -149,8 +177,29 @@ public class CharacterSelectManager : MonoBehaviour
 
     public void ConfirmCharacter(string sceneName)
     {
+        audioScript.PlaySound(0);
+
         //For now just start the game. Later will actually change character.
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
         GameManager.Instance.GameState = DroseraGlobalEnums.GameState.CutScene; 
+    }
+
+    void ConfirmGlow()
+    {
+        StartCoroutine(ConfirmGlowCoroutine());
+    }
+
+    IEnumerator ConfirmGlowCoroutine()
+    {
+        while(true)
+        {
+            confirmGlow.DOFade(0.15f, 0.5f);
+
+            yield return new WaitForSeconds(0.5f);
+
+            confirmGlow.DOFade(0.65f, 0.5f);
+
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 }
