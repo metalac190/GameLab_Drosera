@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &52475012
 RectTransform:
   m_ObjectHideFlags: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   player: {fileID: 0}
-  baseOffset: {x: 0, y: 2, z: 0}
+  baseOffset: {x: 0, y: 3, z: 0}
   trackPlayer: 1
 --- !u!1 &2544588308562730698
 GameObject:
@@ -252,7 +252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   player: {fileID: 0}
-  baseOffset: {x: 0, y: 2, z: 0}
+  baseOffset: {x: 0, y: 3, z: 0}
   trackPlayer: 1
 --- !u!1 &3115595349846288760
 GameObject:
@@ -290,7 +290,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -950.96, y: -539.5}
-  m_SizeDelta: {x: 108, y: 109}
+  m_SizeDelta: {x: 73, y: 9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5764751704683776496
 CanvasRenderer:
@@ -319,14 +319,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c66a75a39e699fb4fb72137a36e5cac8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1912833894ff73d4eb54efb33c0d9015, type: 3}
   m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 2
+  m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!114 &6450790195194958792
@@ -343,7 +343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   player: {fileID: 0}
-  baseOffset: {x: 1.7, y: 0.85, z: 0}
+  baseOffset: {x: 0, y: -0.75, z: 0}
   trackPlayer: 1
 --- !u!1 &3697049943591975410
 GameObject:
@@ -363,7 +363,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &838610856164442062
 RectTransform:
   m_ObjectHideFlags: 0
@@ -472,7 +472,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -950.96, y: -539.5}
-  m_SizeDelta: {x: 108, y: 109}
+  m_SizeDelta: {x: 73, y: 9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5359617113944934792
 CanvasRenderer:
@@ -501,14 +501,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7d629dac5d09c9c449672fede6d9ef2f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1912833894ff73d4eb54efb33c0d9015, type: 3}
   m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 2
+  m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!114 &8542872338608054513
@@ -525,7 +525,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   player: {fileID: 0}
-  baseOffset: {x: 1.7, y: 0.85, z: 0}
+  baseOffset: {x: 0, y: -0.75, z: 0}
   trackPlayer: 1
 --- !u!1 &5750546534465421528
 GameObject:
@@ -552,7 +552,7 @@ RectTransform:
   m_GameObject: {fileID: 5750546534465421528}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 2259053450347943099}
   - {fileID: 3382364253074380441}
@@ -577,6 +577,7 @@ GameObject:
   - component: {fileID: 7886073425907314168}
   - component: {fileID: 7886073425907314169}
   - component: {fileID: 7886073425907314170}
+  - component: {fileID: 953790268}
   m_Layer: 5
   m_Name: Canvas- Player HP Bar (World Space)
   m_TagString: Untagged
@@ -667,6 +668,23 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &953790268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7886073425907314172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 557347642260cc54bb2552cdc17b16f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  desiredUIComparison: 8
+  uiElementsToApplyTo:
+  - {fileID: 3597057032816337690}
+  - {fileID: 4776371746431851650}
+  - {fileID: 4733749960350341879}
 --- !u!1 &7886073425984885379
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,7 +774,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   player: {fileID: 0}
-  baseOffset: {x: 1.7, y: 0.85, z: 0}
+  baseOffset: {x: 1.75, y: 1.75, z: 0}
   trackPlayer: 1
 --- !u!1 &7886073426102657812
 GameObject:
@@ -847,7 +865,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   player: {fileID: 0}
-  baseOffset: {x: 1.7, y: 0.85, z: 0}
+  baseOffset: {x: 1.75, y: 1.75, z: 0}
   trackPlayer: 1
 --- !u!1 &7886073426203045542
 GameObject:
@@ -864,7 +882,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7886073426203045541
 RectTransform:
   m_ObjectHideFlags: 0
@@ -976,5 +994,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   player: {fileID: 0}
-  baseOffset: {x: 1.7, y: 0.85, z: 0}
+  baseOffset: {x: 1.75, y: 1.75, z: 0}
   trackPlayer: 1
