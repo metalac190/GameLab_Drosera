@@ -51,7 +51,6 @@ public class HealthBar : MonoBehaviour
 
     }
 
-    // decrements player's radial hp bar in counterclockwise fashion
     public void TakeDamage()
     {
         currentHealth = player.Health;
@@ -67,13 +66,57 @@ public class HealthBar : MonoBehaviour
             {
                 healthBar.color = healthBarColors[numberOfHealthBars - 1];
                 healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars - 1];
-                heartImage.color = heartImage.color = healthBarBackgroundColors[numberOfHealthBars - 1];
+                // heartImage.color = heartImage.color = healthBarBackgroundColors[numberOfHealthBars - 1];
             }
             else
             {
                 healthBar.enabled = false;
                 this.enabled = false;
             }
+        }
+    }
+
+    public void Heal()
+    {
+        currentHealth = player.Health;
+        maxHealth = player.MaxHealth;
+
+        healthBar.fillAmount = currentHealth / maxHealth;
+
+        if (currentHealth > 80)
+        {
+            numberOfHealthBars = 4;
+
+            healthBar.color = healthBarColors[numberOfHealthBars];
+            healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars];
+        }
+        else if (currentHealth > 60)
+        {
+            numberOfHealthBars = 3;
+
+            healthBar.color = healthBarColors[numberOfHealthBars];
+            healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars];
+        }
+        else if (currentHealth > 40)
+        {
+            numberOfHealthBars = 2;
+
+            healthBar.color = healthBarColors[numberOfHealthBars];
+            healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars];
+        }
+        else if (currentHealth > 20)
+        {
+            numberOfHealthBars = 1;
+
+            healthBar.color = healthBarColors[numberOfHealthBars];
+            healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars];
+        }
+        else
+        {
+            numberOfHealthBars = 0;
+
+            healthBar.color = healthBarColors[numberOfHealthBars];
+            healthBarBackground.color = healthBarBackgroundColors[numberOfHealthBars];
         }
     }
 }
