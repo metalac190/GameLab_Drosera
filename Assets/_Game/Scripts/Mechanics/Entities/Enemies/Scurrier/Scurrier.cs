@@ -347,6 +347,7 @@ public class Scurrier : EnemyBase {
         _scurrierFX.goreTrail.SetActive(true);
         //_animator.SetBool("Gore", true);
         _animator.SetTrigger("Gore Start");
+        GetComponentInChildren<EnemyAnimationController>().EnableHitbox(1);
         _agent.isStopped = false;
         float timeout = 0; // Failsafe to prevent infinite gore
         while(_agent.remainingDistance > 1) {
@@ -415,6 +416,7 @@ public class Scurrier : EnemyBase {
             yield return null;
         }
         _agent.velocity = Vector3.zero;
+        GetComponentInChildren<EnemyAnimationController>().DisableHitbox(1);
         yield return new WaitForSeconds(0.5f);
 
         endGoreSkid:
@@ -433,6 +435,7 @@ public class Scurrier : EnemyBase {
         Debug.Log("Gore crashed into wall");
         _agent.isStopped = true;
         _agent.velocity = Vector3.zero;
+        GetComponentInChildren<EnemyAnimationController>().DisableHitbox(1);
 
         SpawnGoreHitVFX();
 
@@ -450,6 +453,7 @@ public class Scurrier : EnemyBase {
     /// Reset scurrier stats after gore in case of interruption
     /// </summary>
     private void GoreReset() {
+        GetComponentInChildren<EnemyAnimationController>().DisableHitbox(1);
         crashDetector.gameObject.SetActive(false);
         _scurrierFX.goreTrail.SetActive(false);
         _animator.SetBool("Gore", false);
