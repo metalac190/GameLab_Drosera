@@ -20,6 +20,7 @@ public class PauseController : MonoBehaviour
 
     int currentlySelectedElement;
     public int CurrentlySelectedElement { get => currentlySelectedElement; set => currentlySelectedElement = value; }
+    [SerializeField] Color selectedColor;
 
     Pause pause;
     AudioScript audioScript;
@@ -141,11 +142,11 @@ public class PauseController : MonoBehaviour
         if (menu)
         {
             quitText.color = Color.white;
-            menuText.color = Color.yellow;
+            menuText.color = selectedColor;
         }
         else
         {
-            quitText.color = Color.yellow;
+            quitText.color = selectedColor;
             menuText.color = Color.white;
         }
     }

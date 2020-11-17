@@ -7,7 +7,9 @@ using System;
 using TMPro;
 
 [RequireComponent(typeof(ConsoleLog))]
+#if(UNITY_EDITOR)
 [RequireComponent(typeof(ConsoleLevelEditor))]
+#endif
 public class CommandConsole : MonoBehaviour
 {
     public static event Action RevertConsole = delegate { };
@@ -28,7 +30,9 @@ public class CommandConsole : MonoBehaviour
     private Room currentRoom = null;
 
     private ConsoleLog log = null;
+    #if (UNITY_EDITOR)
     private ConsoleLevelEditor levelEditor = null;
+    #endif
     private PlayerBase playerRef = null;
 
     public bool IsInEditor => isInEditor;
@@ -61,7 +65,9 @@ public class CommandConsole : MonoBehaviour
         }
 
         log = GetComponent<ConsoleLog>();
+#if UNITY_EDITOR
         levelEditor = GetComponent<ConsoleLevelEditor>();
+#endif
         playerRef = FindObjectOfType<PlayerBase>();
     }
 
@@ -203,10 +209,12 @@ public class CommandConsole : MonoBehaviour
 
     public void QuitCommand()
     {
+        #if(UNITY_EDITOR)
         if (IsInEditor)
             UnityEditor.EditorApplication.isPlaying = false;
         else
             Application.Quit();
+        #endif
     }
     public void PauseCommand()
     {
@@ -266,7 +274,9 @@ public class CommandConsole : MonoBehaviour
             if (playerRef.currentRoom != null && playerRef.currentRoom != currentRoom)
             {
                 currentRoom = playerRef.currentRoom;
+                #if (UNITY_EDITOR)
                 levelEditor?.PlayerChangedRoom(currentRoom);
+                #endif
                 roomNamText.text = currentRoom.name;
             }
         }

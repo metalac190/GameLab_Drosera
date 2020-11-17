@@ -35,6 +35,7 @@ public class GunnerGrenadeProjectile : MonoBehaviour
     private void Start()
     {
         _rb.AddForce(((Vector3.up * _upwardForce) + transform.forward * _forwardForce));
+        _rb.AddTorque(transform.right * -10);
         OnExplode.AddListener(ShakeScreen);
     }
 

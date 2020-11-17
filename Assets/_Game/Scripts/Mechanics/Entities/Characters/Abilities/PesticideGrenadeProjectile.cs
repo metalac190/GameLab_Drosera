@@ -32,6 +32,7 @@ public class PesticideGrenadeProjectile : MonoBehaviour
     private void Start()
     {
         _rb.AddForce(((Vector3.up * _upwardForce) + transform.forward * _forwardForce));
+        _rb.AddTorque(transform.right * -10);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -54,24 +55,24 @@ public class PesticideGrenadeProjectile : MonoBehaviour
         yield return new WaitForSeconds(explosionDelay);
         OnExplode?.Invoke();
 
-        StartCoroutine(SpawnDecal());
+        Vector3 pos = transform.position;
+        pos.y = 0.2f;
+        StartCoroutine(SpawnDecal(pos));
 
         _audioScript.PlaySound(0);
 
         GameObject vfx = Instantiate(_vfx, transform.position, Quaternion.identity);
         vfx.GetComponentInChildren<SphereCollider>().enabled = false;
-        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        transform.GetChild(0).gameObject.SetActive(false);
         gameObject.GetComponent<SphereCollider>().enabled = false;
 
         StartCoroutine(ClearVFX(vfx));
     }
 
-    IEnumerator SpawnDecal()
+    IEnumerator SpawnDecal(Vector3 pos)
     {
         yield return new WaitForSeconds(0.35f);
 
-        Vector3 pos = transform.position;
-        pos.y = 0.2f;
         GameObject hitbox = Instantiate(_pesticideHitbox, pos, Quaternion.identity);
         Vector3 scale = hitbox.transform.localScale;
         scale.x = _explosionRadius;

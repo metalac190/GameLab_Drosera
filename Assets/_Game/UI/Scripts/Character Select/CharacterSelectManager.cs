@@ -193,11 +193,11 @@ public class CharacterSelectManager : MonoBehaviour
     {
         while(true)
         {
-            confirmGlow.DOFade(0.25f, 0.5f);
+            confirmGlow.DOFade(0.15f, 0.5f);
 
             yield return new WaitForSeconds(0.5f);
 
-            confirmGlow.DOFade(1, 0.5f);
+            confirmGlow.DOFade(0.65f, 0.5f);
 
             yield return new WaitForSeconds(0.5f);
         }
