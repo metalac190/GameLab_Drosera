@@ -31,7 +31,7 @@ public class MenuManager : MonoBehaviour
     bool cycleDown;
     bool cycleUp;
 
-    ExtrasManager extrasManager;
+    [SerializeField] ExtrasManager extrasManager;
 
     private void Awake()
     {
@@ -43,8 +43,6 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
-        extrasManager = FindObjectOfType<ExtrasManager>();
-
         FadeInMainMenuPanel();
         DisplayMainMenuPanel();
     }
