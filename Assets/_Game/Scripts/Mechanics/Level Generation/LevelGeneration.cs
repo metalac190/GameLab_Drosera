@@ -84,7 +84,7 @@ public class LevelGeneration : MonoBehaviour
             while (genTest == false)
             {
                 StartCoroutine(CreateLevelCoroutine(levelNumber, roomMasterPrefab.GetComponent<StoreRooms>().AllRooms));
-                yield return new WaitForSeconds(.001f);
+                yield return new WaitForSecondsRealtime(.001f);
             }
             levelNumber += 1;
         }
