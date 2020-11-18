@@ -202,10 +202,11 @@ public class Scurrier : EnemyBase {
     }
 
     protected override void CheckAggression() {
-        if(Vector3.Distance(PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero, transform.position) < aggressiveRange // Check distance
+        if(hyperseed || // Hyperseed guarantees finding target
+            (Vector3.Distance(PlayerBase.instance != null ? PlayerBase.instance.transform.position : Vector3.zero, transform.position) < aggressiveRange // Check distance
             && PlayerInRoom() // Check in same room
             && EnemyInRoom() // Check if in own room
-            && !Physics.Raycast(transform.position, PlayerBase.instance.transform.position, VectorToPlayer().magnitude, LayerMask.GetMask("Terrain"))) { // Check wall obstruction
+            && !Physics.Raycast(transform.position, PlayerBase.instance.transform.position, VectorToPlayer().magnitude, LayerMask.GetMask("Terrain")))) { // Check wall obstruction
                 TurnAggressive.Invoke();
         }
     }
@@ -312,11 +313,13 @@ public class Scurrier : EnemyBase {
         _scurrierFX.GoreWindUp.Invoke();
         for(float i = 0; i < 0.5; i += Time.deltaTime) {
             // Check if player left line of sight or left max range - exit
-            if(/*Physics.Raycast(transform.position, VectorToPlayer(), goreRange.y, LayerMask.GetMask("Terrain")) ||*/ // Raycast
-                Vector3.Distance(transform.position, initialTargetPos) >= goreRange.y) { // Check distance
+            if(Physics.Raycast(transform.position, VectorToPlayer(), goreRange.y, LayerMask.GetMask("Terrain")) || // Raycast
+                Vector3.Distance(transform.position, initialTargetPos) >= goreRange.y) { // Check distance - out of range
 
+                cooldownTimerGore = cooldownGore * Random.Range(0.4f, 0.6f);
                 currentBehavior = StartCoroutine(AggressiveMove());
-                yield break;
+                goto endFlag;
+                //yield break;
             }
 
             initialTargetPos = PlayerBase.instance.transform.position;
@@ -344,6 +347,7 @@ public class Scurrier : EnemyBase {
         _scurrierFX.goreTrail.SetActive(true);
         //_animator.SetBool("Gore", true);
         _animator.SetTrigger("Gore Start");
+        GetComponentInChildren<EnemyAnimationController>().EnableHitbox(1);
         _agent.isStopped = false;
         float timeout = 0; // Failsafe to prevent infinite gore
         while(_agent.remainingDistance > 1) {
@@ -356,7 +360,7 @@ public class Scurrier : EnemyBase {
             yield return null;
 
             // Premature end (player exit room OR scurrier left its parent room)
-            if(!PlayerInRoom() || !EnemyInRoom())
+            if(!hyperseed && (!PlayerInRoom() || !EnemyInRoom()))
                 break;
 
             // Check timeout
@@ -370,6 +374,9 @@ public class Scurrier : EnemyBase {
         // Did not crash - begin skidding
         _animator.SetTrigger("Gore Finish");
         currentBehavior = StartCoroutine(GoreSkid());
+
+        endFlag:
+        yield return null;
     }
 
     /// <summary>
@@ -409,6 +416,7 @@ public class Scurrier : EnemyBase {
             yield return null;
         }
         _agent.velocity = Vector3.zero;
+        GetComponentInChildren<EnemyAnimationController>().DisableHitbox(1);
         yield return new WaitForSeconds(0.5f);
 
         endGoreSkid:
@@ -427,6 +435,7 @@ public class Scurrier : EnemyBase {
         Debug.Log("Gore crashed into wall");
         _agent.isStopped = true;
         _agent.velocity = Vector3.zero;
+        GetComponentInChildren<EnemyAnimationController>().DisableHitbox(1);
 
         SpawnGoreHitVFX();
 
@@ -444,6 +453,7 @@ public class Scurrier : EnemyBase {
     /// Reset scurrier stats after gore in case of interruption
     /// </summary>
     private void GoreReset() {
+        GetComponentInChildren<EnemyAnimationController>().DisableHitbox(1);
         crashDetector.gameObject.SetActive(false);
         _scurrierFX.goreTrail.SetActive(false);
         _animator.SetBool("Gore", false);
