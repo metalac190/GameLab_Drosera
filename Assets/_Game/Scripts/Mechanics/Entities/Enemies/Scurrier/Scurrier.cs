@@ -87,6 +87,9 @@ public class Scurrier : EnemyBase {
             _health *= hyperseedHealthMultiplier;
             _maxHealth *= hyperseedHealthMultiplier;
 
+            _moveSpeed *= hyperseedSpeedMultiplier;
+            _agent.speed *= hyperseedSpeedMultiplier;
+
             Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
             foreach(Hitbox hitbox in hitboxes) {
                 hitbox.baseDamage *= hyperseedDamageMultiplier;
