@@ -19,6 +19,7 @@ public class OreVein : InteractableBase
     public bool isInfinite;
 
     //private Animator _animator; // Might be useless, keeping for now if it turns out it is needed
+    InGameHUD inGameHUD;
 
     private void Start()
     {
@@ -29,6 +30,8 @@ public class OreVein : InteractableBase
             obj.SetActive(false);
         }
         _orePrefabSizes[Mathf.Clamp(_uses, 0, _orePrefabSizes.Length - 1)].SetActive(true);
+
+        inGameHUD = FindObjectOfType<InGameHUD>();
     }
 
     public override bool Interact(PlayerBase player)
@@ -36,9 +39,15 @@ public class OreVein : InteractableBase
         if (_uses > 0)
         {
             if (isInfinite && player.Ammo + player.AmmoPerOre <= player.MaxAmmo)
+            {
                 player.Ammo += player.AmmoPerOre;
+                inGameHUD.UpdateAmmoText();
+            }
             else if (!isInfinite)
+            {
                 player.HeldAmmo += player.AmmoPerOre;
+                inGameHUD.UpdateAmmoText();
+            }
 
             if (!base.Interact(player))
                 return false;

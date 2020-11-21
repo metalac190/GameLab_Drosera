@@ -31,7 +31,8 @@ public abstract class EntityBase : MonoBehaviour
         _animator = GetComponentInChildren<Animator>();
     }
 
-    protected virtual void Start() {
+    protected virtual void Start() 
+    {
         _health = _maxHealth;
     }
 

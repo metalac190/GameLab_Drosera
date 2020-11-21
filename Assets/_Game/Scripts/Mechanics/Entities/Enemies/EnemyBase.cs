@@ -32,6 +32,7 @@ public abstract class EnemyBase : EntityBase {
     protected bool isHealing;
     protected float hyperseedHealthMultiplier = 0.7f;
     protected float hyperseedDamageMultiplier = 1.2f;
+    protected float hyperseedSpeedMultiplier = 1.4f;
     protected float cooldownTimer; // Timer for attack cooldowns
     [HideInInspector] public bool attackDone, aggroAnimDone;
 
@@ -55,6 +56,7 @@ public abstract class EnemyBase : EntityBase {
         public UnityEvent Alerted;
         public UnityEvent IdleState, AlertState;
         public UnityEvent DamageTaken, Death;
+        public GameObject deathSoundObj;
     }
     [Header("Enemy SFX & VFX")] [SerializeField] protected EnemyFX _enemyFX;
 
@@ -159,6 +161,9 @@ public abstract class EnemyBase : EntityBase {
             _health *= hyperseedHealthMultiplier;
             _maxHealth *= hyperseedHealthMultiplier;
 
+            _moveSpeed *= hyperseedSpeedMultiplier;
+            _agent.speed *= hyperseedSpeedMultiplier;
+
             Hitbox[] hitboxes = GetComponentsInChildren<Hitbox>(true);
             foreach(Hitbox hitbox in hitboxes) {
                 hitbox.baseDamage *= hyperseedDamageMultiplier;
@@ -250,6 +255,8 @@ public abstract class EnemyBase : EntityBase {
     /// Death function of the enemy
     /// </summary>
     protected virtual IEnumerator Die() {
+        //_enemyFX.deathSoundObj.GetComponent<AudioScript>().audioPrefabParent = PlayerBase.instance.gameObject;
+        _enemyFX.deathSoundObj.GetComponent<AudioScript>().audioPrefabParent = GetComponentInParent<Room>().gameObject;
         _enemyFX.Death.Invoke();
         VFXSpawner.vfx.SpawnVFX(_enemyFX.deathEffect, 1f, transform.position, transform.rotation); //Putting this here for now. Bill feel free to set this up how you want to later.
         Destroy(gameObject);

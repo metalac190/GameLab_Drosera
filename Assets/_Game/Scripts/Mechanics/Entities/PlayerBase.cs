@@ -48,6 +48,7 @@ public class PlayerBase : EntityBase
     public bool AdjustCameraLeft { get { return adjustCameraLeftKey; } }
 
     private CharacterController controller;
+    protected bool _isForcedInvincible;
 
     protected Vector3 xMove;
     protected Vector3 zMove;
@@ -119,13 +120,16 @@ public class PlayerBase : EntityBase
     protected float desertDmgTime = .6f;
     [SerializeField]
     protected float desertDmgAmt = 1.2f;
+    private float desertT = 0;
 
     public UnityEvent OnReload;
     public UnityEvent OnDodge;
     public UnityEvent OnLowHealth;
+    public UnityEvent OnEmptyClip;
 
     // Room detection/reference for enemies
     public Room currentRoom;
+    InGameHUD inGameHUD;
 
     protected override void Start()
     {
@@ -133,6 +137,8 @@ public class PlayerBase : EntityBase
         controller = gameObject.GetComponent<CharacterController>();
         currentState = PlayerState.Neutral;
         gm = FindObjectOfType<GameManager>();
+        _isForcedInvincible = _isInvincible;
+        inGameHUD = FindObjectOfType<InGameHUD>();
     }
 
     public static PlayerBase instance;
@@ -145,6 +151,8 @@ public class PlayerBase : EntityBase
 
         Physics.IgnoreLayerCollision(11, 16);
         Physics.IgnoreLayerCollision(16, 15);
+
+        desertT = desertDmgTime;
     }
 
     // Update is called once per frame
@@ -321,8 +329,10 @@ public class PlayerBase : EntityBase
                 _animator.SetInteger("dodgeAni", 0);
             }
         }
-        else if (currentState != PlayerState.Dodging) //idle
+        /*else if (currentState != PlayerState.Dodging) //idle
         {
+            Debug.Log("Idle");
+            Debug.Log(gm.CurrentBiome);
             _animator.SetInteger("walkAni", 0);
 
             if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
@@ -338,7 +348,7 @@ public class PlayerBase : EntityBase
                     t -= Time.deltaTime;
                 }
             }
-        }
+        }*/
         /*
         else if (currentState == PlayerState.Attacking)
         {
@@ -350,10 +360,25 @@ public class PlayerBase : EntityBase
             _animator.SetInteger("dodgeAni", 1);
             //Debug.Log("F");
         }
-        else
+        else //this never gets called?
         {
             _animator.SetInteger("dodgeAni", 0);
-            
+            _animator.SetInteger("walkAni", 0);
+
+            if (gm.CurrentBiome == DroseraGlobalEnums.Biome.Desert)
+            {
+                
+                if (desertT < 0)
+                {
+                    _health -= desertDmgAmt;
+                    TakeDamage(desertDmgAmt);
+                    desertT = desertDmgTime;
+                }
+                else
+                {
+                    desertT -= Time.deltaTime;
+                }
+            }
         }
 
         if(_health/_maxHealth < lowHealthPercentage && !lowHealthPlaying) //low health
@@ -456,6 +481,8 @@ public class PlayerBase : EntityBase
                     ammo = tempAmmo;
                     heldAmmo = 0;
                 }
+                inGameHUD.UpdateAmmoText();
+                inGameHUD.DisplayReloadCooldown();
             }
         }
         if(reloadCoolDown<reloadCoolDownTime)
@@ -484,13 +511,13 @@ public class PlayerBase : EntityBase
         if (dodgeTimer < dodgeTime)
         {
             GetComponentInChildren<TrailRenderer>().emitting = true;
-            _isInvincible = true;
+            SetInvincible();
             dodgeTimer += Time.deltaTime;
         }
         else
         {
             GetComponentInChildren<TrailRenderer>().emitting = false;
-            _isInvincible = false;
+            SetInvincible(false);
             Destroy(tempDVFX, dodgeCooldownTime);
             dodgeCooldown = dodgeCooldownTime;
             currentState = PlayerState.Neutral;
@@ -526,8 +553,12 @@ public class PlayerBase : EntityBase
 
     public override void TakeDamage(float value)
     {
+        if (_isInvincible)
+            return;
+
         _health -= value;
-        OnTakeDamage?.Invoke();
+        if (currentState != PlayerState.Dead)
+            OnTakeDamage?.Invoke();
         if (_health <= 0)
         {
             currentState = PlayerState.Dead;
@@ -553,9 +584,24 @@ public class PlayerBase : EntityBase
 
     IEnumerator InvincibleAfterDmg()
     {
-        _isInvincible = true;
+        SetInvincible();
         yield return new WaitForSeconds(iFrameRate);
         _animator.SetBool("damageAni", false);
-        _isInvincible = false;
+        SetInvincible(false);
     }
+
+    public void SetInvincibilityMode(bool isForcedInvincible)
+    {
+       _isInvincible = isForcedInvincible;
+       _isForcedInvincible = isForcedInvincible;
+    }
+
+    protected void SetInvincible(bool toState = true)
+    {
+        if (_isForcedInvincible || _isInvincible == toState)
+            return;
+
+        _isInvincible = toState;
+    }
+
 }

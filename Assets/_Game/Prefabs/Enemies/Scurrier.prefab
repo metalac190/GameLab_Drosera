@@ -421,7 +421,7 @@ MonoBehaviour:
   _canStun: 0
   _knockbackResistance: 0
   _cooldown: 1
-  _moveSpeed: 6
+  _moveSpeed: 4
   _isInvincible: 0
   _controller: {fileID: 0}
   _animator: {fileID: 0}
@@ -448,6 +448,7 @@ MonoBehaviour:
   desertDamageMultiplier: 1
   desertSpeedMultiplier: 1
   currentBiomeRegistered: None
+  enemySlowed: 0
   _enemyFX:
     burrow: {fileID: 8740312367966588867, guid: 86495891de95c3f4fbfdb3e9f37f0fb3,
       type: 3}
@@ -501,6 +502,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+    deathSoundObj: {fileID: 6530665416833818879}
   aggressiveRange: 5
   swatRange: 2.75
   goreRange: {x: 3.5, y: 30}
@@ -884,7 +886,7 @@ MonoBehaviour:
   playlistClipDelay: 0
   randomize: 0
   smartRandomize: 0
-  stopSoundOnFadeOut: 1
+  stopSoundOnFadeOut: 0
   letClipFinishOnStop: 0
   letClipPlayInPause: 0
   FadeInSpeed: 0
@@ -1889,6 +1891,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3174611246274658896, guid: eaa9d256a6858054c8b9ba621f1c4a0b,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1e6e3535a7f5d7044a47078b32dc6bab, type: 2}
     - target: {fileID: 919132149155446097, guid: eaa9d256a6858054c8b9ba621f1c4a0b,
         type: 3}
       propertyPath: m_Name

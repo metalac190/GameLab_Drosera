@@ -12,16 +12,18 @@ public class InfiniteAmmoTrigger : MonoBehaviour
     private static bool firstTime = true;
     private bool hasBeenEnabled = false;
     private bool closedInPause = false;
+    //Need to have a static reference to player to due to an issue with the scene double loading. Once that is fixed this can be removed.
+    private static Gunner currentPlayer;
 
     private void Start()
     {
-        if(firstTime)
+        if (firstTime)
         {
             tutorialPrompt.SetActive(true);
-            firstTime = false;
         }
         else
         {
+            currentPlayer.SetInfiniteAmmo(false);
             oreVein.isInfinite = false;
             oreInteractUI.SetActive(false);
             tutorialPrompt.SetActive(false);
@@ -31,13 +33,14 @@ public class InfiniteAmmoTrigger : MonoBehaviour
 
     private void Update()
     {
-        if(tutorialPrompt.activeInHierarchy && Time.timeScale < 1)
+        //When the pause menu is brought up, close the tutorial prompt breifly.
+        if (tutorialPrompt.activeInHierarchy && Time.timeScale < 1)
         {
             tutorialPrompt.SetActive(false);
             closedInPause = true;
         }
 
-        if(closedInPause && Time.timeScale >= 1)
+        if (closedInPause && Time.timeScale >= 1)
         {
             tutorialPrompt.SetActive(true);
             closedInPause = false;
@@ -47,8 +50,9 @@ public class InfiniteAmmoTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Gunner player = other.GetComponent<Gunner>();
-        if(firstTime && player && !hasBeenEnabled)
+        if (firstTime && player && !hasBeenEnabled)
         {
+            currentPlayer = player;
             hasBeenEnabled = true;
             player.SetInfiniteAmmo(true);
             print("Player has infinite ammo.");
@@ -58,8 +62,10 @@ public class InfiniteAmmoTrigger : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         Gunner player = other.GetComponent<Gunner>();
-        if (player)
+        if (player && Time.timeScale >= 1)
         {
+            firstTime = false;
+            currentPlayer = player;
             player.SetInfiniteAmmo(false);
             print("Player does not have infinite ammo.");
             oreVein.isInfinite = false;

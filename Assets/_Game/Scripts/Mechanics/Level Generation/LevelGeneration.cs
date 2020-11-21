@@ -79,13 +79,12 @@ public class LevelGeneration : MonoBehaviour
     {
         Debug.Log("Level Number: " + LevelNumber);
         genTest = false;
-        GameManager.Instance.CurrentBiome = LevelBiomesList[levelNumber];
         if (levelNumber < 6)
         {
             while (genTest == false)
             {
                 StartCoroutine(CreateLevelCoroutine(levelNumber, roomMasterPrefab.GetComponent<StoreRooms>().AllRooms));
-                yield return new WaitForSeconds(.001f);
+                yield return new WaitForSecondsRealtime(.001f);
             }
             levelNumber += 1;
         }
@@ -285,6 +284,7 @@ public class LevelGeneration : MonoBehaviour
             genTest = false;
             yield break;
         }
+        GameManager.Instance.CurrentBiome = LevelBiomesList[levelNumber];
         /*AwesomeToon.AwesomeToonHelper[] toons = FindObjectsOfType<AwesomeToon.AwesomeToonHelper>();
         foreach(AwesomeToon.AwesomeToonHelper toon in toons)
         {

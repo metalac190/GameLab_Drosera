@@ -26,6 +26,7 @@ public class ChargeShot : MonoBehaviour
     [SerializeField] float _damageMultiplier = 1f;
     [SerializeField] float _lifespan = 5f;
     [SerializeField] GameObject _AOEEffect;
+    [SerializeField] float _AOEPosMultiplier = 4f; //should be roughly half of the AOE's _scaleMultiplier
 
     [Header("VFX")]
     [SerializeField]
@@ -114,7 +115,7 @@ public class ChargeShot : MonoBehaviour
         int layer = other.gameObject.layer;
         if (!(layer == 11 || layer == 13 || layer == 15)) //hit anything but player, other hitboxes, and invisible walls
         {
-            Vector3 pos = transform.position + transform.forward;
+            Vector3 pos = transform.position + (transform.forward * _charge * _AOEPosMultiplier);
             ChargeShotAOE aoe = Instantiate(_AOEEffect, pos, Quaternion.identity).GetComponent<ChargeShotAOE>();
             aoe.IgnoreTarget(other.gameObject);
 

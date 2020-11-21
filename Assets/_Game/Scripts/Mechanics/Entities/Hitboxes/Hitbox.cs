@@ -39,7 +39,7 @@ public class Hitbox : MonoBehaviour {
             //Spawn VFX if hit player
             if ((other.gameObject.layer == LayerMask.NameToLayer("Player") && CanHitPlayer()) && hitVFX != null && VFXSpawner.vfx != null)
             {
-                GameObject vfx = VFXSpawner.vfx.SpawnVFX(hitVFX, hitVFXDuration, other.transform.position, transform.rotation);
+                GameObject vfx = VFXSpawner.vfx.SpawnVFX(hitVFX, hitVFXDuration, other.transform.position + (Vector3.up * 1), transform.rotation);
             }
         }
     }
