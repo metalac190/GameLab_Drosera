@@ -88,7 +88,7 @@ public class InGameHUD : MonoBehaviour
     private void Start()
     {
         gunnerHookup.OnTakeDamage.AddListener(healthBarUI.TakeDamage);
-        gunnerHookup.OnHeal.AddListener(healthBarUI.TakeDamage);
+        gunnerHookup.OnHeal.AddListener(healthBarUI.Heal);
 
         gunnerPrimaryFireHookup.OnFire.AddListener(UpdateAmmoText);
         gunnerSecondaryFireHookup.OnFire.AddListener(DisplaySecondaryAttackCooldown);
@@ -108,12 +108,6 @@ public class InGameHUD : MonoBehaviour
         if(GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainOne)
         {
             StartCoroutine(ShowPhaseOneObjectiveText());
-
-            oreVeinHookups = FindObjectsOfType<OreVein>();
-            foreach (OreVein ore in oreVeinHookups)
-            {
-                ore.OnInteract.AddListener(UpdateAmmoText);
-            }
         }
         else if (GameManager.Instance.GameState == DroseraGlobalEnums.GameState.MainTwo)
         {

@@ -371,6 +371,7 @@ public class PlayerBase : EntityBase
                 if (desertT < 0)
                 {
                     _health -= desertDmgAmt;
+                    TakeDamage(desertDmgAmt);
                     desertT = desertDmgTime;
                 }
                 else

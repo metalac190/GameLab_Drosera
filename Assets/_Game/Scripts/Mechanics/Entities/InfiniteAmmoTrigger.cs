@@ -20,7 +20,6 @@ public class InfiniteAmmoTrigger : MonoBehaviour
         if (firstTime)
         {
             tutorialPrompt.SetActive(true);
-            firstTime = false;
         }
         else
         {
@@ -63,8 +62,9 @@ public class InfiniteAmmoTrigger : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         Gunner player = other.GetComponent<Gunner>();
-        if (player)
+        if (player && Time.timeScale >= 1)
         {
+            firstTime = false;
             currentPlayer = player;
             player.SetInfiniteAmmo(false);
             print("Player does not have infinite ammo.");

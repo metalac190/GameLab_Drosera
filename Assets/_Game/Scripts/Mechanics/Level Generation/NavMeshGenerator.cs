@@ -25,7 +25,7 @@ public class NavMeshGenerator : MonoBehaviour {
         //Debug.Log(radius + " // " + transform.InverseTransformPoint(radius));
         radius = transform.InverseTransformPoint(radius);
 
-        float radiusLength = Mathf.Clamp(radius.magnitude * 2 * sizeBuffer, 350, 1000);
+        float radiusLength = Mathf.Clamp(radius.magnitude * 2 * sizeBuffer, 600, 1000);
         foreach(NavMeshSurface surface in surfaces) {
             surface.center = radius;
             surface.size = new Vector3(radiusLength, surface.size.y, radiusLength);
