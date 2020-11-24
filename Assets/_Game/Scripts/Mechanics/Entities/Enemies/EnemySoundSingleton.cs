@@ -25,7 +25,11 @@ public class EnemySoundSingleton : MonoBehaviour
 
 
     void Awake() {
-        instance = this;
+
+        if (instance == null)
+        {
+            instance = this;
+        }
     }
 
     public IEnumerator EnemyDamagedSoundDelay(float delayTime)
